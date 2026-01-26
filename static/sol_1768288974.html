@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_0fad8e215c8332b7026c3804d9e44b35 {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+
+            <style>#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            </style>
+
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
+
+        
+</head>
+<body>
+    
+    
+            <div class="folium-map" id="map_0fad8e215c8332b7026c3804d9e44b35" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_0fad8e215c8332b7026c3804d9e44b35 = L.map(
+                "map_0fad8e215c8332b7026c3804d9e44b35",
+                {
+                    center: [51.12114205044519, 71.42881393432619],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 15,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_453bcac60ca8fa0972b308cfea944934 = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 19,
+  "maxNativeZoom": 19,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors",
+  "subdomains": "abc",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_453bcac60ca8fa0972b308cfea944934.addTo(map_0fad8e215c8332b7026c3804d9e44b35);
+        
+    
+            var marker_eb32c15c68d6c312e772cbf9fc73d8e2 = L.marker(
+                [51.1325, 71.4038],
+                {
+}
+            ).addTo(map_0fad8e215c8332b7026c3804d9e44b35);
+        
+    
+            var icon_12f7d4ef131546c04d6e7e9bc3a3ad40 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "play",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_15131f55110a74e15285ddb452ff8526 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_8c47a657aaa5ba600d10d2353f87b296 = $(`<div id="html_8c47a657aaa5ba600d10d2353f87b296" style="width: 100.0%; height: 100.0%;">Start (A)</div>`)[0];
+                popup_15131f55110a74e15285ddb452ff8526.setContent(html_8c47a657aaa5ba600d10d2353f87b296);
+            
+        
+
+        marker_eb32c15c68d6c312e772cbf9fc73d8e2.bindPopup(popup_15131f55110a74e15285ddb452ff8526)
+        ;
+
+        
+    
+    
+                marker_eb32c15c68d6c312e772cbf9fc73d8e2.setIcon(icon_12f7d4ef131546c04d6e7e9bc3a3ad40);
+            
+    
+            var marker_97acb46727d153d2f126cd73a53046e3 = L.marker(
+                [51.12114205044519, 71.42881393432619],
+                {
+}
+            ).addTo(map_0fad8e215c8332b7026c3804d9e44b35);
+        
+    
+            var icon_a949ef220b58457e55a062610ba6aecf = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "flag",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_1b34478b3bda8b4b5f6bc605fdd4b19e = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_6b528962c2667473f339004e0608ab1d = $(`<div id="html_6b528962c2667473f339004e0608ab1d" style="width: 100.0%; height: 100.0%;">Destination (B)</div>`)[0];
+                popup_1b34478b3bda8b4b5f6bc605fdd4b19e.setContent(html_6b528962c2667473f339004e0608ab1d);
+            
+        
+
+        marker_97acb46727d153d2f126cd73a53046e3.bindPopup(popup_1b34478b3bda8b4b5f6bc605fdd4b19e)
+        ;
+
+        
+    
+    
+                marker_97acb46727d153d2f126cd73a53046e3.setIcon(icon_a949ef220b58457e55a062610ba6aecf);
+            
+    
+            var marker_5a1cbc9fc7ae3ccd6340476eb2f06aec = L.marker(
+                [51.118, 71.445],
+                {
+}
+            ).addTo(map_0fad8e215c8332b7026c3804d9e44b35);
+        
+    
+            var icon_fd645fa0893705741cc0ccbb238a7bc0 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "arrow-right",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_b965eeed441ae54a35a3e2d16b3c7313 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_f7a07149732646c69afbdf965710803e = $(`<div id="html_f7a07149732646c69afbdf965710803e" style="width: 100.0%; height: 100.0%;">Next Dest (C)</div>`)[0];
+                popup_b965eeed441ae54a35a3e2d16b3c7313.setContent(html_f7a07149732646c69afbdf965710803e);
+            
+        
+
+        marker_5a1cbc9fc7ae3ccd6340476eb2f06aec.bindPopup(popup_b965eeed441ae54a35a3e2d16b3c7313)
+        ;
+
+        
+    
+    
+                marker_5a1cbc9fc7ae3ccd6340476eb2f06aec.setIcon(icon_fd645fa0893705741cc0ccbb238a7bc0);
+            
+    
+            var circle_marker_e182d724f39b034571106482e28f4085 = L.circleMarker(
+                [51.1196542, 71.4281605],
+                {"bubblingMouseEvents": true, "color": "gray", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "gray", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5, "stroke": true, "weight": 3}
+            ).addTo(map_0fad8e215c8332b7026c3804d9e44b35);
+        
+    
+        var popup_32fbb4c887e96f5c19ef1a75221a94a2 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_c0f88b8b2c42051bda27cc6cb39c7071 = $(`<div id="html_c0f88b8b2c42051bda27cc6cb39c7071" style="width: 100.0%; height: 100.0%;">Potential: Astana Spot</div>`)[0];
+                popup_32fbb4c887e96f5c19ef1a75221a94a2.setContent(html_c0f88b8b2c42051bda27cc6cb39c7071);
+            
+        
+
+        circle_marker_e182d724f39b034571106482e28f4085.bindPopup(popup_32fbb4c887e96f5c19ef1a75221a94a2)
+        ;
+
+        
+    
+    
+            var circle_marker_b336202571bfcb6ba02533ed814d1e1e = L.circleMarker(
+                [51.1236889, 71.4300943],
+                {"bubblingMouseEvents": true, "color": "gray", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "gray", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5, "stroke": true, "weight": 3}
+            ).addTo(map_0fad8e215c8332b7026c3804d9e44b35);
+        
+    
+        var popup_67e0d3084c11fa73897d68efeb096fcb = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_c79f63e6774fbdc3604bd6d075fd3733 = $(`<div id="html_c79f63e6774fbdc3604bd6d075fd3733" style="width: 100.0%; height: 100.0%;">Potential: Astana Spot</div>`)[0];
+                popup_67e0d3084c11fa73897d68efeb096fcb.setContent(html_c79f63e6774fbdc3604bd6d075fd3733);
+            
+        
+
+        circle_marker_b336202571bfcb6ba02533ed814d1e1e.bindPopup(popup_67e0d3084c11fa73897d68efeb096fcb)
+        ;
+
+        
+    
+    
+            var circle_marker_0d097c3a84d1e434b514cb345447c8c2 = L.circleMarker(
+                [51.1238837, 71.4287634],
+                {"bubblingMouseEvents": true, "color": "gray", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "gray", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5, "stroke": true, "weight": 3}
+            ).addTo(map_0fad8e215c8332b7026c3804d9e44b35);
+        
+    
+        var popup_834587528724ef12e3b6d0f0b48c11f4 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_c94401e754cc0c14d659e20a4312c149 = $(`<div id="html_c94401e754cc0c14d659e20a4312c149" style="width: 100.0%; height: 100.0%;">Potential: Astana Spot</div>`)[0];
+                popup_834587528724ef12e3b6d0f0b48c11f4.setContent(html_c94401e754cc0c14d659e20a4312c149);
+            
+        
+
+        circle_marker_0d097c3a84d1e434b514cb345447c8c2.bindPopup(popup_834587528724ef12e3b6d0f0b48c11f4)
+        ;
+
+        
+    
+    
+            var circle_marker_b4c6b4fa5df1b6e988f69bc1ebd8199a = L.circleMarker(
+                [51.1240934, 71.4274726],
+                {"bubblingMouseEvents": true, "color": "gray", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "gray", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5, "stroke": true, "weight": 3}
+            ).addTo(map_0fad8e215c8332b7026c3804d9e44b35);
+        
+    
+        var popup_43fc87396e099de3ff2004ef1a50b221 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_d7cc911f70615eeed723c4eaefc5d849 = $(`<div id="html_d7cc911f70615eeed723c4eaefc5d849" style="width: 100.0%; height: 100.0%;">Potential: Astana Spot</div>`)[0];
+                popup_43fc87396e099de3ff2004ef1a50b221.setContent(html_d7cc911f70615eeed723c4eaefc5d849);
+            
+        
+
+        circle_marker_b4c6b4fa5df1b6e988f69bc1ebd8199a.bindPopup(popup_43fc87396e099de3ff2004ef1a50b221)
+        ;
+
+        
+    
+    
+            var circle_marker_6b19588dcdc481dfe24ba0b543451f30 = L.circleMarker(
+                [51.1198392, 71.4341802],
+                {"bubblingMouseEvents": true, "color": "gray", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "gray", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5, "stroke": true, "weight": 3}
+            ).addTo(map_0fad8e215c8332b7026c3804d9e44b35);
+        
+    
+        var popup_754196110d8d9c2a9d16b56c0e491b3a = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_00ba2da001ed4de4dc0843c1b11657ea = $(`<div id="html_00ba2da001ed4de4dc0843c1b11657ea" style="width: 100.0%; height: 100.0%;">Potential: Astana Spot</div>`)[0];
+                popup_754196110d8d9c2a9d16b56c0e491b3a.setContent(html_00ba2da001ed4de4dc0843c1b11657ea);
+            
+        
+
+        circle_marker_6b19588dcdc481dfe24ba0b543451f30.bindPopup(popup_754196110d8d9c2a9d16b56c0e491b3a)
+        ;
+
+        
+    
+    
+            var circle_marker_43ac29a63307c3583ba7d0ac00260a1c = L.circleMarker(
+                [51.1245606, 71.425258],
+                {"bubblingMouseEvents": true, "color": "gray", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "gray", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5, "stroke": true, "weight": 3}
+            ).addTo(map_0fad8e215c8332b7026c3804d9e44b35);
+        
+    
+        var popup_14d9f08c3126078919b028c117eb17ed = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_9328f90ca00dfa57b50d4672aca80387 = $(`<div id="html_9328f90ca00dfa57b50d4672aca80387" style="width: 100.0%; height: 100.0%;">Potential: Astana Spot</div>`)[0];
+                popup_14d9f08c3126078919b028c117eb17ed.setContent(html_9328f90ca00dfa57b50d4672aca80387);
+            
+        
+
+        circle_marker_43ac29a63307c3583ba7d0ac00260a1c.bindPopup(popup_14d9f08c3126078919b028c117eb17ed)
+        ;
+
+        
+    
+    
+            var circle_marker_b50dd52dd0f86fc53bda81275da1f4f8 = L.circleMarker(
+                [51.1204972, 71.4354578],
+                {"bubblingMouseEvents": true, "color": "gray", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "gray", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5, "stroke": true, "weight": 3}
+            ).addTo(map_0fad8e215c8332b7026c3804d9e44b35);
+        
+    
+        var popup_5bba74dfed798b1ec8c1b337cc5da07f = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_5711c737fd4a65862628959c55d165aa = $(`<div id="html_5711c737fd4a65862628959c55d165aa" style="width: 100.0%; height: 100.0%;">Potential: Astana Spot</div>`)[0];
+                popup_5bba74dfed798b1ec8c1b337cc5da07f.setContent(html_5711c737fd4a65862628959c55d165aa);
+            
+        
+
+        circle_marker_b50dd52dd0f86fc53bda81275da1f4f8.bindPopup(popup_5bba74dfed798b1ec8c1b337cc5da07f)
+        ;
+
+        
+    
+    
+            var circle_marker_5a1aa493906d0e88855e1d315d46a2d4 = L.circleMarker(
+                [51.1191167, 71.434806],
+                {"bubblingMouseEvents": true, "color": "gray", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "gray", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5, "stroke": true, "weight": 3}
+            ).addTo(map_0fad8e215c8332b7026c3804d9e44b35);
+        
+    
+        var popup_dd5f22fe13f272cce0d1685207744fd1 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_805e572805f781a964052c72efc58dca = $(`<div id="html_805e572805f781a964052c72efc58dca" style="width: 100.0%; height: 100.0%;">Potential: Astana Spot</div>`)[0];
+                popup_dd5f22fe13f272cce0d1685207744fd1.setContent(html_805e572805f781a964052c72efc58dca);
+            
+        
+
+        circle_marker_5a1aa493906d0e88855e1d315d46a2d4.bindPopup(popup_dd5f22fe13f272cce0d1685207744fd1)
+        ;
+
+        
+    
+    
+            var circle_marker_b887902275dbf6fc7acb434dd54ecb2c = L.circleMarker(
+                [51.1168188, 71.4292809],
+                {"bubblingMouseEvents": true, "color": "gray", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "gray", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5, "stroke": true, "weight": 3}
+            ).addTo(map_0fad8e215c8332b7026c3804d9e44b35);
+        
+    
+        var popup_8b2f924a7cde4b3ccf0daf8055e6a549 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_be48c7eca91ae405029cb4aca93687d5 = $(`<div id="html_be48c7eca91ae405029cb4aca93687d5" style="width: 100.0%; height: 100.0%;">Potential: Astana Spot</div>`)[0];
+                popup_8b2f924a7cde4b3ccf0daf8055e6a549.setContent(html_be48c7eca91ae405029cb4aca93687d5);
+            
+        
+
+        circle_marker_b887902275dbf6fc7acb434dd54ecb2c.bindPopup(popup_8b2f924a7cde4b3ccf0daf8055e6a549)
+        ;
+
+        
+    
+    
+            var circle_marker_e792a01bb0d9288921de4f5fe8b33f37 = L.circleMarker(
+                [51.1209276, 71.4372874],
+                {"bubblingMouseEvents": true, "color": "gray", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "gray", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5, "stroke": true, "weight": 3}
+            ).addTo(map_0fad8e215c8332b7026c3804d9e44b35);
+        
+    
+        var popup_ff119aeb80241c74d0fa519e59621ea7 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_07ebfc6f858450831141ec272f1148ad = $(`<div id="html_07ebfc6f858450831141ec272f1148ad" style="width: 100.0%; height: 100.0%;">Potential: Astana Spot</div>`)[0];
+                popup_ff119aeb80241c74d0fa519e59621ea7.setContent(html_07ebfc6f858450831141ec272f1148ad);
+            
+        
+
+        circle_marker_e792a01bb0d9288921de4f5fe8b33f37.bindPopup(popup_ff119aeb80241c74d0fa519e59621ea7)
+        ;
+
+        
+    
+    
+            var circle_marker_0798d00f31964c86807680da0f54708b = L.circleMarker(
+                [51.1182084, 71.4359231],
+                {"bubblingMouseEvents": true, "color": "gray", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "gray", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5, "stroke": true, "weight": 3}
+            ).addTo(map_0fad8e215c8332b7026c3804d9e44b35);
+        
+    
+        var popup_c4f1ae4c39460801dfbd9558c33b4c62 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_3dff0c42ab14aaa1caa7e46e1a3662d2 = $(`<div id="html_3dff0c42ab14aaa1caa7e46e1a3662d2" style="width: 100.0%; height: 100.0%;">Potential: Astana Spot</div>`)[0];
+                popup_c4f1ae4c39460801dfbd9558c33b4c62.setContent(html_3dff0c42ab14aaa1caa7e46e1a3662d2);
+            
+        
+
+        circle_marker_0798d00f31964c86807680da0f54708b.bindPopup(popup_c4f1ae4c39460801dfbd9558c33b4c62)
+        ;
+
+        
+    
+    
+            var circle_marker_a0b26ce98cef4e894578afb0dbf05aeb = L.circleMarker(
+                [51.1157602, 71.4313759],
+                {"bubblingMouseEvents": true, "color": "gray", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "gray", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5, "stroke": true, "weight": 3}
+            ).addTo(map_0fad8e215c8332b7026c3804d9e44b35);
+        
+    
+        var popup_f384ff0488b415f60270eebc7a7e71f1 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_5b5ae1d5dc75dbab9a15b170b83eecbb = $(`<div id="html_5b5ae1d5dc75dbab9a15b170b83eecbb" style="width: 100.0%; height: 100.0%;">Potential: Astana Spot</div>`)[0];
+                popup_f384ff0488b415f60270eebc7a7e71f1.setContent(html_5b5ae1d5dc75dbab9a15b170b83eecbb);
+            
+        
+
+        circle_marker_a0b26ce98cef4e894578afb0dbf05aeb.bindPopup(popup_f384ff0488b415f60270eebc7a7e71f1)
+        ;
+
+        
+    
+    
+            var circle_marker_6065d53b76445d6ed1d702fb9ab03633 = L.circleMarker(
+                [51.1265844, 71.4319421],
+                {"bubblingMouseEvents": true, "color": "gray", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "gray", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5, "stroke": true, "weight": 3}
+            ).addTo(map_0fad8e215c8332b7026c3804d9e44b35);
+        
+    
+        var popup_1d9d167d11f6e90d107f803411ee1051 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_9a5fa3926f487f55a1ccc01176fd2f75 = $(`<div id="html_9a5fa3926f487f55a1ccc01176fd2f75" style="width: 100.0%; height: 100.0%;">Potential: Astana Spot</div>`)[0];
+                popup_1d9d167d11f6e90d107f803411ee1051.setContent(html_9a5fa3926f487f55a1ccc01176fd2f75);
+            
+        
+
+        circle_marker_6065d53b76445d6ed1d702fb9ab03633.bindPopup(popup_1d9d167d11f6e90d107f803411ee1051)
+        ;
+
+        
+    
+    
+            var marker_99a37a3979599096180c1b23160c9d77 = L.marker(
+                [51.1159837, 71.4295383],
+                {
+}
+            ).addTo(map_0fad8e215c8332b7026c3804d9e44b35);
+        
+    
+            var div_icon_87aec46d045db7cda79e1854b4317651 = L.divIcon({
+  "html": "\n                        \u003cdiv style=\"font-family: sans-serif; color: white; background-color: orange; \n                        border-radius: 50%; width: 24px; height: 24px; display: flex; \n                        align-items: center; justify-content: center; border: 2px solid black;\n                        font-weight: bold;\"\u003e1\u003c/div\u003e",
+  "className": "empty",
+});
+        
+    
+        var popup_b7fff847458859d0e7e001f43bf4de31 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_42770bb27895cfc266b7f359af247f3d = $(`<div id="html_42770bb27895cfc266b7f359af247f3d" style="width: 100.0%; height: 100.0%;">STOP #1: Astana Spot</div>`)[0];
+                popup_b7fff847458859d0e7e001f43bf4de31.setContent(html_42770bb27895cfc266b7f359af247f3d);
+            
+        
+
+        marker_99a37a3979599096180c1b23160c9d77.bindPopup(popup_b7fff847458859d0e7e001f43bf4de31)
+        ;
+
+        
+    
+    
+                marker_99a37a3979599096180c1b23160c9d77.setIcon(div_icon_87aec46d045db7cda79e1854b4317651);
+            
+    
+            var marker_155ef5e11e81aec50384190db639bfda = L.marker(
+                [51.1162882, 71.4264226],
+                {
+}
+            ).addTo(map_0fad8e215c8332b7026c3804d9e44b35);
+        
+    
+            var div_icon_dec9763c9acdbb90d96c529f581c232c = L.divIcon({
+  "html": "\n                        \u003cdiv style=\"font-family: sans-serif; color: white; background-color: orange; \n                        border-radius: 50%; width: 24px; height: 24px; display: flex; \n                        align-items: center; justify-content: center; border: 2px solid black;\n                        font-weight: bold;\"\u003e2\u003c/div\u003e",
+  "className": "empty",
+});
+        
+    
+        var popup_911cf982753e663e2db96b875692ec9d = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_3acd66386cda9eadbcd2ba90ac2f8658 = $(`<div id="html_3acd66386cda9eadbcd2ba90ac2f8658" style="width: 100.0%; height: 100.0%;">STOP #2: Astana Spot</div>`)[0];
+                popup_911cf982753e663e2db96b875692ec9d.setContent(html_3acd66386cda9eadbcd2ba90ac2f8658);
+            
+        
+
+        marker_155ef5e11e81aec50384190db639bfda.bindPopup(popup_911cf982753e663e2db96b875692ec9d)
+        ;
+
+        
+    
+    
+                marker_155ef5e11e81aec50384190db639bfda.setIcon(div_icon_dec9763c9acdbb90d96c529f581c232c);
+            
+    
+            var marker_850f1e6363652ccbf59a27f0dedfb846 = L.marker(
+                [51.1165393, 71.425848],
+                {
+}
+            ).addTo(map_0fad8e215c8332b7026c3804d9e44b35);
+        
+    
+            var div_icon_76984ac63da455c726567e40bb3a8212 = L.divIcon({
+  "html": "\n                        \u003cdiv style=\"font-family: sans-serif; color: white; background-color: orange; \n                        border-radius: 50%; width: 24px; height: 24px; display: flex; \n                        align-items: center; justify-content: center; border: 2px solid black;\n                        font-weight: bold;\"\u003e3\u003c/div\u003e",
+  "className": "empty",
+});
+        
+    
+        var popup_0e9ee6c35799bbab6f288eaea563a5d7 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_32696054a4189ff7765798baf3e9e91d = $(`<div id="html_32696054a4189ff7765798baf3e9e91d" style="width: 100.0%; height: 100.0%;">STOP #3: Astana Spot</div>`)[0];
+                popup_0e9ee6c35799bbab6f288eaea563a5d7.setContent(html_32696054a4189ff7765798baf3e9e91d);
+            
+        
+
+        marker_850f1e6363652ccbf59a27f0dedfb846.bindPopup(popup_0e9ee6c35799bbab6f288eaea563a5d7)
+        ;
+
+        
+    
+    
+                marker_850f1e6363652ccbf59a27f0dedfb846.setIcon(div_icon_76984ac63da455c726567e40bb3a8212);
+            
+    
+            var marker_ebbb4d8294a220c6c4c98efb4943903a = L.marker(
+                [51.1164598, 71.4251379],
+                {
+}
+            ).addTo(map_0fad8e215c8332b7026c3804d9e44b35);
+        
+    
+            var div_icon_dec379a6cdfd26b6f83b743565d11002 = L.divIcon({
+  "html": "\n                        \u003cdiv style=\"font-family: sans-serif; color: white; background-color: orange; \n                        border-radius: 50%; width: 24px; height: 24px; display: flex; \n                        align-items: center; justify-content: center; border: 2px solid black;\n                        font-weight: bold;\"\u003e4\u003c/div\u003e",
+  "className": "empty",
+});
+        
+    
+        var popup_d3bb4da91af1c9610a2ee04653427970 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_4c81c3d2af1a84d80c681ce2f9728d91 = $(`<div id="html_4c81c3d2af1a84d80c681ce2f9728d91" style="width: 100.0%; height: 100.0%;">STOP #4: Astana Spot</div>`)[0];
+                popup_d3bb4da91af1c9610a2ee04653427970.setContent(html_4c81c3d2af1a84d80c681ce2f9728d91);
+            
+        
+
+        marker_ebbb4d8294a220c6c4c98efb4943903a.bindPopup(popup_d3bb4da91af1c9610a2ee04653427970)
+        ;
+
+        
+    
+    
+                marker_ebbb4d8294a220c6c4c98efb4943903a.setIcon(div_icon_dec379a6cdfd26b6f83b743565d11002);
+            
+    
+            var poly_line_88fffb589599e98b4f27dd7dfac8ffb2 = L.polyline(
+                [[51.1325, 71.4038], [51.1159837, 71.4295383], [51.1162882, 71.4264226], [51.1165393, 71.425848], [51.1164598, 71.4251379]],
+                {"bubblingMouseEvents": true, "color": "orange", "dashArray": "5, 10", "dashOffset": null, "fill": false, "fillColor": "orange", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 5}
+            ).addTo(map_0fad8e215c8332b7026c3804d9e44b35);
+        
+    
+            var poly_line_8bebe18d8103e5d0888c25140a2d72de = L.polyline(
+                [[51.1164598, 71.4251379], [51.12114205044519, 71.42881393432619]],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": "5", "dashOffset": null, "fill": false, "fillColor": "blue", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 1.0, "smoothFactor": 1.0, "stroke": true, "weight": 3}
+            ).addTo(map_0fad8e215c8332b7026c3804d9e44b35);
+        
+</script>
+</html>

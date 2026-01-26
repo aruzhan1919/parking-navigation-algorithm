@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_89df40444453e77c6edcf2fb32e1aa9b {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+
+            <style>#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            </style>
+
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
+
+        
+</head>
+<body>
+    
+    
+            <div class="folium-map" id="map_89df40444453e77c6edcf2fb32e1aa9b" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_89df40444453e77c6edcf2fb32e1aa9b = L.map(
+                "map_89df40444453e77c6edcf2fb32e1aa9b",
+                {
+                    center: [37.742485238266084, -122.47129440307619],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 15,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_9c6d5581d8bb1cd5d87edbd87bfc3881 = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 19,
+  "maxNativeZoom": 19,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors",
+  "subdomains": "abc",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_9c6d5581d8bb1cd5d87edbd87bfc3881.addTo(map_89df40444453e77c6edcf2fb32e1aa9b);
+        
+    
+            var marker_543142a1e3e2f5c65b76d04963ddb71b = L.marker(
+                [37.7955, -122.3937],
+                {
+}
+            ).addTo(map_89df40444453e77c6edcf2fb32e1aa9b);
+        
+    
+            var icon_c048766cd4af86b8943516761b13383a = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "play",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_2b460a7f76df9ed0ab599ac670bbeaeb = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_d098d7679d1ae724d5add2e7ca0a4f66 = $(`<div id="html_d098d7679d1ae724d5add2e7ca0a4f66" style="width: 100.0%; height: 100.0%;">Start (A)</div>`)[0];
+                popup_2b460a7f76df9ed0ab599ac670bbeaeb.setContent(html_d098d7679d1ae724d5add2e7ca0a4f66);
+            
+        
+
+        marker_543142a1e3e2f5c65b76d04963ddb71b.bindPopup(popup_2b460a7f76df9ed0ab599ac670bbeaeb)
+        ;
+
+        
+    
+    
+                marker_543142a1e3e2f5c65b76d04963ddb71b.setIcon(icon_c048766cd4af86b8943516761b13383a);
+            
+    
+            var marker_0d5f773c804c956e8f269f8d686b9995 = L.marker(
+                [37.742485238266084, -122.47129440307619],
+                {
+}
+            ).addTo(map_89df40444453e77c6edcf2fb32e1aa9b);
+        
+    
+            var icon_010a08bd480761e59de60a0d77684584 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "flag",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_257e42bae449f95721cf9a2e9381739c = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_092c8490b8b8205ec8ad364ec58086ce = $(`<div id="html_092c8490b8b8205ec8ad364ec58086ce" style="width: 100.0%; height: 100.0%;">Destination (B)</div>`)[0];
+                popup_257e42bae449f95721cf9a2e9381739c.setContent(html_092c8490b8b8205ec8ad364ec58086ce);
+            
+        
+
+        marker_0d5f773c804c956e8f269f8d686b9995.bindPopup(popup_257e42bae449f95721cf9a2e9381739c)
+        ;
+
+        
+    
+    
+                marker_0d5f773c804c956e8f269f8d686b9995.setIcon(icon_010a08bd480761e59de60a0d77684584);
+            
+    
+            var marker_ff80d6b124b3123ddc0102163772dfa4 = L.marker(
+                [37.73651223296987, -122.42975234985353],
+                {
+}
+            ).addTo(map_89df40444453e77c6edcf2fb32e1aa9b);
+        
+    
+            var icon_e5a2f149958f9490258340e85b64fccb = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "home",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_c1f5a32ac8973c6d0942193ef71d92c5 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_efdc219a21a71fc8f138d54cb14538fc = $(`<div id="html_efdc219a21a71fc8f138d54cb14538fc" style="width: 100.0%; height: 100.0%;">Reference (C)</div>`)[0];
+                popup_c1f5a32ac8973c6d0942193ef71d92c5.setContent(html_efdc219a21a71fc8f138d54cb14538fc);
+            
+        
+
+        marker_ff80d6b124b3123ddc0102163772dfa4.bindPopup(popup_c1f5a32ac8973c6d0942193ef71d92c5)
+        ;
+
+        
+    
+    
+                marker_ff80d6b124b3123ddc0102163772dfa4.setIcon(icon_e5a2f149958f9490258340e85b64fccb);
+            
+    
+            var marker_9231ba346df782e695c6e836f650d29c = L.marker(
+                [37.743227878875004, -122.47100517752916],
+                {
+}
+            ).addTo(map_89df40444453e77c6edcf2fb32e1aa9b);
+        
+    
+            var icon_db9c9c66119273991aa11fd654ba1d0c = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "gray",
+  "iconColor": "white",
+  "icon": "parking",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_b04b2705e3b16dae8b6563a4e437e6d4 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_78b8962a9f0a67460a56064d1b59ac41 = $(`<div id="html_78b8962a9f0a67460a56064d1b59ac41" style="width: 100.0%; height: 100.0%;">             <div style="font-family:sans-serif; min-width:200px;">                 <b>#1: TARAVAL ST (680)</b><br>                 Cap: 24 | Dist: 86m<br>                 <hr style="margin:5px 0;">                 <table style="width:100%; border-collapse:collapse; font-size:12px;">                     <tr><td>A->Spot:</td><td style="text-align:right"><b>23</b> min</td></tr>                     <tr><td>Spot->B:</td><td style="text-align:right"><b>1</b> min</td></tr>                     <tr><td>Spot->C:</td><td style="text-align:right"><b>10</b> min</td></tr>                     <tr style="border-top:1px solid #ccc;">                         <td><b>Total:</b></td>                         <td style="text-align:right"><b>34</b> min</td>                     </tr>                 </table>             </div>             </div>`)[0];
+                popup_b04b2705e3b16dae8b6563a4e437e6d4.setContent(html_78b8962a9f0a67460a56064d1b59ac41);
+            
+        
+
+        marker_9231ba346df782e695c6e836f650d29c.bindPopup(popup_b04b2705e3b16dae8b6563a4e437e6d4)
+        ;
+
+        
+    
+    
+                marker_9231ba346df782e695c6e836f650d29c.setIcon(icon_db9c9c66119273991aa11fd654ba1d0c);
+            
+    
+            var marker_6e9b2863581464eeaef84fc7c1b83d64 = L.marker(
+                [37.74317431716667, -122.47222613331667],
+                {
+}
+            ).addTo(map_89df40444453e77c6edcf2fb32e1aa9b);
+        
+    
+            var icon_b93fda015c608d23cf939851823a4e55 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "gray",
+  "iconColor": "white",
+  "icon": "parking",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_894363d86615df8d69ede2261c565745 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_fff795007dc3015d88bb280c8a5498de = $(`<div id="html_fff795007dc3015d88bb280c8a5498de" style="width: 100.0%; height: 100.0%;">             <div style="font-family:sans-serif; min-width:200px;">                 <b>#2: TARAVAL ST (680)</b><br>                 Cap: 6 | Dist: 112m<br>                 <hr style="margin:5px 0;">                 <table style="width:100%; border-collapse:collapse; font-size:12px;">                     <tr><td>A->Spot:</td><td style="text-align:right"><b>24</b> min</td></tr>                     <tr><td>Spot->B:</td><td style="text-align:right"><b>2</b> min</td></tr>                     <tr><td>Spot->C:</td><td style="text-align:right"><b>10</b> min</td></tr>                     <tr style="border-top:1px solid #ccc;">                         <td><b>Total:</b></td>                         <td style="text-align:right"><b>36</b> min</td>                     </tr>                 </table>             </div>             </div>`)[0];
+                popup_894363d86615df8d69ede2261c565745.setContent(html_fff795007dc3015d88bb280c8a5498de);
+            
+        
+
+        marker_6e9b2863581464eeaef84fc7c1b83d64.bindPopup(popup_894363d86615df8d69ede2261c565745)
+        ;
+
+        
+    
+    
+                marker_6e9b2863581464eeaef84fc7c1b83d64.setIcon(icon_b93fda015c608d23cf939851823a4e55);
+            
+    
+            var marker_e3d3c81e9305b2a0374b4132eb8adbee = L.marker(
+                [37.743252783475, -122.47358418793334],
+                {
+}
+            ).addTo(map_89df40444453e77c6edcf2fb32e1aa9b);
+        
+    
+            var icon_a7015261c722905f6dfde35d5f729466 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "gray",
+  "iconColor": "white",
+  "icon": "parking",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_0ec1f048851acb8ecefe976724be7686 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_cd04ec3b0fffb2ebf447eb4fe4f2da15 = $(`<div id="html_cd04ec3b0fffb2ebf447eb4fe4f2da15" style="width: 100.0%; height: 100.0%;">             <div style="font-family:sans-serif; min-width:200px;">                 <b>#3: 17TH AVE (117)</b><br>                 Cap: 12 | Dist: 219m<br>                 <hr style="margin:5px 0;">                 <table style="width:100%; border-collapse:collapse; font-size:12px;">                     <tr><td>A->Spot:</td><td style="text-align:right"><b>24</b> min</td></tr>                     <tr><td>Spot->B:</td><td style="text-align:right"><b>4</b> min</td></tr>                     <tr><td>Spot->C:</td><td style="text-align:right"><b>11</b> min</td></tr>                     <tr style="border-top:1px solid #ccc;">                         <td><b>Total:</b></td>                         <td style="text-align:right"><b>39</b> min</td>                     </tr>                 </table>             </div>             </div>`)[0];
+                popup_0ec1f048851acb8ecefe976724be7686.setContent(html_cd04ec3b0fffb2ebf447eb4fe4f2da15);
+            
+        
+
+        marker_e3d3c81e9305b2a0374b4132eb8adbee.bindPopup(popup_0ec1f048851acb8ecefe976724be7686)
+        ;
+
+        
+    
+    
+                marker_e3d3c81e9305b2a0374b4132eb8adbee.setIcon(icon_a7015261c722905f6dfde35d5f729466);
+            
+    
+            var marker_215415360e10078d54f4a47f632d0bfe = L.marker(
+                [37.743140761626925, -122.47405159958076],
+                {
+}
+            ).addTo(map_89df40444453e77c6edcf2fb32e1aa9b);
+        
+    
+            var icon_443ea77bdf0795fade827d1e6fb18b39 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "gray",
+  "iconColor": "white",
+  "icon": "parking",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_ffdfc802dbf7432d09ad16f170f9130c = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_1423d6dbaeb50327a5e81f8391a26906 = $(`<div id="html_1423d6dbaeb50327a5e81f8391a26906" style="width: 100.0%; height: 100.0%;">             <div style="font-family:sans-serif; min-width:200px;">                 <b>#4: TARAVAL ST (680)</b><br>                 Cap: 26 | Dist: 253m<br>                 <hr style="margin:5px 0;">                 <table style="width:100%; border-collapse:collapse; font-size:12px;">                     <tr><td>A->Spot:</td><td style="text-align:right"><b>24</b> min</td></tr>                     <tr><td>Spot->B:</td><td style="text-align:right"><b>5</b> min</td></tr>                     <tr><td>Spot->C:</td><td style="text-align:right"><b>11</b> min</td></tr>                     <tr style="border-top:1px solid #ccc;">                         <td><b>Total:</b></td>                         <td style="text-align:right"><b>40</b> min</td>                     </tr>                 </table>             </div>             </div>`)[0];
+                popup_ffdfc802dbf7432d09ad16f170f9130c.setContent(html_1423d6dbaeb50327a5e81f8391a26906);
+            
+        
+
+        marker_215415360e10078d54f4a47f632d0bfe.bindPopup(popup_ffdfc802dbf7432d09ad16f170f9130c)
+        ;
+
+        
+    
+    
+                marker_215415360e10078d54f4a47f632d0bfe.setIcon(icon_443ea77bdf0795fade827d1e6fb18b39);
+            
+    
+            var marker_e8b18cb32d6ccec78abcb462ae8e9649 = L.marker(
+                [37.743060750075, -122.4746040133625],
+                {
+}
+            ).addTo(map_89df40444453e77c6edcf2fb32e1aa9b);
+        
+    
+            var icon_195106ed042bcbd3ef860c982d9d935f = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "gray",
+  "iconColor": "white",
+  "icon": "parking",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_19644c2c090ef699117c24bbd76aac43 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_cdb1864c6047b14f238015229f33b658 = $(`<div id="html_cdb1864c6047b14f238015229f33b658" style="width: 100.0%; height: 100.0%;">             <div style="font-family:sans-serif; min-width:200px;">                 <b>#5: 18TH AVE (118)</b><br>                 Cap: 8 | Dist: 298m<br>                 <hr style="margin:5px 0;">                 <table style="width:100%; border-collapse:collapse; font-size:12px;">                     <tr><td>A->Spot:</td><td style="text-align:right"><b>24</b> min</td></tr>                     <tr><td>Spot->B:</td><td style="text-align:right"><b>6</b> min</td></tr>                     <tr><td>Spot->C:</td><td style="text-align:right"><b>11</b> min</td></tr>                     <tr style="border-top:1px solid #ccc;">                         <td><b>Total:</b></td>                         <td style="text-align:right"><b>41</b> min</td>                     </tr>                 </table>             </div>             </div>`)[0];
+                popup_19644c2c090ef699117c24bbd76aac43.setContent(html_cdb1864c6047b14f238015229f33b658);
+            
+        
+
+        marker_e8b18cb32d6ccec78abcb462ae8e9649.bindPopup(popup_19644c2c090ef699117c24bbd76aac43)
+        ;
+
+        
+    
+    
+                marker_e8b18cb32d6ccec78abcb462ae8e9649.setIcon(icon_195106ed042bcbd3ef860c982d9d935f);
+            
+    
+            var marker_5ab3d59ca883bb26d7b327dd97438d60 = L.marker(
+                [37.74330973418889, -122.47569813268888],
+                {
+}
+            ).addTo(map_89df40444453e77c6edcf2fb32e1aa9b);
+        
+    
+            var icon_5a6992c3b69bea91c215520e506c7528 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "gray",
+  "iconColor": "white",
+  "icon": "parking",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_6905b1fae9831f1a7b9e4949bd4ca8a3 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_bd4a34ff72a938f8cb8d473628e1e0ed = $(`<div id="html_bd4a34ff72a938f8cb8d473628e1e0ed" style="width: 100.0%; height: 100.0%;">             <div style="font-family:sans-serif; min-width:200px;">                 <b>#6: 19TH AVE (119)</b><br>                 Cap: 9 | Dist: 398m<br>                 <hr style="margin:5px 0;">                 <table style="width:100%; border-collapse:collapse; font-size:12px;">                     <tr><td>A->Spot:</td><td style="text-align:right"><b>25</b> min</td></tr>                     <tr><td>Spot->B:</td><td style="text-align:right"><b>9</b> min</td></tr>                     <tr><td>Spot->C:</td><td style="text-align:right"><b>13</b> min</td></tr>                     <tr style="border-top:1px solid #ccc;">                         <td><b>Total:</b></td>                         <td style="text-align:right"><b>47</b> min</td>                     </tr>                 </table>             </div>             </div>`)[0];
+                popup_6905b1fae9831f1a7b9e4949bd4ca8a3.setContent(html_bd4a34ff72a938f8cb8d473628e1e0ed);
+            
+        
+
+        marker_5ab3d59ca883bb26d7b327dd97438d60.bindPopup(popup_6905b1fae9831f1a7b9e4949bd4ca8a3)
+        ;
+
+        
+    
+    
+                marker_5ab3d59ca883bb26d7b327dd97438d60.setIcon(icon_5a6992c3b69bea91c215520e506c7528);
+            
+    
+            var marker_9f3d1168d3212344c9620a0757473765 = L.marker(
+                [37.74293778358889, -122.47677550005],
+                {
+}
+            ).addTo(map_89df40444453e77c6edcf2fb32e1aa9b);
+        
+    
+            var icon_7dccb25157ffee3f8aa0e1c8137235c4 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "gray",
+  "iconColor": "white",
+  "icon": "parking",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_0ba5b932ff1c5b71067a942da442ecbf = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_e1027459722c0ddf9a070a8d17f5f40d = $(`<div id="html_e1027459722c0ddf9a070a8d17f5f40d" style="width: 100.0%; height: 100.0%;">             <div style="font-family:sans-serif; min-width:200px;">                 <b>#7: 20TH AVE (120)</b><br>                 Cap: 18 | Dist: 485m<br>                 <hr style="margin:5px 0;">                 <table style="width:100%; border-collapse:collapse; font-size:12px;">                     <tr><td>A->Spot:</td><td style="text-align:right"><b>25</b> min</td></tr>                     <tr><td>Spot->B:</td><td style="text-align:right"><b>10</b> min</td></tr>                     <tr><td>Spot->C:</td><td style="text-align:right"><b>12</b> min</td></tr>                     <tr style="border-top:1px solid #ccc;">                         <td><b>Total:</b></td>                         <td style="text-align:right"><b>47</b> min</td>                     </tr>                 </table>             </div>             </div>`)[0];
+                popup_0ba5b932ff1c5b71067a942da442ecbf.setContent(html_e1027459722c0ddf9a070a8d17f5f40d);
+            
+        
+
+        marker_9f3d1168d3212344c9620a0757473765.bindPopup(popup_0ba5b932ff1c5b71067a942da442ecbf)
+        ;
+
+        
+    
+    
+                marker_9f3d1168d3212344c9620a0757473765.setIcon(icon_7dccb25157ffee3f8aa0e1c8137235c4);
+            
+    
+            var marker_fd28633a2d987160aba84f03ba813066 = L.marker(
+                [37.73879001658255, -122.4681766233135],
+                {
+}
+            ).addTo(map_89df40444453e77c6edcf2fb32e1aa9b);
+        
+    
+            var icon_e0bbc989dbe1f77c74a82c4592b643bf = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "gray",
+  "iconColor": "white",
+  "icon": "parking",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_7cc35ef0aeea49e3188f992cbb6948a6 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_63b75cc2ad7ae10eac44d2e476b60dee = $(`<div id="html_63b75cc2ad7ae10eac44d2e476b60dee" style="width: 100.0%; height: 100.0%;">             <div style="font-family:sans-serif; min-width:200px;">                 <b>#8: WEST PORTAL AVE (725)</b><br>                 Cap: 126 | Dist: 493m<br>                 <hr style="margin:5px 0;">                 <table style="width:100%; border-collapse:collapse; font-size:12px;">                     <tr><td>A->Spot:</td><td style="text-align:right"><b>22</b> min</td></tr>                     <tr><td>Spot->B:</td><td style="text-align:right"><b>11</b> min</td></tr>                     <tr><td>Spot->C:</td><td style="text-align:right"><b>11</b> min</td></tr>                     <tr style="border-top:1px solid #ccc;">                         <td><b>Total:</b></td>                         <td style="text-align:right"><b>44</b> min</td>                     </tr>                 </table>             </div>             </div>`)[0];
+                popup_7cc35ef0aeea49e3188f992cbb6948a6.setContent(html_63b75cc2ad7ae10eac44d2e476b60dee);
+            
+        
+
+        marker_fd28633a2d987160aba84f03ba813066.bindPopup(popup_7cc35ef0aeea49e3188f992cbb6948a6)
+        ;
+
+        
+    
+    
+                marker_fd28633a2d987160aba84f03ba813066.setIcon(icon_e0bbc989dbe1f77c74a82c4592b643bf);
+            
+    
+            var marker_a74d18091fa9a1fc71dc021f14746b8a = L.marker(
+                [37.74029016528261, -122.4663680782087],
+                {
+}
+            ).addTo(map_89df40444453e77c6edcf2fb32e1aa9b);
+        
+    
+            var icon_7dcecbe6f3a8ff8df7a5697aa27eb94e = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "gray",
+  "iconColor": "white",
+  "icon": "parking",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_8d3c9eb7585a38e8694370b466054a51 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_18a822cee3c83095556e50a3fadf0f86 = $(`<div id="html_18a822cee3c83095556e50a3fadf0f86" style="width: 100.0%; height: 100.0%;">             <div style="font-family:sans-serif; min-width:200px;">                 <b>#9: WEST PORTAL AVE (725)</b><br>                 Cap: 23 | Dist: 497m<br>                 <hr style="margin:5px 0;">                 <table style="width:100%; border-collapse:collapse; font-size:12px;">                     <tr><td>A->Spot:</td><td style="text-align:right"><b>22</b> min</td></tr>                     <tr><td>Spot->B:</td><td style="text-align:right"><b>10</b> min</td></tr>                     <tr><td>Spot->C:</td><td style="text-align:right"><b>10</b> min</td></tr>                     <tr style="border-top:1px solid #ccc;">                         <td><b>Total:</b></td>                         <td style="text-align:right"><b>42</b> min</td>                     </tr>                 </table>             </div>             </div>`)[0];
+                popup_8d3c9eb7585a38e8694370b466054a51.setContent(html_18a822cee3c83095556e50a3fadf0f86);
+            
+        
+
+        marker_a74d18091fa9a1fc71dc021f14746b8a.bindPopup(popup_8d3c9eb7585a38e8694370b466054a51)
+        ;
+
+        
+    
+    
+                marker_a74d18091fa9a1fc71dc021f14746b8a.setIcon(icon_7dcecbe6f3a8ff8df7a5697aa27eb94e);
+            
+    
+            var marker_73197eaf0467e6f902c67990a2cf91d3 = L.marker(
+                [37.739589400728576, -122.46677472855716],
+                {
+}
+            ).addTo(map_89df40444453e77c6edcf2fb32e1aa9b);
+        
+    
+            var icon_e5865e00e59bf0243c470eb1ddd5f4ae = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "gray",
+  "iconColor": "white",
+  "icon": "parking",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_7455a89a9c5073dde67cd05850cd8354 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_26ebe85176b3b03fcdf5d8d3c3f163c2 = $(`<div id="html_26ebe85176b3b03fcdf5d8d3c3f163c2" style="width: 100.0%; height: 100.0%;">             <div style="font-family:sans-serif; min-width:200px;">                 <b>#10: VICENTE ST (703)</b><br>                 Cap: 14 | Dist: 511m<br>                 <hr style="margin:5px 0;">                 <table style="width:100%; border-collapse:collapse; font-size:12px;">                     <tr><td>A->Spot:</td><td style="text-align:right"><b>22</b> min</td></tr>                     <tr><td>Spot->B:</td><td style="text-align:right"><b>11</b> min</td></tr>                     <tr><td>Spot->C:</td><td style="text-align:right"><b>9</b> min</td></tr>                     <tr style="border-top:1px solid #ccc;">                         <td><b>Total:</b></td>                         <td style="text-align:right"><b>42</b> min</td>                     </tr>                 </table>             </div>             </div>`)[0];
+                popup_7455a89a9c5073dde67cd05850cd8354.setContent(html_26ebe85176b3b03fcdf5d8d3c3f163c2);
+            
+        
+
+        marker_73197eaf0467e6f902c67990a2cf91d3.bindPopup(popup_7455a89a9c5073dde67cd05850cd8354)
+        ;
+
+        
+    
+    
+                marker_73197eaf0467e6f902c67990a2cf91d3.setIcon(icon_e5865e00e59bf0243c470eb1ddd5f4ae);
+            
+    
+            var marker_fba35c36bd3b9b451cd5832ab60c6cc5 = L.marker(
+                [37.74301308431724, -122.4772393994069],
+                {
+}
+            ).addTo(map_89df40444453e77c6edcf2fb32e1aa9b);
+        
+    
+            var icon_d31010c76afcb2b06af93fc166fd25ed = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "gray",
+  "iconColor": "white",
+  "icon": "parking",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_7ea9fd6b74f0afbe51d9d8c89013b796 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_88507d136e0efbb5ce2f8ba8cf7c0629 = $(`<div id="html_88507d136e0efbb5ce2f8ba8cf7c0629" style="width: 100.0%; height: 100.0%;">             <div style="font-family:sans-serif; min-width:200px;">                 <b>#11: TARAVAL ST (680)</b><br>                 Cap: 29 | Dist: 527m<br>                 <hr style="margin:5px 0;">                 <table style="width:100%; border-collapse:collapse; font-size:12px;">                     <tr><td>A->Spot:</td><td style="text-align:right"><b>25</b> min</td></tr>                     <tr><td>Spot->B:</td><td style="text-align:right"><b>11</b> min</td></tr>                     <tr><td>Spot->C:</td><td style="text-align:right"><b>12</b> min</td></tr>                     <tr style="border-top:1px solid #ccc;">                         <td><b>Total:</b></td>                         <td style="text-align:right"><b>48</b> min</td>                     </tr>                 </table>             </div>             </div>`)[0];
+                popup_7ea9fd6b74f0afbe51d9d8c89013b796.setContent(html_88507d136e0efbb5ce2f8ba8cf7c0629);
+            
+        
+
+        marker_fba35c36bd3b9b451cd5832ab60c6cc5.bindPopup(popup_7ea9fd6b74f0afbe51d9d8c89013b796)
+        ;
+
+        
+    
+    
+                marker_fba35c36bd3b9b451cd5832ab60c6cc5.setIcon(icon_d31010c76afcb2b06af93fc166fd25ed);
+            
+    
+            var marker_be23d3045503d0e5627969c4fd16d8cc = L.marker(
+                [37.73787125364546, -122.46888884488182],
+                {
+}
+            ).addTo(map_89df40444453e77c6edcf2fb32e1aa9b);
+        
+    
+            var icon_b1e9fcfbdc90eb3c5fb721732a86f24a = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "gray",
+  "iconColor": "white",
+  "icon": "parking",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_74de7aaf873c176d2564e3f0ffb4f2bf = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_2d9e775cb71abf3839a9116f95913d3e = $(`<div id="html_2d9e775cb71abf3839a9116f95913d3e" style="width: 100.0%; height: 100.0%;">             <div style="font-family:sans-serif; min-width:200px;">                 <b>#12: 14TH AVE (114)</b><br>                 Cap: 11 | Dist: 554m<br>                 <hr style="margin:5px 0;">                 <table style="width:100%; border-collapse:collapse; font-size:12px;">                     <tr><td>A->Spot:</td><td style="text-align:right"><b>22</b> min</td></tr>                     <tr><td>Spot->B:</td><td style="text-align:right"><b>10</b> min</td></tr>                     <tr><td>Spot->C:</td><td style="text-align:right"><b>10</b> min</td></tr>                     <tr style="border-top:1px solid #ccc;">                         <td><b>Total:</b></td>                         <td style="text-align:right"><b>42</b> min</td>                     </tr>                 </table>             </div>             </div>`)[0];
+                popup_74de7aaf873c176d2564e3f0ffb4f2bf.setContent(html_2d9e775cb71abf3839a9116f95913d3e);
+            
+        
+
+        marker_be23d3045503d0e5627969c4fd16d8cc.bindPopup(popup_74de7aaf873c176d2564e3f0ffb4f2bf)
+        ;
+
+        
+    
+    
+                marker_be23d3045503d0e5627969c4fd16d8cc.setIcon(icon_b1e9fcfbdc90eb3c5fb721732a86f24a);
+            
+    
+            var marker_bf002dd04e2756c483d48000c649d1fc = L.marker(
+                [37.74040690326786, -122.46542746829287],
+                {
+}
+            ).addTo(map_89df40444453e77c6edcf2fb32e1aa9b);
+        
+    
+            var icon_405c286f6be7585573466f869c9e2a7f = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "gray",
+  "iconColor": "white",
+  "icon": "parking",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_b4c9380af48136aa2ab34fe5a040d364 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_565be406d7f93402da8bf6943c1faa81 = $(`<div id="html_565be406d7f93402da8bf6943c1faa81" style="width: 100.0%; height: 100.0%;">             <div style="font-family:sans-serif; min-width:200px;">                 <b>#13: ULLOA ST (923)</b><br>                 Cap: 28 | Dist: 566m<br>                 <hr style="margin:5px 0;">                 <table style="width:100%; border-collapse:collapse; font-size:12px;">                     <tr><td>A->Spot:</td><td style="text-align:right"><b>22</b> min</td></tr>                     <tr><td>Spot->B:</td><td style="text-align:right"><b>10</b> min</td></tr>                     <tr><td>Spot->C:</td><td style="text-align:right"><b>9</b> min</td></tr>                     <tr style="border-top:1px solid #ccc;">                         <td><b>Total:</b></td>                         <td style="text-align:right"><b>41</b> min</td>                     </tr>                 </table>             </div>             </div>`)[0];
+                popup_b4c9380af48136aa2ab34fe5a040d364.setContent(html_565be406d7f93402da8bf6943c1faa81);
+            
+        
+
+        marker_bf002dd04e2756c483d48000c649d1fc.bindPopup(popup_b4c9380af48136aa2ab34fe5a040d364)
+        ;
+
+        
+    
+    
+                marker_bf002dd04e2756c483d48000c649d1fc.setIcon(icon_405c286f6be7585573466f869c9e2a7f);
+            
+    
+            var marker_8f7f50e345b2aa19067fcac08976ab0d = L.marker(
+                [37.74304260668889, -122.47784892098889],
+                {
+}
+            ).addTo(map_89df40444453e77c6edcf2fb32e1aa9b);
+        
+    
+            var icon_92ed7812680256cfb2e7355a6326effa = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "gray",
+  "iconColor": "white",
+  "icon": "parking",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_a6a1b19a63ad4df1e6699509ac8fe8ec = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_fc14056940c163b656ccc53d60d1da07 = $(`<div id="html_fc14056940c163b656ccc53d60d1da07" style="width: 100.0%; height: 100.0%;">             <div style="font-family:sans-serif; min-width:200px;">                 <b>#14: 21ST AVE (121)</b><br>                 Cap: 9 | Dist: 581m<br>                 <hr style="margin:5px 0;">                 <table style="width:100%; border-collapse:collapse; font-size:12px;">                     <tr><td>A->Spot:</td><td style="text-align:right"><b>26</b> min</td></tr>                     <tr><td>Spot->B:</td><td style="text-align:right"><b>12</b> min</td></tr>                     <tr><td>Spot->C:</td><td style="text-align:right"><b>13</b> min</td></tr>                     <tr style="border-top:1px solid #ccc;">                         <td><b>Total:</b></td>                         <td style="text-align:right"><b>51</b> min</td>                     </tr>                 </table>             </div>             </div>`)[0];
+                popup_a6a1b19a63ad4df1e6699509ac8fe8ec.setContent(html_fc14056940c163b656ccc53d60d1da07);
+            
+        
+
+        marker_8f7f50e345b2aa19067fcac08976ab0d.bindPopup(popup_a6a1b19a63ad4df1e6699509ac8fe8ec)
+        ;
+
+        
+    
+    
+                marker_8f7f50e345b2aa19067fcac08976ab0d.setIcon(icon_92ed7812680256cfb2e7355a6326effa);
+            
+    
+            var marker_386e692baf8fa46aadfe8ed7ff243efa = L.marker(
+                [37.737109731202224, -122.47006771999779],
+                {
+}
+            ).addTo(map_89df40444453e77c6edcf2fb32e1aa9b);
+        
+    
+            var icon_3e20d8e7eedd8085ab1206d22bdeef63 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "gray",
+  "iconColor": "white",
+  "icon": "parking",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_f52ca180b7a130b7b4079b08b1d4afe5 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_2265235506988f038fbc7639a07d4e3a = $(`<div id="html_2265235506988f038fbc7639a07d4e3a" style="width: 100.0%; height: 100.0%;">             <div style="font-family:sans-serif; min-width:200px;">                 <b>#15: WEST PORTAL AVE (725)</b><br>                 Cap: 45 | Dist: 606m<br>                 <hr style="margin:5px 0;">                 <table style="width:100%; border-collapse:collapse; font-size:12px;">                     <tr><td>A->Spot:</td><td style="text-align:right"><b>23</b> min</td></tr>                     <tr><td>Spot->B:</td><td style="text-align:right"><b>12</b> min</td></tr>                     <tr><td>Spot->C:</td><td style="text-align:right"><b>10</b> min</td></tr>                     <tr style="border-top:1px solid #ccc;">                         <td><b>Total:</b></td>                         <td style="text-align:right"><b>45</b> min</td>                     </tr>                 </table>             </div>             </div>`)[0];
+                popup_f52ca180b7a130b7b4079b08b1d4afe5.setContent(html_2265235506988f038fbc7639a07d4e3a);
+            
+        
+
+        marker_386e692baf8fa46aadfe8ed7ff243efa.bindPopup(popup_f52ca180b7a130b7b4079b08b1d4afe5)
+        ;
+
+        
+    
+    
+                marker_386e692baf8fa46aadfe8ed7ff243efa.setIcon(icon_3e20d8e7eedd8085ab1206d22bdeef63);
+            
+    
+            var marker_dd2afeed9ff2bd5b355092992d2efd76 = L.marker(
+                [37.7430098028, -122.4784810019],
+                {
+}
+            ).addTo(map_89df40444453e77c6edcf2fb32e1aa9b);
+        
+    
+            var icon_291c80458a4a0407616b347c1fad11fe = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "gray",
+  "iconColor": "white",
+  "icon": "parking",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_65176cd3040a855c88b2f36df7ce985c = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_046e8e54f57a2d8fe8e6794e8d1674ed = $(`<div id="html_046e8e54f57a2d8fe8e6794e8d1674ed" style="width: 100.0%; height: 100.0%;">             <div style="font-family:sans-serif; min-width:200px;">                 <b>#16: TARAVAL ST (680)</b><br>                 Cap: 1 | Dist: 636m<br>                 <hr style="margin:5px 0;">                 <table style="width:100%; border-collapse:collapse; font-size:12px;">                     <tr><td>A->Spot:</td><td style="text-align:right"><b>25</b> min</td></tr>                     <tr><td>Spot->B:</td><td style="text-align:right"><b>12</b> min</td></tr>                     <tr><td>Spot->C:</td><td style="text-align:right"><b>12</b> min</td></tr>                     <tr style="border-top:1px solid #ccc;">                         <td><b>Total:</b></td>                         <td style="text-align:right"><b>49</b> min</td>                     </tr>                 </table>             </div>             </div>`)[0];
+                popup_65176cd3040a855c88b2f36df7ce985c.setContent(html_046e8e54f57a2d8fe8e6794e8d1674ed);
+            
+        
+
+        marker_dd2afeed9ff2bd5b355092992d2efd76.bindPopup(popup_65176cd3040a855c88b2f36df7ce985c)
+        ;
+
+        
+    
+    
+                marker_dd2afeed9ff2bd5b355092992d2efd76.setIcon(icon_291c80458a4a0407616b347c1fad11fe);
+            
+</script>
+</html>

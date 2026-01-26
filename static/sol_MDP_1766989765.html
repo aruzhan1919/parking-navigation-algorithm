@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_3830e65d5bccbc67c8af86e8c80d4ee1 {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+
+            <style>#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            </style>
+
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
+
+        
+</head>
+<body>
+    
+    
+            <div class="folium-map" id="map_3830e65d5bccbc67c8af86e8c80d4ee1" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_3830e65d5bccbc67c8af86e8c80d4ee1 = L.map(
+                "map_3830e65d5bccbc67c8af86e8c80d4ee1",
+                {
+                    center: [37.74967935472825, -122.42134094238283],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 15,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_5bfa41afbf598581cf93ceae462b849f = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 19,
+  "maxNativeZoom": 19,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors",
+  "subdomains": "abc",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_5bfa41afbf598581cf93ceae462b849f.addTo(map_3830e65d5bccbc67c8af86e8c80d4ee1);
+        
+    
+            var marker_7f50165e202a4fdb347c824562f3903c = L.marker(
+                [37.75768707689704, -122.44005203247072],
+                {
+}
+            ).addTo(map_3830e65d5bccbc67c8af86e8c80d4ee1);
+        
+    
+            var icon_da189994451c92f7a94a6b2e887e8c4c = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "play",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_3f4f00114a063540f92cd460bef9388b = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_d61f7b7618a1442dcd43e19636756c9f = $(`<div id="html_d61f7b7618a1442dcd43e19636756c9f" style="width: 100.0%; height: 100.0%;">Start (A)</div>`)[0];
+                popup_3f4f00114a063540f92cd460bef9388b.setContent(html_d61f7b7618a1442dcd43e19636756c9f);
+            
+        
+
+        marker_7f50165e202a4fdb347c824562f3903c.bindPopup(popup_3f4f00114a063540f92cd460bef9388b)
+        ;
+
+        
+    
+    
+                marker_7f50165e202a4fdb347c824562f3903c.setIcon(icon_da189994451c92f7a94a6b2e887e8c4c);
+            
+    
+            var marker_80151f045c5932d1488b69c2526af2b5 = L.marker(
+                [37.74967935472825, -122.42134094238283],
+                {
+}
+            ).addTo(map_3830e65d5bccbc67c8af86e8c80d4ee1);
+        
+    
+            var icon_c32e1d6a7109837798b09a61fab17b3e = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "flag",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_e8c9c5bc7c27e30f04fe6f12d14f5575 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_fa22002a1cbfd30734a4d25f994e9534 = $(`<div id="html_fa22002a1cbfd30734a4d25f994e9534" style="width: 100.0%; height: 100.0%;">Destination (B)</div>`)[0];
+                popup_e8c9c5bc7c27e30f04fe6f12d14f5575.setContent(html_fa22002a1cbfd30734a4d25f994e9534);
+            
+        
+
+        marker_80151f045c5932d1488b69c2526af2b5.bindPopup(popup_e8c9c5bc7c27e30f04fe6f12d14f5575)
+        ;
+
+        
+    
+    
+                marker_80151f045c5932d1488b69c2526af2b5.setIcon(icon_c32e1d6a7109837798b09a61fab17b3e);
+            
+    
+            var marker_354b3bfb83eb47f74b0c093ca536501f = L.marker(
+                [37.768, -122.3877],
+                {
+}
+            ).addTo(map_3830e65d5bccbc67c8af86e8c80d4ee1);
+        
+    
+            var icon_4dbf6899ca7b30ddd73579c59bda6254 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "home",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_73b0a2d2081b2e1aff2ef997445b6d7a = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_98560d450629243c72d7fdfb652ef1cb = $(`<div id="html_98560d450629243c72d7fdfb652ef1cb" style="width: 100.0%; height: 100.0%;">Reference (C)</div>`)[0];
+                popup_73b0a2d2081b2e1aff2ef997445b6d7a.setContent(html_98560d450629243c72d7fdfb652ef1cb);
+            
+        
+
+        marker_354b3bfb83eb47f74b0c093ca536501f.bindPopup(popup_73b0a2d2081b2e1aff2ef997445b6d7a)
+        ;
+
+        
+    
+    
+                marker_354b3bfb83eb47f74b0c093ca536501f.setIcon(icon_4dbf6899ca7b30ddd73579c59bda6254);
+            
+    
+            var marker_4a137e1cf37c4db6c19570a4076adb17 = L.marker(
+                [37.7505586994875, -122.4196303881125],
+                {
+}
+            ).addTo(map_3830e65d5bccbc67c8af86e8c80d4ee1);
+        
+    
+            var icon_abbc6952f84c89854dc9213245c93194 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "car",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_64c3915b3e175d5359648189ee7da183 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_77bee304b2499d120bc28cc289d473d5 = $(`<div id="html_77bee304b2499d120bc28cc289d473d5" style="width: 100.0%; height: 100.0%;"><b>Stop #1</b><br>25TH ST (225)<br>Est. Spots: 16<br>Drive from A: 8 min<br>Walk to B: 3 min</div>`)[0];
+                popup_64c3915b3e175d5359648189ee7da183.setContent(html_77bee304b2499d120bc28cc289d473d5);
+            
+        
+
+        marker_4a137e1cf37c4db6c19570a4076adb17.bindPopup(popup_64c3915b3e175d5359648189ee7da183)
+        ;
+
+        
+    
+    
+                marker_4a137e1cf37c4db6c19570a4076adb17.setIcon(icon_abbc6952f84c89854dc9213245c93194);
+            
+    
+            var marker_1b54c3f566ed45a1e8568b9631083c41 = L.marker(
+                [37.7493952127675, -122.4203621801325],
+                {
+}
+            ).addTo(map_3830e65d5bccbc67c8af86e8c80d4ee1);
+        
+    
+            var icon_70ce24ed2ac1ea8062b1a735dca852fb = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "car",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_681ab3fa4b7e10fc6f7559693f54cf68 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_09caeaead85de53198eb16fd6bbdead4 = $(`<div id="html_09caeaead85de53198eb16fd6bbdead4" style="width: 100.0%; height: 100.0%;"><b>Stop #2</b><br>VALENCIA ST (700)<br>Est. Spots: 40<br>Drive from A: 8 min<br>Walk to B: 3 min</div>`)[0];
+                popup_681ab3fa4b7e10fc6f7559693f54cf68.setContent(html_09caeaead85de53198eb16fd6bbdead4);
+            
+        
+
+        marker_1b54c3f566ed45a1e8568b9631083c41.bindPopup(popup_681ab3fa4b7e10fc6f7559693f54cf68)
+        ;
+
+        
+    
+    
+                marker_1b54c3f566ed45a1e8568b9631083c41.setIcon(icon_70ce24ed2ac1ea8062b1a735dca852fb);
+            
+    
+            var marker_d83f090406cfa1ec7839890fff381aab = L.marker(
+                [37.748962708627275, -122.41977941793635],
+                {
+}
+            ).addTo(map_3830e65d5bccbc67c8af86e8c80d4ee1);
+        
+    
+            var icon_e50f611986d8890c899420cf48a8b4b0 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "car",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_c83329a8a39042760ac0c22e143aee27 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_a43796a97a4bc903936afaab8e4bf5a5 = $(`<div id="html_a43796a97a4bc903936afaab8e4bf5a5" style="width: 100.0%; height: 100.0%;"><b>Stop #3</b><br>26TH ST (226)<br>Est. Spots: 11<br>Drive from A: 8 min<br>Walk to B: 3 min</div>`)[0];
+                popup_c83329a8a39042760ac0c22e143aee27.setContent(html_a43796a97a4bc903936afaab8e4bf5a5);
+            
+        
+
+        marker_d83f090406cfa1ec7839890fff381aab.bindPopup(popup_c83329a8a39042760ac0c22e143aee27)
+        ;
+
+        
+    
+    
+                marker_d83f090406cfa1ec7839890fff381aab.setIcon(icon_e50f611986d8890c899420cf48a8b4b0);
+            
+    
+            var poly_line_f47c84d23b045130614bacb32206099e = L.polyline(
+                [[37.748962708627275, -122.41977941793635], [37.74967935472825, -122.42134094238283]],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": "10", "dashOffset": null, "fill": false, "fillColor": "blue", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 3}
+            ).addTo(map_3830e65d5bccbc67c8af86e8c80d4ee1);
+        
+    
+            poly_line_f47c84d23b045130614bacb32206099e.bindTooltip(
+                `<div>
+                     Walk to Dest
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+    
+            var poly_line_5285aaa523deaee6b452a32eebf72585 = L.polyline(
+                [[37.75768707689704, -122.44005203247072], [37.7505586994875, -122.4196303881125], [37.7493952127675, -122.4203621801325], [37.748962708627275, -122.41977941793635]],
+                {"bubblingMouseEvents": true, "color": "black", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "black", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.7, "smoothFactor": 1.0, "stroke": true, "weight": 4}
+            ).addTo(map_3830e65d5bccbc67c8af86e8c80d4ee1);
+        
+    
+            poly_line_5285aaa523deaee6b452a32eebf72585.bindTooltip(
+                `<div>
+                     Driving Path
+                 </div>`,
+                {
+  "sticky": true,
+}
+            );
+        
+</script>
+</html>

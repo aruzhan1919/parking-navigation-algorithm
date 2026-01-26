@@ -1,0 +1,873 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_0dde63d6e894b5a82c124e4c41116d4e {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+
+            <style>#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            </style>
+
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
+
+        
+</head>
+<body>
+    
+    
+            <div class="folium-map" id="map_0dde63d6e894b5a82c124e4c41116d4e" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_0dde63d6e894b5a82c124e4c41116d4e = L.map(
+                "map_0dde63d6e894b5a82c124e4c41116d4e",
+                {
+                    center: [51.1210477827375, 71.42861532233071],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 15,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_4deeb665c6583035840ba62db7d216ef = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 19,
+  "maxNativeZoom": 19,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors",
+  "subdomains": "abc",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_4deeb665c6583035840ba62db7d216ef.addTo(map_0dde63d6e894b5a82c124e4c41116d4e);
+        
+    
+            var marker_6ceb1ef063864c27d6b409f6afbe7943 = L.marker(
+                [51.1325, 71.4038],
+                {
+}
+            ).addTo(map_0dde63d6e894b5a82c124e4c41116d4e);
+        
+    
+            var icon_a333711cf1bff940fa9dace675971612 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_abf76921252537cfa1eea62b6e7d5e0e = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_219f9d4f78c604b687cddb8dd5026702 = $(`<div id="html_219f9d4f78c604b687cddb8dd5026702" style="width: 100.0%; height: 100.0%;">A</div>`)[0];
+                popup_abf76921252537cfa1eea62b6e7d5e0e.setContent(html_219f9d4f78c604b687cddb8dd5026702);
+            
+        
+
+        marker_6ceb1ef063864c27d6b409f6afbe7943.bindPopup(popup_abf76921252537cfa1eea62b6e7d5e0e)
+        ;
+
+        
+    
+    
+                marker_6ceb1ef063864c27d6b409f6afbe7943.setIcon(icon_a333711cf1bff940fa9dace675971612);
+            
+    
+            var marker_0be23a977b2cc6604f33a0317e79c99d = L.marker(
+                [51.1210477827375, 71.42861532233071],
+                {
+}
+            ).addTo(map_0dde63d6e894b5a82c124e4c41116d4e);
+        
+    
+            var icon_84b3d92a6ba642bd735be0e79b3fd6e7 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_e96f40c93e4e8847c5bf016a5165f7f1 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_38614463a554ce55b1ae6f193f6ebb94 = $(`<div id="html_38614463a554ce55b1ae6f193f6ebb94" style="width: 100.0%; height: 100.0%;">B</div>`)[0];
+                popup_e96f40c93e4e8847c5bf016a5165f7f1.setContent(html_38614463a554ce55b1ae6f193f6ebb94);
+            
+        
+
+        marker_0be23a977b2cc6604f33a0317e79c99d.bindPopup(popup_e96f40c93e4e8847c5bf016a5165f7f1)
+        ;
+
+        
+    
+    
+                marker_0be23a977b2cc6604f33a0317e79c99d.setIcon(icon_84b3d92a6ba642bd735be0e79b3fd6e7);
+            
+    
+            var marker_79fa2b1285ff8d697bab0b73f990c7d1 = L.marker(
+                [51.118, 71.445],
+                {
+}
+            ).addTo(map_0dde63d6e894b5a82c124e4c41116d4e);
+        
+    
+            var icon_e965bf162ba48d5e17c35cecd69e6385 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_390f139dacde13de73b3108b1319ce5a = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_3a5293ad8cb65cbef8f39647829b5bea = $(`<div id="html_3a5293ad8cb65cbef8f39647829b5bea" style="width: 100.0%; height: 100.0%;">C</div>`)[0];
+                popup_390f139dacde13de73b3108b1319ce5a.setContent(html_3a5293ad8cb65cbef8f39647829b5bea);
+            
+        
+
+        marker_79fa2b1285ff8d697bab0b73f990c7d1.bindPopup(popup_390f139dacde13de73b3108b1319ce5a)
+        ;
+
+        
+    
+    
+                marker_79fa2b1285ff8d697bab0b73f990c7d1.setIcon(icon_e965bf162ba48d5e17c35cecd69e6385);
+            
+    
+            var marker_b5652904e1a05e5e0e4f58177bc5e3af = L.marker(
+                [51.1196542, 71.4281605],
+                {
+}
+            ).addTo(map_0dde63d6e894b5a82c124e4c41116d4e);
+        
+    
+            var icon_59cb1e7a1abeb44dee78a4b998ec71b3 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "gray",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_6900bb7348ce2246d7cbbf4638269377 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_5a263cb7b6f3b4d0bc83395f98bab0a3 = $(`<div id="html_5a263cb7b6f3b4d0bc83395f98bab0a3" style="width: 100.0%; height: 100.0%;">Astana Parking (P=1.0)</div>`)[0];
+                popup_6900bb7348ce2246d7cbbf4638269377.setContent(html_5a263cb7b6f3b4d0bc83395f98bab0a3);
+            
+        
+
+        marker_b5652904e1a05e5e0e4f58177bc5e3af.bindPopup(popup_6900bb7348ce2246d7cbbf4638269377)
+        ;
+
+        
+    
+    
+                marker_b5652904e1a05e5e0e4f58177bc5e3af.setIcon(icon_59cb1e7a1abeb44dee78a4b998ec71b3);
+            
+    
+            var marker_43c484854da3b148d4e5be2b84ddb377 = L.marker(
+                [51.1236889, 71.4300943],
+                {
+}
+            ).addTo(map_0dde63d6e894b5a82c124e4c41116d4e);
+        
+    
+            var icon_8977eab62245b5754bc7a0d758cdfb55 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_d12f6492b1c1b9180fffceb19400944c = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_50e48d5c769caeca9d5aa53b6e13d575 = $(`<div id="html_50e48d5c769caeca9d5aa53b6e13d575" style="width: 100.0%; height: 100.0%;">Astana Parking (P=1.0)</div>`)[0];
+                popup_d12f6492b1c1b9180fffceb19400944c.setContent(html_50e48d5c769caeca9d5aa53b6e13d575);
+            
+        
+
+        marker_43c484854da3b148d4e5be2b84ddb377.bindPopup(popup_d12f6492b1c1b9180fffceb19400944c)
+        ;
+
+        
+    
+    
+                marker_43c484854da3b148d4e5be2b84ddb377.setIcon(icon_8977eab62245b5754bc7a0d758cdfb55);
+            
+    
+            var marker_63aa55516c01eccfdc3de0a857972aa2 = L.marker(
+                [51.1238837, 71.4287634],
+                {
+}
+            ).addTo(map_0dde63d6e894b5a82c124e4c41116d4e);
+        
+    
+            var icon_e93b438d87a124fbc762e0c32c67e1f2 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_2515005b509c2d6b7067899fc9691421 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_6f674cea921ba52f6fd9759f470eb4c9 = $(`<div id="html_6f674cea921ba52f6fd9759f470eb4c9" style="width: 100.0%; height: 100.0%;">Astana Parking (P=1.0)</div>`)[0];
+                popup_2515005b509c2d6b7067899fc9691421.setContent(html_6f674cea921ba52f6fd9759f470eb4c9);
+            
+        
+
+        marker_63aa55516c01eccfdc3de0a857972aa2.bindPopup(popup_2515005b509c2d6b7067899fc9691421)
+        ;
+
+        
+    
+    
+                marker_63aa55516c01eccfdc3de0a857972aa2.setIcon(icon_e93b438d87a124fbc762e0c32c67e1f2);
+            
+    
+            var marker_ced524277298521a364050cc8f0d451b = L.marker(
+                [51.1240934, 71.4274726],
+                {
+}
+            ).addTo(map_0dde63d6e894b5a82c124e4c41116d4e);
+        
+    
+            var icon_7f89773e9e6b3bfb45a126d3bad4fcb9 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "orange",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_930beed6684a77cc93445745b349f86c = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_c24c52a0286d43b374ffb3bf67972432 = $(`<div id="html_c24c52a0286d43b374ffb3bf67972432" style="width: 100.0%; height: 100.0%;">Astana Parking (P=1.0)</div>`)[0];
+                popup_930beed6684a77cc93445745b349f86c.setContent(html_c24c52a0286d43b374ffb3bf67972432);
+            
+        
+
+        marker_ced524277298521a364050cc8f0d451b.bindPopup(popup_930beed6684a77cc93445745b349f86c)
+        ;
+
+        
+    
+    
+                marker_ced524277298521a364050cc8f0d451b.setIcon(icon_7f89773e9e6b3bfb45a126d3bad4fcb9);
+            
+    
+            var marker_073f6699919f3bd3e55bae03dda9da80 = L.marker(
+                [51.1198392, 71.4341802],
+                {
+}
+            ).addTo(map_0dde63d6e894b5a82c124e4c41116d4e);
+        
+    
+            var icon_3acd01696949a69fdee171c0be5294eb = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "gray",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_7021d2870ca37e189e961934776acb78 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_0941ba967df3e369b7764e538104d946 = $(`<div id="html_0941ba967df3e369b7764e538104d946" style="width: 100.0%; height: 100.0%;">Astana Parking (P=1.0)</div>`)[0];
+                popup_7021d2870ca37e189e961934776acb78.setContent(html_0941ba967df3e369b7764e538104d946);
+            
+        
+
+        marker_073f6699919f3bd3e55bae03dda9da80.bindPopup(popup_7021d2870ca37e189e961934776acb78)
+        ;
+
+        
+    
+    
+                marker_073f6699919f3bd3e55bae03dda9da80.setIcon(icon_3acd01696949a69fdee171c0be5294eb);
+            
+    
+            var marker_ee2f328cdd4b3b7ef88b4ce33fa1d917 = L.marker(
+                [51.1245606, 71.425258],
+                {
+}
+            ).addTo(map_0dde63d6e894b5a82c124e4c41116d4e);
+        
+    
+            var icon_08fc9c83f144b031a7db120299c1a26b = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "gray",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_e07f7af916603853543b8fca2a18402f = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_dfdb5dbbc3634a2b91b4bf219d789515 = $(`<div id="html_dfdb5dbbc3634a2b91b4bf219d789515" style="width: 100.0%; height: 100.0%;">Astana Parking (P=1.0)</div>`)[0];
+                popup_e07f7af916603853543b8fca2a18402f.setContent(html_dfdb5dbbc3634a2b91b4bf219d789515);
+            
+        
+
+        marker_ee2f328cdd4b3b7ef88b4ce33fa1d917.bindPopup(popup_e07f7af916603853543b8fca2a18402f)
+        ;
+
+        
+    
+    
+                marker_ee2f328cdd4b3b7ef88b4ce33fa1d917.setIcon(icon_08fc9c83f144b031a7db120299c1a26b);
+            
+    
+            var marker_1b91bd009f417291a83a66835d70bf7c = L.marker(
+                [51.1168188, 71.4292809],
+                {
+}
+            ).addTo(map_0dde63d6e894b5a82c124e4c41116d4e);
+        
+    
+            var icon_bb8d7ef2fc65a59847f033daeedca270 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "gray",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_e3706c7b9e812e46e3f1517d76f2f9cd = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_8a9d14972da24e9f19913b1c494321ac = $(`<div id="html_8a9d14972da24e9f19913b1c494321ac" style="width: 100.0%; height: 100.0%;">Astana Parking (P=1.0)</div>`)[0];
+                popup_e3706c7b9e812e46e3f1517d76f2f9cd.setContent(html_8a9d14972da24e9f19913b1c494321ac);
+            
+        
+
+        marker_1b91bd009f417291a83a66835d70bf7c.bindPopup(popup_e3706c7b9e812e46e3f1517d76f2f9cd)
+        ;
+
+        
+    
+    
+                marker_1b91bd009f417291a83a66835d70bf7c.setIcon(icon_bb8d7ef2fc65a59847f033daeedca270);
+            
+    
+            var marker_166c91ee045f2a68901785a1596a5f1d = L.marker(
+                [51.1204972, 71.4354578],
+                {
+}
+            ).addTo(map_0dde63d6e894b5a82c124e4c41116d4e);
+        
+    
+            var icon_bb7f30767736ac2f05d7c08d7d8df480 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "gray",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_34b70d21938e2509aa8af5fd70f27a2a = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_c80d78307a17a81d680816f3f9f8c2a3 = $(`<div id="html_c80d78307a17a81d680816f3f9f8c2a3" style="width: 100.0%; height: 100.0%;">Astana Parking (P=1.0)</div>`)[0];
+                popup_34b70d21938e2509aa8af5fd70f27a2a.setContent(html_c80d78307a17a81d680816f3f9f8c2a3);
+            
+        
+
+        marker_166c91ee045f2a68901785a1596a5f1d.bindPopup(popup_34b70d21938e2509aa8af5fd70f27a2a)
+        ;
+
+        
+    
+    
+                marker_166c91ee045f2a68901785a1596a5f1d.setIcon(icon_bb7f30767736ac2f05d7c08d7d8df480);
+            
+    
+            var marker_800d73f5a1dcbbe582c1d5ff33374012 = L.marker(
+                [51.1191167, 71.434806],
+                {
+}
+            ).addTo(map_0dde63d6e894b5a82c124e4c41116d4e);
+        
+    
+            var icon_4308e7847128b3120d03170957e856ed = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "gray",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_40cc03ac6d7fd99aecf70cd5756cdb7f = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_3eba5a877c960d04ee54442e7af475e8 = $(`<div id="html_3eba5a877c960d04ee54442e7af475e8" style="width: 100.0%; height: 100.0%;">Astana Parking (P=1.0)</div>`)[0];
+                popup_40cc03ac6d7fd99aecf70cd5756cdb7f.setContent(html_3eba5a877c960d04ee54442e7af475e8);
+            
+        
+
+        marker_800d73f5a1dcbbe582c1d5ff33374012.bindPopup(popup_40cc03ac6d7fd99aecf70cd5756cdb7f)
+        ;
+
+        
+    
+    
+                marker_800d73f5a1dcbbe582c1d5ff33374012.setIcon(icon_4308e7847128b3120d03170957e856ed);
+            
+    
+            var marker_b6ab2d66d41589285c6f0428985354e9 = L.marker(
+                [51.1165393, 71.425848],
+                {
+}
+            ).addTo(map_0dde63d6e894b5a82c124e4c41116d4e);
+        
+    
+            var icon_2d9ad1611d706684a272fd433eb61179 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "gray",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_2eea105cf639db55aae807d32c8a4ee8 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_d6fbb73d41bcb9644f4229552aef174e = $(`<div id="html_d6fbb73d41bcb9644f4229552aef174e" style="width: 100.0%; height: 100.0%;">Astana Parking (P=1.0)</div>`)[0];
+                popup_2eea105cf639db55aae807d32c8a4ee8.setContent(html_d6fbb73d41bcb9644f4229552aef174e);
+            
+        
+
+        marker_b6ab2d66d41589285c6f0428985354e9.bindPopup(popup_2eea105cf639db55aae807d32c8a4ee8)
+        ;
+
+        
+    
+    
+                marker_b6ab2d66d41589285c6f0428985354e9.setIcon(icon_2d9ad1611d706684a272fd433eb61179);
+            
+    
+            var marker_2cb3c206d5729e2fa6a7dab3520c514e = L.marker(
+                [51.1162882, 71.4264226],
+                {
+}
+            ).addTo(map_0dde63d6e894b5a82c124e4c41116d4e);
+        
+    
+            var icon_5c2f55da080fe2b3012a5df6262e38f3 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "gray",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_a20251166c5fb77000edff89692d1e1b = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_0131699edd1304231129b436d4bb57d4 = $(`<div id="html_0131699edd1304231129b436d4bb57d4" style="width: 100.0%; height: 100.0%;">Astana Parking (P=1.0)</div>`)[0];
+                popup_a20251166c5fb77000edff89692d1e1b.setContent(html_0131699edd1304231129b436d4bb57d4);
+            
+        
+
+        marker_2cb3c206d5729e2fa6a7dab3520c514e.bindPopup(popup_a20251166c5fb77000edff89692d1e1b)
+        ;
+
+        
+    
+    
+                marker_2cb3c206d5729e2fa6a7dab3520c514e.setIcon(icon_5c2f55da080fe2b3012a5df6262e38f3);
+            
+    
+            var marker_4f6149890b5cd6a5ca74bae0b6d597b9 = L.marker(
+                [51.1164598, 71.4251379],
+                {
+}
+            ).addTo(map_0dde63d6e894b5a82c124e4c41116d4e);
+        
+    
+            var icon_64691ae2e7b4cb1bdacdc9099eeba80a = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "gray",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_1e2bb59cda5a002583c2dd85de3d7e66 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_fcc0af7b09070d1faa51dd962c78969f = $(`<div id="html_fcc0af7b09070d1faa51dd962c78969f" style="width: 100.0%; height: 100.0%;">Astana Parking (P=1.0)</div>`)[0];
+                popup_1e2bb59cda5a002583c2dd85de3d7e66.setContent(html_fcc0af7b09070d1faa51dd962c78969f);
+            
+        
+
+        marker_4f6149890b5cd6a5ca74bae0b6d597b9.bindPopup(popup_1e2bb59cda5a002583c2dd85de3d7e66)
+        ;
+
+        
+    
+    
+                marker_4f6149890b5cd6a5ca74bae0b6d597b9.setIcon(icon_64691ae2e7b4cb1bdacdc9099eeba80a);
+            
+    
+            var marker_e25fd85b1939a8dd752a56db5b231321 = L.marker(
+                [51.1159837, 71.4295383],
+                {
+}
+            ).addTo(map_0dde63d6e894b5a82c124e4c41116d4e);
+        
+    
+            var icon_448e6c1fcee8a98fb3551136c63f5f70 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "gray",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_7d2cfe43f8be7d45d6496ff79917d8aa = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_df2a4178c92dd36b893f94234e67bf48 = $(`<div id="html_df2a4178c92dd36b893f94234e67bf48" style="width: 100.0%; height: 100.0%;">Astana Parking (P=1.0)</div>`)[0];
+                popup_7d2cfe43f8be7d45d6496ff79917d8aa.setContent(html_df2a4178c92dd36b893f94234e67bf48);
+            
+        
+
+        marker_e25fd85b1939a8dd752a56db5b231321.bindPopup(popup_7d2cfe43f8be7d45d6496ff79917d8aa)
+        ;
+
+        
+    
+    
+                marker_e25fd85b1939a8dd752a56db5b231321.setIcon(icon_448e6c1fcee8a98fb3551136c63f5f70);
+            
+    
+            var marker_23bf555542085f82bd7352d2d82839cb = L.marker(
+                [51.1182084, 71.4359231],
+                {
+}
+            ).addTo(map_0dde63d6e894b5a82c124e4c41116d4e);
+        
+    
+            var icon_da728542e1f7fbe863e07df58518783a = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "gray",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_2e54acfa608a49cb22f6bbd3562efb29 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_52ba209d4ab7b5a6ebc57924e75ba699 = $(`<div id="html_52ba209d4ab7b5a6ebc57924e75ba699" style="width: 100.0%; height: 100.0%;">Astana Parking (P=1.0)</div>`)[0];
+                popup_2e54acfa608a49cb22f6bbd3562efb29.setContent(html_52ba209d4ab7b5a6ebc57924e75ba699);
+            
+        
+
+        marker_23bf555542085f82bd7352d2d82839cb.bindPopup(popup_2e54acfa608a49cb22f6bbd3562efb29)
+        ;
+
+        
+    
+    
+                marker_23bf555542085f82bd7352d2d82839cb.setIcon(icon_da728542e1f7fbe863e07df58518783a);
+            
+    
+            var marker_edca93f315b141a8eced9ce2167f3852 = L.marker(
+                [51.1209276, 71.4372874],
+                {
+}
+            ).addTo(map_0dde63d6e894b5a82c124e4c41116d4e);
+        
+    
+            var icon_4a8d6d2fde4d93122f389b1adf60ab22 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "gray",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_693b3c58ac6edaecf497f25f92de957f = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_acaefc148c1d2b10a033ff4358f7caf6 = $(`<div id="html_acaefc148c1d2b10a033ff4358f7caf6" style="width: 100.0%; height: 100.0%;">Astana Parking (P=1.0)</div>`)[0];
+                popup_693b3c58ac6edaecf497f25f92de957f.setContent(html_acaefc148c1d2b10a033ff4358f7caf6);
+            
+        
+
+        marker_edca93f315b141a8eced9ce2167f3852.bindPopup(popup_693b3c58ac6edaecf497f25f92de957f)
+        ;
+
+        
+    
+    
+                marker_edca93f315b141a8eced9ce2167f3852.setIcon(icon_4a8d6d2fde4d93122f389b1adf60ab22);
+            
+    
+            var marker_2d4d004887faf281750e8d2cd1e1b6e1 = L.marker(
+                [51.1157602, 71.4313759],
+                {
+}
+            ).addTo(map_0dde63d6e894b5a82c124e4c41116d4e);
+        
+    
+            var icon_3d62a82bf43c03693e6e578235481542 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "gray",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_a63e77a222daecedc44bbecf8d5723ee = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_2792a5972284ce9528cee1f609af926e = $(`<div id="html_2792a5972284ce9528cee1f609af926e" style="width: 100.0%; height: 100.0%;">Astana Parking (P=1.0)</div>`)[0];
+                popup_a63e77a222daecedc44bbecf8d5723ee.setContent(html_2792a5972284ce9528cee1f609af926e);
+            
+        
+
+        marker_2d4d004887faf281750e8d2cd1e1b6e1.bindPopup(popup_a63e77a222daecedc44bbecf8d5723ee)
+        ;
+
+        
+    
+    
+                marker_2d4d004887faf281750e8d2cd1e1b6e1.setIcon(icon_3d62a82bf43c03693e6e578235481542);
+            
+    
+            var marker_c8c78d98d9f95b9459cf2589adb756ca = L.marker(
+                [51.1155198, 71.4272079],
+                {
+}
+            ).addTo(map_0dde63d6e894b5a82c124e4c41116d4e);
+        
+    
+            var icon_a8626ef21f38769f38b668df74ab426a = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "gray",
+  "iconColor": "white",
+  "icon": "info-sign",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_656c8d5e5b167940414c1588c0aa84d2 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_397c732e2874b9d6a12525ab49c734e0 = $(`<div id="html_397c732e2874b9d6a12525ab49c734e0" style="width: 100.0%; height: 100.0%;">Astana Parking (P=1.0)</div>`)[0];
+                popup_656c8d5e5b167940414c1588c0aa84d2.setContent(html_397c732e2874b9d6a12525ab49c734e0);
+            
+        
+
+        marker_c8c78d98d9f95b9459cf2589adb756ca.bindPopup(popup_656c8d5e5b167940414c1588c0aa84d2)
+        ;
+
+        
+    
+    
+                marker_c8c78d98d9f95b9459cf2589adb756ca.setIcon(icon_a8626ef21f38769f38b668df74ab426a);
+            
+    
+            var poly_line_35e079ff1733478ec2270445f25d1f85 = L.polyline(
+                [[51.1325, 71.4038], [51.1240934, 71.4274726], [51.1238837, 71.4287634], [51.1236889, 71.4300943]],
+                {"bubblingMouseEvents": true, "color": "orange", "dashArray": null, "dashOffset": null, "fill": false, "fillColor": "orange", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 5}
+            ).addTo(map_0dde63d6e894b5a82c124e4c41116d4e);
+        
+    
+            var poly_line_7e9eb9b12c6b41eb3e177c7c1b3bfc4a = L.polyline(
+                [[51.1236889, 71.4300943], [51.1210477827375, 71.42861532233071]],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": "5", "dashOffset": null, "fill": false, "fillColor": "blue", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 1.0, "smoothFactor": 1.0, "stroke": true, "weight": 3}
+            ).addTo(map_0dde63d6e894b5a82c124e4c41116d4e);
+        
+</script>
+</html>

@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html>
+<head>
+    
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.3/dist/leaflet.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.2.0/css/all.min.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Leaflet.awesome-markers/2.0.2/leaflet.awesome-markers.css"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/python-visualization/folium/folium/templates/leaflet.awesome.rotate.min.css"/>
+    
+            <meta name="viewport" content="width=device-width,
+                initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+            <style>
+                #map_6b2eebe5e436f1e88f4c7056cd242366 {
+                    position: relative;
+                    width: 100.0%;
+                    height: 100.0%;
+                    left: 0.0%;
+                    top: 0.0%;
+                }
+                .leaflet-container { font-size: 1rem; }
+            </style>
+
+            <style>html, body {
+                width: 100%;
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            </style>
+
+            <style>#map {
+                position:absolute;
+                top:0;
+                bottom:0;
+                right:0;
+                left:0;
+                }
+            </style>
+
+            <script>
+                L_NO_TOUCH = false;
+                L_DISABLE_3D = false;
+            </script>
+
+        
+</head>
+<body>
+    
+    
+            <div class="folium-map" id="map_6b2eebe5e436f1e88f4c7056cd242366" ></div>
+        
+</body>
+<script>
+    
+    
+            var map_6b2eebe5e436f1e88f4c7056cd242366 = L.map(
+                "map_6b2eebe5e436f1e88f4c7056cd242366",
+                {
+                    center: [51.12124979801929, 71.42898559570314],
+                    crs: L.CRS.EPSG3857,
+                    ...{
+  "zoom": 15,
+  "zoomControl": true,
+  "preferCanvas": false,
+}
+
+                }
+            );
+
+            
+
+        
+    
+            var tile_layer_b14681d198b99eeb9047d7f191430b4d = L.tileLayer(
+                "https://tile.openstreetmap.org/{z}/{x}/{y}.png",
+                {
+  "minZoom": 0,
+  "maxZoom": 19,
+  "maxNativeZoom": 19,
+  "noWrap": false,
+  "attribution": "\u0026copy; \u003ca href=\"https://www.openstreetmap.org/copyright\"\u003eOpenStreetMap\u003c/a\u003e contributors",
+  "subdomains": "abc",
+  "detectRetina": false,
+  "tms": false,
+  "opacity": 1,
+}
+
+            );
+        
+    
+            tile_layer_b14681d198b99eeb9047d7f191430b4d.addTo(map_6b2eebe5e436f1e88f4c7056cd242366);
+        
+    
+            var marker_96f0c53703b6abb633c92f66e8808273 = L.marker(
+                [51.1325, 71.4038],
+                {
+}
+            ).addTo(map_6b2eebe5e436f1e88f4c7056cd242366);
+        
+    
+            var icon_d9c754f55971816f2afcad69157a406e = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "green",
+  "iconColor": "white",
+  "icon": "play",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_dc7e9e300edbd09f4d5c43cb6f97123b = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_8a3e48078724c33a5636702d41558b93 = $(`<div id="html_8a3e48078724c33a5636702d41558b93" style="width: 100.0%; height: 100.0%;">Start (A)</div>`)[0];
+                popup_dc7e9e300edbd09f4d5c43cb6f97123b.setContent(html_8a3e48078724c33a5636702d41558b93);
+            
+        
+
+        marker_96f0c53703b6abb633c92f66e8808273.bindPopup(popup_dc7e9e300edbd09f4d5c43cb6f97123b)
+        ;
+
+        
+    
+    
+                marker_96f0c53703b6abb633c92f66e8808273.setIcon(icon_d9c754f55971816f2afcad69157a406e);
+            
+    
+            var marker_e140b2f884f200f5691eaa8dfaee0f1e = L.marker(
+                [51.12124979801929, 71.42898559570314],
+                {
+}
+            ).addTo(map_6b2eebe5e436f1e88f4c7056cd242366);
+        
+    
+            var icon_cd2df36aaa54858ccdc34aa7fd904a68 = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "red",
+  "iconColor": "white",
+  "icon": "flag",
+  "prefix": "glyphicon",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_f2e80ae556e911cd44989b964f9558c0 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_3cc8685f668a95ae155477d2d8597204 = $(`<div id="html_3cc8685f668a95ae155477d2d8597204" style="width: 100.0%; height: 100.0%;">Destination (B)</div>`)[0];
+                popup_f2e80ae556e911cd44989b964f9558c0.setContent(html_3cc8685f668a95ae155477d2d8597204);
+            
+        
+
+        marker_e140b2f884f200f5691eaa8dfaee0f1e.bindPopup(popup_f2e80ae556e911cd44989b964f9558c0)
+        ;
+
+        
+    
+    
+                marker_e140b2f884f200f5691eaa8dfaee0f1e.setIcon(icon_cd2df36aaa54858ccdc34aa7fd904a68);
+            
+    
+            var marker_b85ab092bde0c5aa10aba1d6a6444496 = L.marker(
+                [51.118, 71.445],
+                {
+}
+            ).addTo(map_6b2eebe5e436f1e88f4c7056cd242366);
+        
+    
+            var icon_f94dcea227d84a3257c2d3d24889930d = L.AwesomeMarkers.icon(
+                {
+  "markerColor": "blue",
+  "iconColor": "white",
+  "icon": "arrow-right",
+  "prefix": "fa",
+  "extraClasses": "fa-rotate-0",
+}
+            );
+        
+    
+        var popup_9f07c2a1f752a1f45fbcfc738bb743cd = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_bd03956ef57ceaf98a083b59f7c4f88a = $(`<div id="html_bd03956ef57ceaf98a083b59f7c4f88a" style="width: 100.0%; height: 100.0%;">Next Dest (C)</div>`)[0];
+                popup_9f07c2a1f752a1f45fbcfc738bb743cd.setContent(html_bd03956ef57ceaf98a083b59f7c4f88a);
+            
+        
+
+        marker_b85ab092bde0c5aa10aba1d6a6444496.bindPopup(popup_9f07c2a1f752a1f45fbcfc738bb743cd)
+        ;
+
+        
+    
+    
+                marker_b85ab092bde0c5aa10aba1d6a6444496.setIcon(icon_f94dcea227d84a3257c2d3d24889930d);
+            
+    
+            var circle_marker_88b03a5e446c01bec0dcc7d8fe07ebf6 = L.circleMarker(
+                [51.1196542, 71.4281605],
+                {"bubblingMouseEvents": true, "color": "gray", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "gray", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5, "stroke": true, "weight": 3}
+            ).addTo(map_6b2eebe5e436f1e88f4c7056cd242366);
+        
+    
+        var popup_016c2382a6244cd2e19beeb1a00dfaf7 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_6b3cf25fc5e4c0e5a6f61a49e4bd9bd0 = $(`<div id="html_6b3cf25fc5e4c0e5a6f61a49e4bd9bd0" style="width: 100.0%; height: 100.0%;">Potential: Astana Parking</div>`)[0];
+                popup_016c2382a6244cd2e19beeb1a00dfaf7.setContent(html_6b3cf25fc5e4c0e5a6f61a49e4bd9bd0);
+            
+        
+
+        circle_marker_88b03a5e446c01bec0dcc7d8fe07ebf6.bindPopup(popup_016c2382a6244cd2e19beeb1a00dfaf7)
+        ;
+
+        
+    
+    
+            var circle_marker_118c215988e855d0f703afac46f1cbd7 = L.circleMarker(
+                [51.1236889, 71.4300943],
+                {"bubblingMouseEvents": true, "color": "gray", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "gray", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5, "stroke": true, "weight": 3}
+            ).addTo(map_6b2eebe5e436f1e88f4c7056cd242366);
+        
+    
+        var popup_046aaea9793cd151dcf974b2f3a7be58 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_383f6bc77762e68d304264347f6a87d1 = $(`<div id="html_383f6bc77762e68d304264347f6a87d1" style="width: 100.0%; height: 100.0%;">Potential: Astana Parking</div>`)[0];
+                popup_046aaea9793cd151dcf974b2f3a7be58.setContent(html_383f6bc77762e68d304264347f6a87d1);
+            
+        
+
+        circle_marker_118c215988e855d0f703afac46f1cbd7.bindPopup(popup_046aaea9793cd151dcf974b2f3a7be58)
+        ;
+
+        
+    
+    
+            var circle_marker_a36f1ebb864e3895790456788c234bc0 = L.circleMarker(
+                [51.1198392, 71.4341802],
+                {"bubblingMouseEvents": true, "color": "gray", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "gray", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5, "stroke": true, "weight": 3}
+            ).addTo(map_6b2eebe5e436f1e88f4c7056cd242366);
+        
+    
+        var popup_9b349ebadbc9a1a23eb21e5f30b623b4 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_9fb1997a66c39f4aa31fbdef7bd7ceb7 = $(`<div id="html_9fb1997a66c39f4aa31fbdef7bd7ceb7" style="width: 100.0%; height: 100.0%;">Potential: Astana Parking</div>`)[0];
+                popup_9b349ebadbc9a1a23eb21e5f30b623b4.setContent(html_9fb1997a66c39f4aa31fbdef7bd7ceb7);
+            
+        
+
+        circle_marker_a36f1ebb864e3895790456788c234bc0.bindPopup(popup_9b349ebadbc9a1a23eb21e5f30b623b4)
+        ;
+
+        
+    
+    
+            var circle_marker_6e9cadd210a8a4ae7042521a1a5825f7 = L.circleMarker(
+                [51.1204972, 71.4354578],
+                {"bubblingMouseEvents": true, "color": "gray", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "gray", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5, "stroke": true, "weight": 3}
+            ).addTo(map_6b2eebe5e436f1e88f4c7056cd242366);
+        
+    
+        var popup_af8f1607fba6e70ea1ba4f45f08bc3ef = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_cd42b8130f0ad209769c8edd315a8d04 = $(`<div id="html_cd42b8130f0ad209769c8edd315a8d04" style="width: 100.0%; height: 100.0%;">Potential: Astana Parking</div>`)[0];
+                popup_af8f1607fba6e70ea1ba4f45f08bc3ef.setContent(html_cd42b8130f0ad209769c8edd315a8d04);
+            
+        
+
+        circle_marker_6e9cadd210a8a4ae7042521a1a5825f7.bindPopup(popup_af8f1607fba6e70ea1ba4f45f08bc3ef)
+        ;
+
+        
+    
+    
+            var circle_marker_fc12747825e8c6d0825cee9bf5b2dbb2 = L.circleMarker(
+                [51.1191167, 71.434806],
+                {"bubblingMouseEvents": true, "color": "gray", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "gray", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5, "stroke": true, "weight": 3}
+            ).addTo(map_6b2eebe5e436f1e88f4c7056cd242366);
+        
+    
+        var popup_c614fffb1abe37a5e3f33e494f196fad = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_00e693c22fc7a98eeeda5bab1fcfb2e5 = $(`<div id="html_00e693c22fc7a98eeeda5bab1fcfb2e5" style="width: 100.0%; height: 100.0%;">Potential: Astana Parking</div>`)[0];
+                popup_c614fffb1abe37a5e3f33e494f196fad.setContent(html_00e693c22fc7a98eeeda5bab1fcfb2e5);
+            
+        
+
+        circle_marker_fc12747825e8c6d0825cee9bf5b2dbb2.bindPopup(popup_c614fffb1abe37a5e3f33e494f196fad)
+        ;
+
+        
+    
+    
+            var circle_marker_7c7d57cdd7cbe32b0816ecbc82d314f5 = L.circleMarker(
+                [51.1168188, 71.4292809],
+                {"bubblingMouseEvents": true, "color": "gray", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "gray", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5, "stroke": true, "weight": 3}
+            ).addTo(map_6b2eebe5e436f1e88f4c7056cd242366);
+        
+    
+        var popup_f9a891ad19835417094477b025421f63 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_5bf1d65c4bb84d912ff616d729ba2152 = $(`<div id="html_5bf1d65c4bb84d912ff616d729ba2152" style="width: 100.0%; height: 100.0%;">Potential: Astana Parking</div>`)[0];
+                popup_f9a891ad19835417094477b025421f63.setContent(html_5bf1d65c4bb84d912ff616d729ba2152);
+            
+        
+
+        circle_marker_7c7d57cdd7cbe32b0816ecbc82d314f5.bindPopup(popup_f9a891ad19835417094477b025421f63)
+        ;
+
+        
+    
+    
+            var circle_marker_5d7c3463f85c200ffa90cb83c4da55fa = L.circleMarker(
+                [51.1165393, 71.425848],
+                {"bubblingMouseEvents": true, "color": "gray", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "gray", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5, "stroke": true, "weight": 3}
+            ).addTo(map_6b2eebe5e436f1e88f4c7056cd242366);
+        
+    
+        var popup_82c751be04d75aed111bc88560873fdf = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_2902da17c7477a6cab53565469a5f602 = $(`<div id="html_2902da17c7477a6cab53565469a5f602" style="width: 100.0%; height: 100.0%;">Potential: Astana Parking</div>`)[0];
+                popup_82c751be04d75aed111bc88560873fdf.setContent(html_2902da17c7477a6cab53565469a5f602);
+            
+        
+
+        circle_marker_5d7c3463f85c200ffa90cb83c4da55fa.bindPopup(popup_82c751be04d75aed111bc88560873fdf)
+        ;
+
+        
+    
+    
+            var circle_marker_c8663c34ab53465da3f738ae79ff0a1c = L.circleMarker(
+                [51.1162882, 71.4264226],
+                {"bubblingMouseEvents": true, "color": "gray", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "gray", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5, "stroke": true, "weight": 3}
+            ).addTo(map_6b2eebe5e436f1e88f4c7056cd242366);
+        
+    
+        var popup_09988bf0c2eb53c76a86ccfde75b8098 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_f002a81d8b8699dc51ce6a06d7d9a04d = $(`<div id="html_f002a81d8b8699dc51ce6a06d7d9a04d" style="width: 100.0%; height: 100.0%;">Potential: Astana Parking</div>`)[0];
+                popup_09988bf0c2eb53c76a86ccfde75b8098.setContent(html_f002a81d8b8699dc51ce6a06d7d9a04d);
+            
+        
+
+        circle_marker_c8663c34ab53465da3f738ae79ff0a1c.bindPopup(popup_09988bf0c2eb53c76a86ccfde75b8098)
+        ;
+
+        
+    
+    
+            var circle_marker_c4374d9e95adceb8ed12488c3f6fb287 = L.circleMarker(
+                [51.1209276, 71.4372874],
+                {"bubblingMouseEvents": true, "color": "gray", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "gray", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5, "stroke": true, "weight": 3}
+            ).addTo(map_6b2eebe5e436f1e88f4c7056cd242366);
+        
+    
+        var popup_b150a45cb0c8f39e2f1eb69101f37bb5 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_3c64594d12edb617c21d4baf842aa8fc = $(`<div id="html_3c64594d12edb617c21d4baf842aa8fc" style="width: 100.0%; height: 100.0%;">Potential: Astana Parking</div>`)[0];
+                popup_b150a45cb0c8f39e2f1eb69101f37bb5.setContent(html_3c64594d12edb617c21d4baf842aa8fc);
+            
+        
+
+        circle_marker_c4374d9e95adceb8ed12488c3f6fb287.bindPopup(popup_b150a45cb0c8f39e2f1eb69101f37bb5)
+        ;
+
+        
+    
+    
+            var circle_marker_fd799a8999986b6e4ad9dbe42669fc5b = L.circleMarker(
+                [51.1159837, 71.4295383],
+                {"bubblingMouseEvents": true, "color": "gray", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "gray", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5, "stroke": true, "weight": 3}
+            ).addTo(map_6b2eebe5e436f1e88f4c7056cd242366);
+        
+    
+        var popup_df5b949aff1849d4dd18b890505192db = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_5f0c60724d8ed648a16909ddc83b58e6 = $(`<div id="html_5f0c60724d8ed648a16909ddc83b58e6" style="width: 100.0%; height: 100.0%;">Potential: Astana Parking</div>`)[0];
+                popup_df5b949aff1849d4dd18b890505192db.setContent(html_5f0c60724d8ed648a16909ddc83b58e6);
+            
+        
+
+        circle_marker_fd799a8999986b6e4ad9dbe42669fc5b.bindPopup(popup_df5b949aff1849d4dd18b890505192db)
+        ;
+
+        
+    
+    
+            var circle_marker_2d9cf1e1a8576103f0148d2d0850c5cc = L.circleMarker(
+                [51.1182084, 71.4359231],
+                {"bubblingMouseEvents": true, "color": "gray", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "gray", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5, "stroke": true, "weight": 3}
+            ).addTo(map_6b2eebe5e436f1e88f4c7056cd242366);
+        
+    
+        var popup_0b61aff2ab0fd04849f1178a6b002ec2 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_a27a12b26010db0b656329e630a64a99 = $(`<div id="html_a27a12b26010db0b656329e630a64a99" style="width: 100.0%; height: 100.0%;">Potential: Astana Parking</div>`)[0];
+                popup_0b61aff2ab0fd04849f1178a6b002ec2.setContent(html_a27a12b26010db0b656329e630a64a99);
+            
+        
+
+        circle_marker_2d9cf1e1a8576103f0148d2d0850c5cc.bindPopup(popup_0b61aff2ab0fd04849f1178a6b002ec2)
+        ;
+
+        
+    
+    
+            var circle_marker_4bea279eac4832eafc991ee5d42e0090 = L.circleMarker(
+                [51.1164598, 71.4251379],
+                {"bubblingMouseEvents": true, "color": "gray", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "gray", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5, "stroke": true, "weight": 3}
+            ).addTo(map_6b2eebe5e436f1e88f4c7056cd242366);
+        
+    
+        var popup_00f7cc153f2d6179309d93affab12bed = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_a01ecbc802ffb0343822c81d7dfb7939 = $(`<div id="html_a01ecbc802ffb0343822c81d7dfb7939" style="width: 100.0%; height: 100.0%;">Potential: Astana Parking</div>`)[0];
+                popup_00f7cc153f2d6179309d93affab12bed.setContent(html_a01ecbc802ffb0343822c81d7dfb7939);
+            
+        
+
+        circle_marker_4bea279eac4832eafc991ee5d42e0090.bindPopup(popup_00f7cc153f2d6179309d93affab12bed)
+        ;
+
+        
+    
+    
+            var circle_marker_2d50723fb0151d74f4db546655156576 = L.circleMarker(
+                [51.1265844, 71.4319421],
+                {"bubblingMouseEvents": true, "color": "gray", "dashArray": null, "dashOffset": null, "fill": true, "fillColor": "gray", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "opacity": 1.0, "radius": 5, "stroke": true, "weight": 3}
+            ).addTo(map_6b2eebe5e436f1e88f4c7056cd242366);
+        
+    
+        var popup_a8c1e6052722e739ddd850cf100ac8de = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_4534f80e7e77569aa66c8c091592d3d0 = $(`<div id="html_4534f80e7e77569aa66c8c091592d3d0" style="width: 100.0%; height: 100.0%;">Potential: Astana Parking</div>`)[0];
+                popup_a8c1e6052722e739ddd850cf100ac8de.setContent(html_4534f80e7e77569aa66c8c091592d3d0);
+            
+        
+
+        circle_marker_2d50723fb0151d74f4db546655156576.bindPopup(popup_a8c1e6052722e739ddd850cf100ac8de)
+        ;
+
+        
+    
+    
+            var marker_375b33041e3585997bf0dabbcaa47cb1 = L.marker(
+                [51.1245606, 71.425258],
+                {
+}
+            ).addTo(map_6b2eebe5e436f1e88f4c7056cd242366);
+        
+    
+            var div_icon_fd7d7174a3d2d5ffed1e89ff33ee0f25 = L.divIcon({
+  "html": "\n                        \u003cdiv style=\"font-family: sans-serif; color: white; background-color: orange; \n                        border-radius: 50%; width: 24px; height: 24px; display: flex; \n                        align-items: center; justify-content: center; border: 2px solid black;\n                        font-weight: bold;\"\u003e1\u003c/div\u003e",
+  "className": "empty",
+});
+        
+    
+        var popup_10f6ec20e2c2ee5f2005fd0e4836e6b9 = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_35085344c33021a057c10690c38f3e2d = $(`<div id="html_35085344c33021a057c10690c38f3e2d" style="width: 100.0%; height: 100.0%;">STOP #1: Astana Parking</div>`)[0];
+                popup_10f6ec20e2c2ee5f2005fd0e4836e6b9.setContent(html_35085344c33021a057c10690c38f3e2d);
+            
+        
+
+        marker_375b33041e3585997bf0dabbcaa47cb1.bindPopup(popup_10f6ec20e2c2ee5f2005fd0e4836e6b9)
+        ;
+
+        
+    
+    
+                marker_375b33041e3585997bf0dabbcaa47cb1.setIcon(div_icon_fd7d7174a3d2d5ffed1e89ff33ee0f25);
+            
+    
+            var marker_7e830919751a47ca80c84ef786ab4fdc = L.marker(
+                [51.1240934, 71.4274726],
+                {
+}
+            ).addTo(map_6b2eebe5e436f1e88f4c7056cd242366);
+        
+    
+            var div_icon_2b84022b266df84f2e59324cb7328b8f = L.divIcon({
+  "html": "\n                        \u003cdiv style=\"font-family: sans-serif; color: white; background-color: orange; \n                        border-radius: 50%; width: 24px; height: 24px; display: flex; \n                        align-items: center; justify-content: center; border: 2px solid black;\n                        font-weight: bold;\"\u003e2\u003c/div\u003e",
+  "className": "empty",
+});
+        
+    
+        var popup_90bc85a950d156a24d5926e8e9f9a7fe = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_a691fd110b1ca31129ce207f11489b8b = $(`<div id="html_a691fd110b1ca31129ce207f11489b8b" style="width: 100.0%; height: 100.0%;">STOP #2: Astana Parking</div>`)[0];
+                popup_90bc85a950d156a24d5926e8e9f9a7fe.setContent(html_a691fd110b1ca31129ce207f11489b8b);
+            
+        
+
+        marker_7e830919751a47ca80c84ef786ab4fdc.bindPopup(popup_90bc85a950d156a24d5926e8e9f9a7fe)
+        ;
+
+        
+    
+    
+                marker_7e830919751a47ca80c84ef786ab4fdc.setIcon(div_icon_2b84022b266df84f2e59324cb7328b8f);
+            
+    
+            var marker_4477d7798e074e5f970a4f26afb94704 = L.marker(
+                [51.1238837, 71.4287634],
+                {
+}
+            ).addTo(map_6b2eebe5e436f1e88f4c7056cd242366);
+        
+    
+            var div_icon_be726f2cc41a6c03f4be64711b22118a = L.divIcon({
+  "html": "\n                        \u003cdiv style=\"font-family: sans-serif; color: white; background-color: orange; \n                        border-radius: 50%; width: 24px; height: 24px; display: flex; \n                        align-items: center; justify-content: center; border: 2px solid black;\n                        font-weight: bold;\"\u003e3\u003c/div\u003e",
+  "className": "empty",
+});
+        
+    
+        var popup_719fb73d1384bc5687156e547e0e624d = L.popup({
+  "maxWidth": "100%",
+});
+
+        
+            
+                var html_58fcea167d4d6b213a5531ffa18a96ac = $(`<div id="html_58fcea167d4d6b213a5531ffa18a96ac" style="width: 100.0%; height: 100.0%;">STOP #3: Astana Parking</div>`)[0];
+                popup_719fb73d1384bc5687156e547e0e624d.setContent(html_58fcea167d4d6b213a5531ffa18a96ac);
+            
+        
+
+        marker_4477d7798e074e5f970a4f26afb94704.bindPopup(popup_719fb73d1384bc5687156e547e0e624d)
+        ;
+
+        
+    
+    
+                marker_4477d7798e074e5f970a4f26afb94704.setIcon(div_icon_be726f2cc41a6c03f4be64711b22118a);
+            
+    
+            var poly_line_42b1b0aa055a2d0f1e4a44ea180432af = L.polyline(
+                [[51.1325, 71.4038], [51.1245606, 71.425258], [51.1240934, 71.4274726], [51.1238837, 71.4287634]],
+                {"bubblingMouseEvents": true, "color": "orange", "dashArray": "5, 10", "dashOffset": null, "fill": false, "fillColor": "orange", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 0.8, "smoothFactor": 1.0, "stroke": true, "weight": 5}
+            ).addTo(map_6b2eebe5e436f1e88f4c7056cd242366);
+        
+    
+            var poly_line_aeae636fd56fd81cdd275f05417ee166 = L.polyline(
+                [[51.1238837, 71.4287634], [51.12124979801929, 71.42898559570314]],
+                {"bubblingMouseEvents": true, "color": "blue", "dashArray": "5", "dashOffset": null, "fill": false, "fillColor": "blue", "fillOpacity": 0.2, "fillRule": "evenodd", "lineCap": "round", "lineJoin": "round", "noClip": false, "opacity": 1.0, "smoothFactor": 1.0, "stroke": true, "weight": 3}
+            ).addTo(map_6b2eebe5e436f1e88f4c7056cd242366);
+        
+</script>
+</html>
