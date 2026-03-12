@@ -203,10 +203,6 @@ class MDP_Difference(BaseAlgorithm):
 
                     p_i = self.spots[i].get("p_i", 0.8)
                     walk = self.walk_fn(self.spots[i]["coords"])
-                    # 🔹 First choice constraint: must be within 3 min walking
-                    if curr == -1:
-                        if walk > 180:
-                            continue
                     exit_d = self.drive_fn(("spot", self.spots[i]), ("node", "ref"))
 
                     # Transition: Phi_prev + Drive(u, v)
@@ -223,27 +219,27 @@ class MDP_Difference(BaseAlgorithm):
                     q = (
                         norm_step + norm_quality
                     )  # это стоимость добавить эту парковку как следующий шаг поиска
-                    candidates.append(
-                        (
-                            cost_so_far + fail_prob * q,
-                            fail_prob * (1.0 - p_i),
-                            i,
-                            path + [i],
-                            visited | {i},
-                        )
-                    )
-                    ########## CHANGE ################
-                    # c_fail = (norm_drive + norm_phi_prev) + (phi_prev / self.max_phi)
-
                     # candidates.append(
                     #     (
-                    #         cost_so_far + fail_prob * (p_i * q + (1.0 - p_i) * c_fail),
+                    #         cost_so_far + fail_prob * q,
                     #         fail_prob * (1.0 - p_i),
                     #         i,
                     #         path + [i],
                     #         visited | {i},
                     #     )
                     # )
+                    ########### CHANGE ################
+                    c_fail = (norm_drive + norm_phi_prev) + (phi_prev / self.max_phi)
+
+                    candidates.append(
+                        (
+                            cost_so_far + fail_prob * (p_i * q + (1.0 - p_i) * c_fail),
+                            fail_prob * (1.0 - p_i),
+                            i,
+                            path + [i],
+                            visited | {i},
+                        )
+                    )
                     ########### CHANGE ################
 
             candidates.sort(key=lambda x: x[0])

@@ -172,87 +172,48 @@ class BaseAlgorithm(ABC):
 
 class MDP_Difference(BaseAlgorithm):
     def solve(self, **kwargs):
-        k, lw, le, ltr = (
-            int(kwargs.get("k", 3)),
-            kwargs.get("lambda_w", 1.0),
-            kwargs.get("lambda_e", 1.0),
-            kwargs.get("lambda_tr", 1.0),
-        )
-        beam = [(0.0, 1.0, -1, [], frozenset())]
-        ############ CHANGE ###############
-        # first_idx = min(
-        #     range(self.n), key=lambda i: self.walk_fn(self.spots[i]["coords"])
-        # )
+        k = int(kwargs.get("k", 3))
+        beam_width = kwargs.get("beam_width", 200)
 
-        # beam = [(0.0, 1.0, first_idx, [first_idx], {first_idx})]
-        best_chain = []  # (cost_so_far, fail_probability, current_spot, path_taken, visited_spots)
+        # Each element: (chain, visited_set)
+        beam = [([], set())]
+        best_chain = []
+        best_value = float("inf")
 
-        for _ in range(k):
+        for depth in range(k):
             candidates = []
-            for cost_so_far, fail_prob, curr, path, visited in beam:
-                # Search penalty of failed spot normalized by M_phi
-                phi_prev = self._get_phi(curr) if curr >= 0 else 0
-                norm_phi_prev = phi_prev / self.max_phi
 
+            for chain, visited in beam:
                 for i in range(self.n):
-                    raw_drive = self.trans_matrix[
-                        curr + 1, i
-                    ]  # driving time from current position to spot  (curr +1 means current position in our matrix)
-                    if raw_drive == float("inf") or i in visited:
+                    if i in visited:
                         continue
 
-                    p_i = self.spots[i].get("p_i", 0.8)
-                    walk = self.walk_fn(self.spots[i]["coords"])
-                    # 🔹 First choice constraint: must be within 3 min walking
-                    if curr == -1:
-                        if walk > 180:
-                            continue
-                    exit_d = self.drive_fn(("spot", self.spots[i]), ("node", "ref"))
+                    new_chain = chain + [i]
+                    new_visited = visited | {i}
 
-                    # Transition: Phi_prev + Drive(u, v)
-                    drive_w = ltr if curr >= 0 else 1.0
-                    norm_drive = (drive_w * raw_drive) / self.max_drive
-                    norm_step = (
-                        norm_drive + norm_phi_prev
-                    )  # показывает нормализованную стоимость перехода к следующей парковке
+                    # 🔹 TRUE expected time evaluation
+                    expected_time, *_ = calculate_metrics(new_chain, self.state)
 
-                    # Quality: Normalized by respective M values
-                    norm_quality = (lw * (walk / self.max_walk)) + (
-                        le * (exit_d / self.max_drive)
-                    )  # нормализованная + взвешенная
-                    q = (
-                        norm_step + norm_quality
-                    )  # это стоимость добавить эту парковку как следующий шаг поиска
-                    candidates.append(
-                        (
-                            cost_so_far + fail_prob * q,
-                            fail_prob * (1.0 - p_i),
-                            i,
-                            path + [i],
-                            visited | {i},
-                        )
-                    )
-                    ########## CHANGE ################
-                    # c_fail = (norm_drive + norm_phi_prev) + (phi_prev / self.max_phi)
+                    candidates.append((expected_time, new_chain, new_visited))
 
-                    # candidates.append(
-                    #     (
-                    #         cost_so_far + fail_prob * (p_i * q + (1.0 - p_i) * c_fail),
-                    #         fail_prob * (1.0 - p_i),
-                    #         i,
-                    #         path + [i],
-                    #         visited | {i},
-                    #     )
-                    # )
-                    ########### CHANGE ################
+            if not candidates:
+                break
 
+            # Sort by real expected time
             candidates.sort(key=lambda x: x[0])
-            # beam = candidates[:1000]
-            beam = candidates[:1000]
-            if beam:
-                best_chain = beam[0][3]
-        return best_chain, calculate_metrics(best_chain, self.state), {}
 
+            # Keep best beam_width
+            beam = [(chain, visited) for _, chain, visited in candidates[:beam_width]]
+
+            # Track best complete chain seen so far
+            if candidates[0][0] < best_value:
+                best_value = candidates[0][0]
+                best_chain = candidates[0][1]
+
+        # Final evaluation
+        metrics = calculate_metrics(best_chain, self.state)
+
+        return best_chain, metrics, {}
 
 class FiniteHorizonMDP(BaseAlgorithm):
     def solve(self, **kwargs):

@@ -26,11 +26,10 @@ def calculate_metrics(chain, state):
     for i, idx in enumerate(chain):
         spot = spots[idx]
         p_i = spot.get("p_i", 0.8)
-        # phi = spot.get("phi_exit_seconds", 60)
-        phi = 0.0
+        phi = spot.get("phi_exit_seconds", 60)
 
         # 1. Drive to Spot
-        drive_time = drive_fn(prev_node, ("spot", spot))["travel_time"]  # NEW
+        drive_time = drive_fn(prev_node, ("spot", spot))
         arrival_time = current_timeline_time + drive_time
 
         # 2. Terminal Actions
@@ -39,9 +38,7 @@ def calculate_metrics(chain, state):
         # 3. Exit Drive
         raw_exit_drive = drive_fn(
             ("spot", spot), ("node", "ref")
-        )[
-            "travel_time"
-        ]  # how long it will take to leave the parking spot and drive to the reference point C
+        )  # how long it will take to leave the parking spot and drive to the reference point C
         drive_exit_ref = raw_exit_drive * exit_mult
 
         # 4. Success Case: NO PHI. We found a spot!
