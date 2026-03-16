@@ -7,13 +7,13 @@ SCENARIOS = {
     "Short Stay (10-40m)": {
         "description": "Errands, Parents - quickly find a spot near the target.",
         "params": {
-            "lambda_w": 5.0,  # штраф за пешую ходьбу 8
-            "lambda_e": 0.0,  # важность быстрого выезда
-            "lambda_tr": 0.0,  # важность времени между парковками 3
+            "lambda_w": 4.0,  # штраф за пешую ходьбу 8 4
+            "lambda_e": 1.0,  # важность быстрого выезда 1
+            "lambda_tr": 3.0,  # важность времени между парковками 3
             "lambda_turns_arr": 0.0,  # NEW
             "lambda_turns_exit": 0.0,  # NEW
-            "lambda_cross": 505.0,  # NEW
-            "k": 5,  # глубина цепочки парковок
+            "lambda_cross": 25.0,  # NEW
+            "k": 6,  # глубина цепочки парковок
             "traffic_multiplier_drive": 1.4,
             "traffic_multiplier_exit": 1.6,
             "max_walk_time": 300,  # changed (can delete later)

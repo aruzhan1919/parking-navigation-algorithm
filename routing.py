@@ -392,6 +392,51 @@ def get_route(u_coords, v_coords, custom_G=None):
 #     return len(crossed)
 
 
+# def count_crossings(spot_coords, dest_coords, G, ignore_edge=None):
+#     walk_line = LineString(
+#         [
+#             (spot_coords[1], spot_coords[0]),
+#             (dest_coords[1], dest_coords[0]),
+#         ]
+#     )
+
+#     crossed_streets = set()
+
+#     for u, v, k, data in G.edges(keys=True, data=True):
+#         if ignore_edge is not None and (u, v, k) == ignore_edge:
+#             continue
+
+#         geom = data.get("geometry")
+#         if geom is None:
+#             x1, y1 = G.nodes[u]["x"], G.nodes[u]["y"]
+#             x2, y2 = G.nodes[v]["x"], G.nodes[v]["y"]
+#             geom = LineString([(x1, y1), (x2, y2)])
+
+#         if not walk_line.crosses(geom):
+#             continue
+
+#         highway = data.get("highway", "")
+#         if isinstance(highway, list):
+#             highway = highway[0] if highway else ""
+#         if highway in {"service", "parking_aisle", "driveway"}:
+#             continue
+
+#         # Use street name if available
+#         street_name = normalize_street_name(data.get("name"))
+
+#         if street_name is not None:
+#             crossed_streets.add(("name", street_name))
+#         else:
+#             # fallback for unnamed roads
+#             osmid = data.get("osmid")
+#             if isinstance(osmid, list):
+#                 osmid = tuple(osmid)
+#             crossed_streets.add(("osmid", osmid))
+
+
+#     return len(crossed_streets)
+
+
 def normalize_street_name(name):
     if name is None:
         return None
@@ -402,7 +447,165 @@ def normalize_street_name(name):
     return name or None
 
 
-def count_crossings(spot_coords, dest_coords, G, ignore_edge=None):
+# def _edge_geometry(G, edge):
+#     u, v, k = edge
+#     data = G.edges[u, v, k]
+#     geom = data.get("geometry")
+#     if geom is None:
+#         x1, y1 = G.nodes[u]["x"], G.nodes[u]["y"]
+#         x2, y2 = G.nodes[v]["x"], G.nodes[v]["y"]
+#         geom = LineString([(x1, y1), (x2, y2)])
+#     return geom
+
+
+# def _point_side_relative_to_geom(point_latlon, geom):
+#     """
+#     point_latlon = (lat, lon)
+#     geom = LineString with coordinates in (lon, lat)
+
+#     Returns signed side relative to the closest segment of geom.
+#     """
+#     px, py = point_latlon[1], point_latlon[0]
+#     coords = list(geom.coords)
+
+#     best_dist2 = float("inf")
+#     best_sign = 0.0
+
+#     for i in range(len(coords) - 1):
+#         x1, y1 = coords[i]
+#         x2, y2 = coords[i + 1]
+
+#         dx = x2 - x1
+#         dy = y2 - y1
+#         seg_len2 = dx * dx + dy * dy
+#         if seg_len2 == 0:
+#             continue
+
+#         t = ((px - x1) * dx + (py - y1) * dy) / seg_len2
+#         t = max(0.0, min(1.0, t))
+
+#         qx = x1 + t * dx
+#         qy = y1 + t * dy
+#         dist2 = (px - qx) ** 2 + (py - qy) ** 2
+
+#         if dist2 < best_dist2:
+#             best_dist2 = dist2
+#             best_sign = dx * (py - y1) - dy * (px - x1)
+
+#     return best_sign
+
+
+# def count_crossings(spot_coords, dest_coords, G, ignore_edge=None, eps=1e-10):
+#     walk_line = LineString(
+#         [
+#             (spot_coords[1], spot_coords[0]),
+#             (dest_coords[1], dest_coords[0]),
+#         ]
+#     )
+
+#     crossed_streets = set()
+
+#     spot_street_name = None
+#     opposite_sides = False
+
+#     # Step 1: check side relative to the spot's own edge
+#     if ignore_edge is not None and ignore_edge in G.edges:
+#         spot_geom = _edge_geometry(G, ignore_edge)
+#         spot_data = G.edges[ignore_edge]
+
+#         spot_street_name = normalize_street_name(spot_data.get("name"))
+
+#         spot_sign = _point_side_relative_to_geom(spot_coords, spot_geom)
+#         dest_sign = _point_side_relative_to_geom(dest_coords, spot_geom)
+
+#         if abs(spot_sign) > eps and abs(dest_sign) > eps and spot_sign * dest_sign < 0:
+#             opposite_sides = True
+
+#     # Step 2: collect crossed street names
+#     for u, v, k, data in G.edges(keys=True, data=True):
+#         geom = data.get("geometry")
+#         if geom is None:
+#             x1, y1 = G.nodes[u]["x"], G.nodes[u]["y"]
+#             x2, y2 = G.nodes[v]["x"], G.nodes[v]["y"]
+#             geom = LineString([(x1, y1), (x2, y2)])
+
+#         if not walk_line.crosses(geom):
+#             continue
+
+#         highway = data.get("highway", "")
+#         if isinstance(highway, list):
+#             highway = highway[0] if highway else ""
+
+#         if highway in {"service", "parking_aisle", "driveway"}:
+#             continue
+
+#         crossed_name = normalize_street_name(data.get("name"))
+#         if crossed_name is None:
+#             continue
+
+#         # If spot and dest are on same side of spot edge,
+#         # then do not count spot's own street name
+#         if not opposite_sides and spot_street_name is not None:
+#             if crossed_name == spot_street_name:
+#                 continue
+
+#         crossed_streets.add(crossed_name)
+
+
+# #     return len(crossed_streets)
+# def _closest_segment_to_point(point_latlon, geom):
+#     """
+#     Choose ONE local segment of the edge geometry based on the spot point.
+#     point_latlon = (lat, lon)
+#     geom coords are (lon, lat)
+#     """
+#     px, py = point_latlon[1], point_latlon[0]
+#     coords = list(geom.coords)
+
+#     best_dist2 = float("inf")
+#     best_seg = None
+
+#     for i in range(len(coords) - 1):
+#         x1, y1 = coords[i]
+#         x2, y2 = coords[i + 1]
+
+#         dx = x2 - x1
+#         dy = y2 - y1
+#         seg_len2 = dx * dx + dy * dy
+#         if seg_len2 == 0:
+#             continue
+
+#         t = ((px - x1) * dx + (py - y1) * dy) / seg_len2
+#         t = max(0.0, min(1.0, t))
+
+#         qx = x1 + t * dx
+#         qy = y1 + t * dy
+#         dist2 = (px - qx) ** 2 + (py - qy) ** 2
+
+#         if dist2 < best_dist2:
+#             best_dist2 = dist2
+#             best_seg = (x1, y1, x2, y2)
+
+#     return best_seg
+
+
+def _point_side_relative_to_edge(point_latlon, G, edge):
+    """
+    Signed side of point relative to the straight line through the edge endpoints.
+    point_latlon = (lat, lon)
+    edge = (u, v, k)
+    """
+    u, v, k = edge
+
+    x1, y1 = G.nodes[u]["x"], G.nodes[u]["y"]  # lon, lat
+    x2, y2 = G.nodes[v]["x"], G.nodes[v]["y"]  # lon, lat
+
+    px, py = point_latlon[1], point_latlon[0]  # lon, lat
+
+    return (x2 - x1) * (py - y1) - (y2 - y1) * (px - x1)
+
+
+def count_crossings(spot_coords, dest_coords, G, ignore_edge=None, eps=1e-10):
     walk_line = LineString(
         [
             (spot_coords[1], spot_coords[0]),
@@ -412,10 +615,22 @@ def count_crossings(spot_coords, dest_coords, G, ignore_edge=None):
 
     crossed_streets = set()
 
-    for u, v, k, data in G.edges(keys=True, data=True):
-        if ignore_edge is not None and (u, v, k) == ignore_edge:
-            continue
+    spot_street_name = None
+    opposite_sides = False
 
+    # Step 1: check side relative to the spot's own edge using only edge endpoints
+    if ignore_edge is not None and ignore_edge in G.edges:
+        spot_data = G.edges[ignore_edge]
+        spot_street_name = normalize_street_name(spot_data.get("name"))
+
+        spot_sign = _point_side_relative_to_edge(spot_coords, G, ignore_edge)
+        dest_sign = _point_side_relative_to_edge(dest_coords, G, ignore_edge)
+
+        if abs(spot_sign) > eps and abs(dest_sign) > eps and spot_sign * dest_sign < 0:
+            opposite_sides = True
+
+    # Step 2: collect crossed street names
+    for u, v, k, data in G.edges(keys=True, data=True):
         geom = data.get("geometry")
         if geom is None:
             x1, y1 = G.nodes[u]["x"], G.nodes[u]["y"]
@@ -428,19 +643,20 @@ def count_crossings(spot_coords, dest_coords, G, ignore_edge=None):
         highway = data.get("highway", "")
         if isinstance(highway, list):
             highway = highway[0] if highway else ""
+
         if highway in {"service", "parking_aisle", "driveway"}:
             continue
 
-        # Use street name if available
-        street_name = normalize_street_name(data.get("name"))
+        crossed_name = normalize_street_name(data.get("name"))
+        if crossed_name is None:
+            continue
 
-        if street_name is not None:
-            crossed_streets.add(("name", street_name))
-        else:
-            # fallback for unnamed roads
-            osmid = data.get("osmid")
-            if isinstance(osmid, list):
-                osmid = tuple(osmid)
-            crossed_streets.add(("osmid", osmid))
+        # If spot and dest are on same side of spot edge,
+        # then do not count spot's own street name
+        if not opposite_sides and spot_street_name is not None:
+            if crossed_name == spot_street_name:
+                continue
+
+        crossed_streets.add(crossed_name)
 
     return len(crossed_streets)
