@@ -407,8 +407,8 @@ class MDP_Difference(BaseAlgorithm):
                 if last not in used:
                     full_chain.append(last)
 
-        # return full_chain, calculate_metrics(full_chain, self.state), {}
-        return best_chain, calculate_metrics(best_chain, self.state), {}
+        return full_chain, calculate_metrics(full_chain, self.state), {}
+        # return best_chain, calculate_metrics(best_chain, self.state), {}
 
 
 class FiniteHorizonMDP(BaseAlgorithm):

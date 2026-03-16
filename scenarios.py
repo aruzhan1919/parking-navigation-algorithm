@@ -13,7 +13,7 @@ SCENARIOS = {
             "lambda_turns_arr": 0.0,  # NEW
             "lambda_turns_exit": 0.0,  # NEW
             "lambda_cross": 25.0,  # NEW
-            "k": 6,  # глубина цепочки парковок
+            "k": 3,  # глубина цепочки парковок
             "traffic_multiplier_drive": 1.4,
             "traffic_multiplier_exit": 1.6,
             "max_walk_time": 300,  # changed (can delete later)
@@ -25,8 +25,8 @@ SCENARIOS = {
             "lambda_w": 5.0,
             "lambda_e": 2.0,
             "lambda_tr": 6.0,
-            "lambda_turns_arr": 4.0,  # NEW
-            "lambda_turns_exit": 3.0,  # NEW
+            "lambda_turns_arr": 0.0,  # NEW 4
+            "lambda_turns_exit": 0.0,  # NEW 3
             "lambda_cross": 3.0,  # NEW
             "k": 5,
             "traffic_multiplier_drive": 1.3,
@@ -52,13 +52,13 @@ SCENARIOS = {
     "Long Stay - Night (8-12h)": {
         "description": "Residents - walk as little as possible.",
         "params": {
-            "lambda_w": 3.0,  # 3
+            "lambda_w": 6.0,  # 3
             "lambda_e": 2.0,  # 1
             "lambda_tr": 4.0,  # 5
-            "lambda_turns_arr": 2.0,  # NEW
+            "lambda_turns_arr": 0.0,  # NEW
             "lambda_turns_exit": 3.0,  # NEW
             "lambda_cross": 7.0,  # NEW
-            "k": 8,
+            "k": 7,
             "traffic_multiplier_drive": 1.0,
             "traffic_multiplier_exit": 1.4,
             "max_walk_time": 1200,
@@ -70,8 +70,8 @@ SCENARIOS = {
             "lambda_w": 4.0,
             "lambda_e": 9.0,
             "lambda_tr": 7.1,
-            "lambda_turns_arr": 8.0,  # NEW
-            "lambda_turns_exit": 3.0,  # NEW
+            "lambda_turns_arr": 0.0,  # NEW
+            "lambda_turns_exit": 10.0,  # NEW
             "lambda_cross": 4.0,  # NEW
             "k": 4,
             "traffic_multiplier_drive": 1.0,
@@ -83,11 +83,11 @@ SCENARIOS = {
         "description": "Drop-off - absolute proximity.",
         "params": {
             "lambda_w": 20.0,
-            "lambda_e": 1.1,
+            "lambda_e": 1.0,
             "lambda_tr": 10.5,
-            "lambda_turns_arr": 10.0,  # NEW
-            "lambda_turns_exit": 3.0,  # NEW
-            "lambda_cross": 12.0,  # NEW
+            "lambda_turns_arr": 0.0,  # NEW
+            "lambda_turns_exit": 0.0,  # NEW
+            "lambda_cross": 22.0,  # NEW
             "k": 2,
             "traffic_multiplier_drive": 1.4,
             "traffic_multiplier_exit": 1.4,
@@ -100,9 +100,9 @@ SCENARIOS = {
             "lambda_w": 50.0,
             "lambda_e": 1.00,
             "lambda_tr": 25.3,
-            "lambda_turns_arr": 4.0,  # NEW
-            "lambda_turns_exit": 3.0,  # NEW
-            "lambda_cross": 3.0,  # NEW
+            "lambda_turns_arr": 0.0,  # NEW
+            "lambda_turns_exit": 0.0,  # NEW
+            "lambda_cross": 22.0,  # NEW
             "k": 2,
             "traffic_multiplier_drive": 1.5,
             "traffic_multiplier_exit": 1.4,
