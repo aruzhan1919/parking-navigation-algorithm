@@ -214,6 +214,83 @@ def augment_graph_with_spots(spots):
     return G_aug
 
 
+# def get_route(u_coords, v_coords, custom_G=None):
+#     target_G = custom_G if custom_G else G
+
+#     # --- Resolve u ---
+#     if isinstance(u_coords, str):
+#         u_node = u_coords
+#     else:
+#         u_node = ox.nearest_nodes(target_G, u_coords[1], u_coords[0])
+
+#     # --- Resolve v ---
+#     if isinstance(v_coords, str):
+#         v_node = v_coords
+#     else:
+#         v_node = ox.nearest_nodes(target_G, v_coords[1], v_coords[0])
+
+#     if isinstance(u_node, str) and u_node not in target_G.nodes:
+#         raise KeyError(f"u_node {u_node} not found in graph")
+
+#     if isinstance(v_node, str) and v_node not in target_G.nodes:
+#         raise KeyError(f"v_node {v_node} not found in graph")
+
+#     try:
+#         path = nx.shortest_path(
+#             target_G, u_node, v_node, weight="travel_time_new"
+#         )  ##CHANGED from travel_time
+
+#         path_coords = [[target_G.nodes[n]["y"], target_G.nodes[n]["x"]] for n in path]
+
+#         time = 0.0
+#         for i in range(len(path) - 1):
+#             edge_data = target_G.get_edge_data(path[i], path[i + 1])
+#             if isinstance(edge_data, dict):
+#                 edge_data = list(edge_data.values())[0]
+#             time += edge_data.get("travel_time_new", 1.0)  ##CHANGED from travel_time
+
+#         # --- Turn penalties ---
+#         turn_penalty = 0.0
+#         path_without_spots = [n for n in path if not isinstance(n, str)]
+#         for i in range(1, len(path_without_spots) - 1):
+#             n1, n2, n3 = (
+#                 path_without_spots[i - 1],
+#                 path_without_spots[i],
+#                 path_without_spots[i + 1],
+#             )
+
+#             edge1 = G.get_edge_data(n1, n2)
+#             edge2 = G.get_edge_data(n2, n3)
+
+#             if edge1 is None or edge2 is None:
+#                 continue
+
+#             if isinstance(edge1, dict):
+#                 edge1 = list(edge1.values())[0]
+#             if isinstance(edge2, dict):
+#                 edge2 = list(edge2.values())[0]
+
+#             b1 = edge1.get("bearing", 0)
+#             b2 = edge2.get("bearing", 0)
+#             angle = (b2 - b1 + 180) % 360 - 180
+#             if abs(angle) < 20:
+#                 turn_penalty += COST_STRAIGHT
+#             elif abs(angle) > 150:
+#                 turn_penalty += COST_U_TURN
+#             elif angle > 0:
+#                 turn_penalty += COST_RIGHT
+#             else:
+#                 turn_penalty += COST_LEFT
+
+#         return {
+#             "path": path_coords,
+#             "travel_time": time + turn_penalty,
+#             "nodes": path,
+#         }  ### added nodes key and value
+#     except Exception:
+#         return {"path": [], "travel_time": float("inf"), "nodes": []}
+
+
 def get_route(u_coords, v_coords, custom_G=None):
     target_G = custom_G if custom_G else G
 
@@ -353,55 +430,6 @@ def get_route(u_coords, v_coords, custom_G=None):
         }
 
 
-# def count_crossings(spot_coords, dest_coords, G, ignore_edge=None):
-#     walk_line = LineString(
-#         [
-#             (spot_coords[1], spot_coords[0]),
-#             (dest_coords[1], dest_coords[0]),
-#         ]
-#     )
-
-#     crossed = set()
-
-#     for u, v, k, data in G.edges(keys=True, data=True):
-#         if ignore_edge is not None and (u, v, k) == ignore_edge:
-#             continue
-
-#         geom = data.get("geometry")
-#         if geom is None:
-#             x1, y1 = G.nodes[u]["x"], G.nodes[u]["y"]
-#             x2, y2 = G.nodes[v]["x"], G.nodes[v]["y"]
-#             geom = LineString([(x1, y1), (x2, y2)])
-
-#         if not walk_line.crosses(geom):
-#             continue
-
-#         highway = data.get("highway", "")
-#         if highway in ["service", "parking_aisle", "driveway"]:
-#             continue
-
-#         # count only crossings that are near traffic signals
-#         has_signal = (
-#             G.nodes[u].get("highway") == "traffic_signals"
-#             or G.nodes[v].get("highway") == "traffic_signals"
-#         )
-
-#         if has_signal:
-#             crossed.add((u, v, k))
-
-#     return len(crossed)
-
-
-def normalize_street_name(name):
-    if name is None:
-        return None
-    if isinstance(name, list):
-        name = " | ".join(sorted(str(x).strip().lower() for x in name if x))
-    else:
-        name = str(name).strip().lower()
-    return name or None
-
-
 def count_crossings(spot_coords, dest_coords, G, ignore_edge=None):
     walk_line = LineString(
         [
@@ -410,7 +438,7 @@ def count_crossings(spot_coords, dest_coords, G, ignore_edge=None):
         ]
     )
 
-    crossed_streets = set()
+    crossed = set()
 
     for u, v, k, data in G.edges(keys=True, data=True):
         if ignore_edge is not None and (u, v, k) == ignore_edge:
@@ -426,21 +454,120 @@ def count_crossings(spot_coords, dest_coords, G, ignore_edge=None):
             continue
 
         highway = data.get("highway", "")
-        if isinstance(highway, list):
-            highway = highway[0] if highway else ""
-        if highway in {"service", "parking_aisle", "driveway"}:
+        if highway in ["service", "parking_aisle", "driveway"]:
             continue
 
-        # Use street name if available
-        street_name = normalize_street_name(data.get("name"))
+        # count only crossings that are near traffic signals
+        has_signal = (
+            G.nodes[u].get("highway") == "traffic_signals"
+            or G.nodes[v].get("highway") == "traffic_signals"
+        )
 
-        if street_name is not None:
-            crossed_streets.add(("name", street_name))
-        else:
-            # fallback for unnamed roads
-            osmid = data.get("osmid")
-            if isinstance(osmid, list):
-                osmid = tuple(osmid)
-            crossed_streets.add(("osmid", osmid))
+        if has_signal:
+            crossed.add((u, v, k))
 
-    return len(crossed_streets)
+    return len(crossed)
+
+
+# def evaluate_path_with_penalties(path, target_G):
+#     base_time = 0.0
+
+#     for i in range(len(path) - 1):
+#         edge_data = target_G.get_edge_data(path[i], path[i + 1])
+#         if isinstance(edge_data, dict):
+#             edge_data = list(edge_data.values())[0]
+#         base_time += edge_data.get("travel_time_new", 1.0)
+
+#     turn_penalty = 0.0
+#     path_clean = [n for n in path if not isinstance(n, str)]
+
+#     for i in range(1, len(path_clean) - 1):
+#         n1, n2, n3 = path_clean[i - 1], path_clean[i], path_clean[i + 1]
+
+#         edge1 = target_G.get_edge_data(n1, n2)
+#         edge2 = target_G.get_edge_data(n2, n3)
+
+#         if not edge1 or not edge2:
+#             continue
+
+#         if isinstance(edge1, dict):
+#             edge1 = list(edge1.values())[0]
+#         if isinstance(edge2, dict):
+#             edge2 = list(edge2.values())[0]
+
+#         b1 = edge1.get("bearing", 0)
+#         b2 = edge2.get("bearing", 0)
+#         angle = (b2 - b1 + 180) % 360 - 180
+
+#         if abs(angle) < 20:
+#             turn_type = "straight"
+#             base_turn = COST_STRAIGHT
+#         elif abs(angle) > 150:
+#             turn_type = "uturn"
+#             base_turn = COST_U_TURN
+#         elif angle > 0:
+#             turn_type = "right"
+#             base_turn = COST_RIGHT
+#         else:
+#             turn_type = "left"
+#             base_turn = COST_LEFT
+
+#         has_signal = target_G.nodes[n2].get("highway") == "traffic_signals"
+
+#         signal_penalty = 0
+#         if has_signal:
+#             if turn_type == "right":
+#                 signal_penalty = 5
+#             elif turn_type == "straight":
+#                 signal_penalty = 20
+#             elif turn_type == "left":
+#                 signal_penalty = 30
+#             elif turn_type == "uturn":
+#                 signal_penalty = 35
+
+#         turn_penalty += base_turn + signal_penalty
+
+#     return {
+#         "nodes": path,
+#         "path": [[target_G.nodes[n]["y"], target_G.nodes[n]["x"]] for n in path],
+#         "base_time": base_time,
+#         "penalty_time": turn_penalty,
+#         "total_time": base_time + turn_penalty,
+#     }
+
+
+# def get_k_best_routes(u_coords, v_coords, custom_G=None, k_generate=10, k_return=5):
+
+#     target_G = custom_G if custom_G else G
+
+#     u_node = (
+#         u_coords
+#         if isinstance(u_coords, str)
+#         else ox.nearest_nodes(target_G, u_coords[1], u_coords[0])
+#     )
+
+#     v_node = (
+#         v_coords
+#         if isinstance(v_coords, str)
+#         else ox.nearest_nodes(target_G, v_coords[1], v_coords[0])
+#     )
+
+#     try:
+#         generator = nx.shortest_simple_paths(
+#             target_G, u_node, v_node, weight="travel_time_new"
+#         )
+
+#         candidates = list(islice(generator, k_generate))
+
+#         results = []
+
+#         for path in candidates:
+#             res = evaluate_path_with_penalties(path, target_G)
+#             results.append(res)
+
+#         results.sort(key=lambda x: x["total_time"])
+
+#         return results[:k_return]
+
+#     except:
+#         return []
