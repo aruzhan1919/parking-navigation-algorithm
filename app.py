@@ -4,6 +4,7 @@ import numpy as np
 from jinja2 import FileSystemLoader
 from datetime import datetime, timedelta
 import pytz
+import requests as http_requests
 import routing
 from scenarios import SCENARIOS
 from locations import LOCATIONS
@@ -54,6 +55,50 @@ def traffic_multiplier_for_time(dt_local):
         if 18 <= h < 21.5:
             return 1.45
         return 1.00
+
+
+def get_weather_multipliers(lat, lon):
+    try:
+        url = (
+            f"https://api.open-meteo.com/v1/forecast"
+            f"?latitude={lat}&longitude={lon}"
+            f"&current=weathercode,windspeed_10m,temperature_2m"
+            f"&forecast_days=1"
+        )
+        r = http_requests.get(url, timeout=3)
+        c = r.json()["current"]
+        code = c["weathercode"]
+        wind = c["windspeed_10m"]
+        temp = c["temperature_2m"]
+
+        mult = 1.0
+
+        if code in range(51, 68) or code in range(80, 83):
+            mult = 1.3  # rain
+        elif code in range(71, 78) or code in range(85, 87):
+            mult = 1.4  # snow
+        elif code >= 95:
+            mult = 1.8  # storm
+
+        if wind > 50:
+            mult = max(mult, 1.8)
+        elif wind > 35:
+            mult = max(mult, 1.5)
+        elif wind > 20:
+            mult = max(mult, 1.2)
+
+        if temp < -15 and temp > -20:
+            mult = max(mult, 1.3)
+        elif temp <= -20:
+            mult = max(mult, 1.6)
+
+        if (code in range(71, 78) or code in range(85, 87)) and wind > 20:
+            mult = max(mult, 1.6)  # snow + wind combo
+
+        return mult
+
+    except Exception:
+        return 1.0
 
 
 ############ NEW CHANGE #################
@@ -142,6 +187,7 @@ def solve():
     dest = parse_coord(data.get("dest"))
     ref = parse_coord(data.get("ref"))
     exit_multiplier = float(data.get("exit_multiplier", 1.0))
+    weather_mult = get_weather_multipliers(start[0], start[1])  # NEW
 
     ############# NEW CHANGE ##########
     # tz = pytz.timezone("Asia/Almaty")
@@ -184,6 +230,8 @@ def solve():
             "lambda_cross": custom.get("lambda_cross", 1.0),
             "k": custom.get("k", 5),
         }
+    params["lambda_w"] *= weather_mult
+    params["lambda_cross"] *= weather_mult
     # stay_minutes = STAY_DURATION.get(scenario_key, 30)
     # exit_time = now + timedelta(minutes=stay_minutes)
     # traffic_mult_drive = traffic_multiplier_for_time(now)
@@ -286,12 +334,16 @@ def solve():
             "travel_time": res["travel_time"] * mult,
             "turn_penalty": res["turn_penalty"] * mult,
         }
-        final_time = result["travel_time"]
+        # final_time = result["travel_time"]
         DISTANCE_CACHE[cache_key] = result
         return result
 
     adapter = StateAdapter(
-        start, dest, ref, MANUAL_SPOTS, traffic_multiplier=traffic_mult_drive
+        start,
+        dest,
+        ref,
+        MANUAL_SPOTS,
+        traffic_multiplier=traffic_mult_drive,
     )
     state = adapter.get_state()
     state["drive_fn"] = drive_fn

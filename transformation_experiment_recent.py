@@ -7,7 +7,13 @@ import routing  # Project routing logic (paths, travel times, graph access)
 
 class StateAdapter:
     def __init__(
-        self, start, dest, ref, spots, traffic_multiplier=1.4, distance_cache=None
+        self,
+        start,
+        dest,
+        ref,
+        spots,
+        traffic_multiplier=1.4,
+        distance_cache=None,
     ):
         if routing.G is None:
             routing.initialize_graph()
