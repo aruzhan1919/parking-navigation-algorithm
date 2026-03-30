@@ -16,7 +16,6 @@ SCENARIOS = {
             "k": 3,  # глубина цепочки парковок
             "traffic_multiplier_drive": 1.4,
             "traffic_multiplier_exit": 1.6,
-            "max_walk_time": 300,  # changed (can delete later)
         },
     },
     "Mid Stay (1-2h)": {
@@ -31,7 +30,6 @@ SCENARIOS = {
             "k": 5,
             "traffic_multiplier_drive": 1.3,
             "traffic_multiplier_exit": 1.5,
-            "max_walk_time": 660,
         },
     },
     "Long Stay - Day (6-10h)": {
@@ -43,25 +41,23 @@ SCENARIOS = {
             "lambda_turns_arr": 2.0,  # NEW
             "lambda_turns_exit": 8.0,  # NEW
             "lambda_cross": 1.0,  # NEW
-            "k": 7,
+            "k": 7,  # 7
             "traffic_multiplier_drive": 1.65,
             "traffic_multiplier_exit": 1.8,
-            "max_walk_time": 900,
         },
     },
     "Long Stay - Night (8-12h)": {
         "description": "Residents - walk as little as possible.",
         "params": {
-            "lambda_w": 6.0,  # 3
+            "lambda_w": 10.0,  # 3
             "lambda_e": 2.0,  # 1
             "lambda_tr": 4.0,  # 5
             "lambda_turns_arr": 0.0,  # NEW
             "lambda_turns_exit": 3.0,  # NEW
             "lambda_cross": 7.0,  # NEW
-            "k": 7,
+            "k": 7,  # 7
             "traffic_multiplier_drive": 1.0,
             "traffic_multiplier_exit": 1.4,
-            "max_walk_time": 1200,
         },
     },
     "Evening Stay (2-4h)": {
@@ -69,14 +65,13 @@ SCENARIOS = {
         "params": {
             "lambda_w": 4.0,
             "lambda_e": 9.0,
-            "lambda_tr": 7.1,
+            "lambda_tr": 7.0,
             "lambda_turns_arr": 0.0,  # NEW
             "lambda_turns_exit": 10.0,  # NEW
             "lambda_cross": 4.0,  # NEW
             "k": 4,
             "traffic_multiplier_drive": 1.0,
             "traffic_multiplier_exit": 1.8,
-            "max_walk_time": 720,
         },
     },
     "Taxi (5-10m)": {
@@ -91,7 +86,6 @@ SCENARIOS = {
             "k": 2,
             "traffic_multiplier_drive": 1.4,
             "traffic_multiplier_exit": 1.4,
-            "max_walk_time": 240,
         },
     },
     "Delivery (1-4m)": {
@@ -99,95 +93,14 @@ SCENARIOS = {
         "params": {
             "lambda_w": 50.0,
             "lambda_e": 1.00,
-            "lambda_tr": 25.3,
+            "lambda_tr": 25.0,
             "lambda_turns_arr": 0.0,  # NEW
             "lambda_turns_exit": 0.0,  # NEW
             "lambda_cross": 22.0,  # NEW
             "k": 2,
             "traffic_multiplier_drive": 1.5,
             "traffic_multiplier_exit": 1.4,
-            "max_walk_time": 240,
         },
     },
     "Custom": {"description": "Manually tune parameters.", "params": {}},
 }
-# SCENARIOS = {
-#     "Short Stay (10-40m)": {
-#         "description": "Errands, Parents - quickly find a spot near the target.",
-#         "params": {
-#             "lambda_w": 5.0,  # штраф за пешую ходьбу
-#             "lambda_e": 3.0,  # важность быстрого выезда
-#             "lambda_tr": 1.0,  # важность времени между парковками
-#             "k": 2,  # глубина цепочки парковок
-#             "traffic_multiplier": 1.4,
-#             "max_walk_time": 300,  # changed (can delete later)
-#         },
-#     },
-#     "Mid Stay (1-2h)": {
-#         "description": "Service, Tourists - find a reliable spot nearby.",
-#         "params": {
-#             "lambda_w": 4.0,
-#             "lambda_e": 3.0,
-#             "lambda_tr": 1.0,
-#             "k": 3,
-#             "traffic_multiplier": 1.3,
-#             "max_walk_time": 660,
-#         },
-#     },
-#     "Long Stay - Day (6-10h)": {
-#         "description": "Office, Students - walk is fine, exit must be fast for rush hour.",
-#         "params": {
-#             "lambda_w": 3.0,
-#             "lambda_e": 2.0,
-#             "lambda_tr": 1.0,
-#             "k": 4,
-#             "traffic_multiplier": 1.7,
-#             "max_walk_time": 900,
-#         },
-#     },
-#     "Long Stay - Night (8-12h)": {
-#         "description": "Residents - walk as little as possible.",
-#         "params": {
-#             "lambda_w": 2.0,
-#             "lambda_e": 1.5,
-#             "lambda_tr": 1.0,
-#             "k": 4,
-#             "traffic_multiplier": 1.0,
-#             "max_walk_time": 1200,
-#         },
-#     },
-#     "Evening Stay (2-4h)": {
-#         "description": "Social, Events - exit time is critical, walk tolerated.",
-#         "params": {
-#             "lambda_w": 4.2,
-#             "lambda_e": 3.0,
-#             "lambda_tr": 1.0,
-#             "k": 4,
-#             "traffic_multiplier": 1.0,
-#             "max_walk_time": 720,
-#         },
-#     },
-#     "Taxi (5-10m)": {
-#         "description": "Drop-off - absolute proximity.",
-#         "params": {
-#             "lambda_w": 8.0,
-#             "lambda_e": 4.1,
-#             "lambda_tr": 1.0,
-#             "k": 1,
-#             "traffic_multiplier": 1.4,
-#             "max_walk_time": 240,
-#         },
-#     },
-#     "Delivery (1-4m)": {
-#         "description": "Courier - doorstep access.",
-#         "params": {
-#             "lambda_w": 8.0,
-#             "lambda_e": 4.1,
-#             "lambda_tr": 1.0,
-#             "k": 1,
-#             "traffic_multiplier": 1.5,
-#             "max_walk_time": 240,
-#         },
-#     },
-#     "Custom": {"description": "Manually tune parameters.", "params": {}},
-# }
