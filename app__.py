@@ -7,6 +7,7 @@ import pytz
 from geopy.distance import geodesic
 import requests as http_requests
 import routing
+import pandas as pd
 
 # from routing import add_edge_from_latlon
 from scenarios import SCENARIOS
@@ -16,6 +17,7 @@ from algorithms import (
     FiniteHorizonMDP,
     HeuristicLookahead,
     MDP_Difference,
+    TwoStageMDP,
 )
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -316,7 +318,7 @@ def build_solution(
         DISTANCE_CACHE[cache_key] = result
         return result
 
-    restricted_spots = restrict_spots_by_walk_time(MANUAL_SPOTS, dest, limit=30)
+    restricted_spots = restrict_spots_by_walk_time(MANUAL_SPOTS, dest, limit=40)
 
     adapter = StateAdapter(
         start,
@@ -332,17 +334,30 @@ def build_solution(
     state["exit_multiplier"] = exit_multiplier
     state["G_aug"] = G_used
 
+    # solver_class = (
+    #     MDP_Difference
+    #     if algo_choice == "MDP_Difference"
+    #     else (FiniteHorizonMDP if algo_choice == "MDP" else HeuristicLookahead)
+    # )
     solver_class = (
         MDP_Difference
         if algo_choice == "MDP_Difference"
-        else (FiniteHorizonMDP if algo_choice == "MDP" else HeuristicLookahead)
+        else (
+            FiniteHorizonMDP
+            if algo_choice == "MDP"
+            else (TwoStageMDP if algo_choice == "TwoStage" else HeuristicLookahead)
+        )
     )
     solver = solver_class(state)
     chain, metrics, _ = solver.solve(**params)
 
     if not chain:
         return {"status": "error", "message": "Pathfinding failed."}
-
+    ######### new ########
+    if hasattr(solver, "DEBUG_DATA") and solver.DEBUG_DATA:
+        df = pd.DataFrame(solver.DEBUG_DATA)
+        df.to_csv("debug_distribution.csv", index=False)
+        print("Saved debug_distribution.csv")
     segments = []
     details = []
     curr_origin_id = start

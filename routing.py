@@ -43,6 +43,7 @@ COST_STRAIGHT = 0.0
 G = None
 G_TURN = None
 
+
 BUSY_STREETS_1 = [
     # "Мәңгілік Ел даңғылы",
     # "Тұран даңғылы",
@@ -133,121 +134,289 @@ def initialize_graph():
         data["travel_time_new"] = base * multiplier
 
 
+# def augment_graph_with_spots(spots):
+#     """
+#     Realizes the 'Split-Edge' theory.
+#     Transforms the graph by injecting spot-nodes into existing edges.
+#     """
+#     global G
+#     initialize_graph()  # убеждаемся, что карта дорог загружена
+
+#     # Work on a copy to keep the base graph clean
+#     G_aug = G.copy()
+
+#     # 1. Find nearest edges for all spots
+#     lats = [s["coords"][0] for s in spots]
+#     lngs = [s["coords"][1] for s in spots]
+#     nearest_edges = ox.nearest_edges(
+#         G_aug, lngs, lats
+#     )  # На какой именно улице она лежит ближе всего?
+
+#     ########## new #########
+#     # u, v, k = nearest_edges
+#     # print(u, v, k)
+#     # print(G.get_edge_data(u, v, k))
+#     ########## new #########
+#     # 2. Group spots by the edge they belong to
+#     edge_to_spots = {}
+#     for i, edge in enumerate(nearest_edges):
+#         ######### CHANGE ##########
+#         spots[i]["_edge"] = edge
+#         if edge not in edge_to_spots:
+#             edge_to_spots[edge] = []
+#         edge_to_spots[edge].append(spots[i])
+
+#     for (u, v, k), spot_list in edge_to_spots.items():
+#         edge_data = G_aug.get_edge_data(u, v, k)
+#         if not edge_data:
+#             continue
+#         ########### CHANGE ################
+#         bearing = edge_data.get("bearing", 0)
+
+#         edge_geom = edge_data.get("geometry", None)  ### we have None values too
+#         total_len = edge_data["length"]
+#         total_time = edge_data["travel_time_new"]  # CHANGE from travel_time
+
+#         # Calculate distance along edge for each spot
+#         spot_offsets = []
+#         for s in spot_list:
+#             p = Point(s["coords"][1], s["coords"][0])
+#             ########### CHANGE ##########
+#             s["_bearing"] = bearing
+#             ##### CHANGE ###############
+#             if edge_geom is None:
+#                 # build straight-line geometry from u to v
+#                 u_x, u_y = G_aug.nodes[u]["x"], G_aug.nodes[u]["y"]
+#                 v_x, v_y = G_aug.nodes[v]["x"], G_aug.nodes[v]["y"]
+#                 edge_geom = LineString([(u_x, u_y), (v_x, v_y)])
+#             dist_along = edge_geom.project(p)
+#             ##### CHANGE ###############
+#             spot_offsets.append((s["id"], dist_along, s["coords"]))
+
+#         # Sort spots by distance along the edge
+#         spot_offsets.sort(key=lambda x: x[1])
+
+#         # 3. Split the edge
+#         curr_u = u
+#         last_offset = 0
+
+#         for spot_id, offset, coords in spot_offsets:
+#             new_node = f"spot_{spot_id}"
+#             ###### CHANGE 1 ##########
+#             proj_point = edge_geom.interpolate(offset)
+
+#             G_aug.add_node(
+#                 new_node,
+#                 x=proj_point.x,
+#                 y=proj_point.y,
+#                 is_manual=True,  # new
+#             )
+#             ###### CHANGE 1 ##########
+#             # store the real graph node for this spot
+#             for s in spot_list:
+#                 if s["id"] == spot_id:
+#                     s["_node_id"] = new_node
+#                     s["_proj_coords"] = (proj_point.y, proj_point.x)
+#                     break
+#             ####### change ############
+#             # Calculate segment metrics
+#             seg_len = offset - last_offset
+#             ratio = seg_len / total_len if total_len > 0 else 0
+#             seg_time = total_time * ratio
+
+#             # Add the segment from current position to this spot
+#             G_aug.add_edge(
+#                 curr_u,
+#                 new_node,
+#                 length=seg_len,
+#                 travel_time_new=seg_time,  # CHANGE from travel_time
+#                 highway=edge_data.get("highway"),
+#             )
+
+#             curr_u = new_node
+#             last_offset = offset
+
+#         # Final segment to the original end intersection
+#         final_len = total_len - last_offset
+#         ratio = final_len / total_len if total_len > 0 else 0
+#         G_aug.add_edge(
+#             curr_u,
+#             v,
+#             length=final_len,
+#             travel_time_new=total_time * ratio,  # CHANGE from travel_time
+#             highway=edge_data.get("highway"),
+#         )
+
+#         # Remove the original long edge
+#         G_aug.remove_edge(u, v, k)
+
+
+#     return G_aug
 def augment_graph_with_spots(spots):
     """
-    Realizes the 'Split-Edge' theory.
-    Transforms the graph by injecting spot-nodes into existing edges.
+    Split road edges by injecting spot nodes into the graph.
+
+    Fixes:
+    1. If reverse edge(s) v->u exist, split them too.
+    2. Use geometry projection only for relative position along the edge,
+       then convert that fraction into meters using edge_data["length"].
+    3. If spots are attached to both (u,v,*) and (v,u,*), process them together.
     """
     global G
-    initialize_graph()  # убеждаемся, что карта дорог загружена
+    initialize_graph()
 
-    # Work on a copy to keep the base graph clean
     G_aug = G.copy()
 
-    # 1. Find nearest edges for all spots
     lats = [s["coords"][0] for s in spots]
     lngs = [s["coords"][1] for s in spots]
-    nearest_edges = ox.nearest_edges(
-        G_aug, lngs, lats
-    )  # На какой именно улице она лежит ближе всего?
+    nearest_edges = ox.nearest_edges(G_aug, lngs, lats)
 
-    ########## new #########
-    # u, v, k = nearest_edges
-    # print(u, v, k)
-    # print(G.get_edge_data(u, v, k))
-    ########## new #########
-    # 2. Group spots by the edge they belong to
     edge_to_spots = {}
     for i, edge in enumerate(nearest_edges):
-        ######### CHANGE ##########
         spots[i]["_edge"] = edge
-        if edge not in edge_to_spots:
-            edge_to_spots[edge] = []
-        edge_to_spots[edge].append(spots[i])
+        edge_to_spots.setdefault(edge, []).append(spots[i])
 
-    for (u, v, k), spot_list in edge_to_spots.items():
+    def build_edge_geometry(graph, a, b, edge_data):
+        geom = edge_data.get("geometry")
+        if geom is None:
+            ax, ay = graph.nodes[a]["x"], graph.nodes[a]["y"]
+            bx, by = graph.nodes[b]["x"], graph.nodes[b]["y"]
+            geom = LineString([(ax, ay), (bx, by)])
+        return geom
+
+    def project_spots_onto_edge(graph, a, b, edge_data, spot_list, reverse=False):
+        edge_geom = build_edge_geometry(graph, a, b, edge_data)
+        geom_len = edge_geom.length
+        total_len = float(edge_data.get("length", 0.0))
+
+        out = []
+        for s in spot_list:
+            p = Point(s["coords"][1], s["coords"][0])
+
+            proj_dist_geom = edge_geom.project(p)
+            ratio = (proj_dist_geom / geom_len) if geom_len > 0 else 0.0
+            ratio = max(0.0, min(1.0, ratio))
+
+            if reverse:
+                ratio = 1.0 - ratio
+
+            offset_m = ratio * total_len
+            proj_point = edge_geom.interpolate(proj_dist_geom)
+
+            out.append(
+                {
+                    "spot": s,
+                    "offset_m": offset_m,
+                    "proj_point": proj_point,
+                }
+            )
+
+        out.sort(key=lambda x: x["offset_m"])
+        return out
+
+    def add_split_chain(graph, a, b, k_edge, edge_data, projected_spots):
+        total_len = float(edge_data.get("length", 0.0))
+        total_time = float(edge_data.get("travel_time_new", 0.0))
+
+        curr = a
+        last_offset_m = 0.0
+
+        for item in projected_spots:
+            s = item["spot"]
+            new_node = f"spot_{s['id']}"
+            proj_point = item["proj_point"]
+            offset_m = item["offset_m"]
+
+            if new_node not in graph:
+                graph.add_node(
+                    new_node,
+                    x=proj_point.x,
+                    y=proj_point.y,
+                    is_manual=True,
+                )
+                s["_node_id"] = new_node
+                s["_proj_coords"] = (proj_point.y, proj_point.x)
+                s["_bearing"] = edge_data.get("bearing", 0)
+
+            seg_len = max(0.0, offset_m - last_offset_m)
+            seg_ratio = (seg_len / total_len) if total_len > 0 else 0.0
+            seg_time = total_time * seg_ratio
+
+            graph.add_edge(
+                curr,
+                new_node,
+                length=seg_len,
+                travel_time_new=seg_time,
+                highway=edge_data.get("highway"),
+                name=edge_data.get("name"),
+            )
+
+            curr = new_node
+            last_offset_m = offset_m
+
+        final_len = max(0.0, total_len - last_offset_m)
+        final_ratio = (final_len / total_len) if total_len > 0 else 0.0
+
+        graph.add_edge(
+            curr,
+            b,
+            length=final_len,
+            travel_time_new=total_time * final_ratio,
+            highway=edge_data.get("highway"),
+            name=edge_data.get("name"),
+        )
+
+        if graph.has_edge(a, b, k_edge):
+            graph.remove_edge(a, b, k_edge)
+
+    processed = set()
+
+    for (u, v, k), spot_list in list(edge_to_spots.items()):
+        if (u, v, k) in processed:
+            continue
+
         edge_data = G_aug.get_edge_data(u, v, k)
         if not edge_data:
             continue
-        ########### CHANGE ################
-        bearing = edge_data.get("bearing", 0)
 
-        edge_geom = edge_data.get("geometry", None)  ### we have None values too
-        total_len = edge_data["length"]
-        total_time = edge_data["travel_time_new"]  # CHANGE from travel_time
+        # collect ALL spots belonging to this direction + reverse direction(s)
+        combined_spots = list(spot_list)
 
-        # Calculate distance along edge for each spot
-        spot_offsets = []
-        for s in spot_list:
-            p = Point(s["coords"][1], s["coords"][0])
-            ########### CHANGE ##########
-            s["_bearing"] = bearing
-            ##### CHANGE ###############
-            if edge_geom is None:
-                # build straight-line geometry from u to v
-                u_x, u_y = G_aug.nodes[u]["x"], G_aug.nodes[u]["y"]
-                v_x, v_y = G_aug.nodes[v]["x"], G_aug.nodes[v]["y"]
-                edge_geom = LineString([(u_x, u_y), (v_x, v_y)])
-            dist_along = edge_geom.project(p)
-            ##### CHANGE ###############
-            spot_offsets.append((s["id"], dist_along, s["coords"]))
+        reverse_keys = []
+        if G_aug.has_edge(v, u):
+            reverse_keys = list(G_aug[v][u].keys())
+            for k_rev in reverse_keys:
+                combined_spots.extend(edge_to_spots.get((v, u, k_rev), []))
 
-        # Sort spots by distance along the edge
-        spot_offsets.sort(key=lambda x: x[1])
+        # deduplicate by spot id
+        unique_spots = []
+        seen_ids = set()
+        for s in combined_spots:
+            if s["id"] not in seen_ids:
+                seen_ids.add(s["id"])
+                unique_spots.append(s)
 
-        # 3. Split the edge
-        curr_u = u
-        last_offset = 0
-
-        for spot_id, offset, coords in spot_offsets:
-            new_node = f"spot_{spot_id}"
-            ###### CHANGE 1 ##########
-            proj_point = edge_geom.interpolate(offset)
-
-            G_aug.add_node(
-                new_node,
-                x=proj_point.x,
-                y=proj_point.y,
-                is_manual=True,  # new
-            )
-            ###### CHANGE 1 ##########
-            # store the real graph node for this spot
-            for s in spot_list:
-                if s["id"] == spot_id:
-                    s["_node_id"] = new_node
-                    s["_proj_coords"] = (proj_point.y, proj_point.x)
-                    break
-            ####### change ############
-            # Calculate segment metrics
-            seg_len = offset - last_offset
-            ratio = seg_len / total_len if total_len > 0 else 0
-            seg_time = total_time * ratio
-
-            # Add the segment from current position to this spot
-            G_aug.add_edge(
-                curr_u,
-                new_node,
-                length=seg_len,
-                travel_time_new=seg_time,  # CHANGE from travel_time
-                highway=edge_data.get("highway"),
-            )
-
-            curr_u = new_node
-            last_offset = offset
-
-        # Final segment to the original end intersection
-        final_len = total_len - last_offset
-        ratio = final_len / total_len if total_len > 0 else 0
-        G_aug.add_edge(
-            curr_u,
-            v,
-            length=final_len,
-            travel_time_new=total_time * ratio,  # CHANGE from travel_time
-            highway=edge_data.get("highway"),
+        # split forward edge
+        forward_projected = project_spots_onto_edge(
+            G_aug, u, v, edge_data, unique_spots, reverse=False
         )
+        add_split_chain(G_aug, u, v, k, edge_data, forward_projected)
+        processed.add((u, v, k))
 
-        # Remove the original long edge
-        G_aug.remove_edge(u, v, k)
+        # split reverse edge(s), if they exist
+        for k_rev in reverse_keys:
+            if (v, u, k_rev) in processed:
+                continue
+
+            rev_edge_data = G_aug.get_edge_data(v, u, k_rev)
+            if not rev_edge_data:
+                continue
+
+            reverse_projected = project_spots_onto_edge(
+                G_aug, v, u, rev_edge_data, unique_spots, reverse=True
+            )
+            add_split_chain(G_aug, v, u, k_rev, rev_edge_data, reverse_projected)
+            processed.add((v, u, k_rev))
 
     return G_aug
 
@@ -525,12 +694,19 @@ def get_route(u_coords, v_coords, custom_G=None):
             names2 = edge2.get("name")
             is_hard = False
             if names1 and names2:
-                names1 = names1 if isinstance(names1, list) else [names1]
-                names2 = names2 if isinstance(names2, list) else [names2]
+                # names1 = names1 if isinstance(names1, list) else [names1]
+                # names2 = names2 if isinstance(names2, list) else [names2]
+                # is_hard = any(
+                #     (a, b) in HARD_INTERSECTIONS or (b, a) in HARD_INTERSECTIONS
+                #     for a in names1
+                #     for b in names2
+                # )
+                n1_list = names1 if isinstance(names1, list) else [names1]
+                n2_list = names2 if isinstance(names2, list) else [names2]
                 is_hard = any(
-                    (a, b) in HARD_INTERSECTIONS or (b, a) in HARD_INTERSECTIONS
-                    for a in names1
-                    for b in names2
+                    (s1, s2) in HARD_INTERSECTIONS or (s2, s1) in HARD_INTERSECTIONS
+                    for s1 in n1_list
+                    for s2 in n2_list
                 )
 
             # Traffic signal penalty
@@ -563,7 +739,8 @@ def get_route(u_coords, v_coords, custom_G=None):
             "nodes": path,
         }
 
-    except Exception:
+    except Exception as e:
+        print(f"[get_route] failed u={u_node} v={v_node}: {e}")
         return {
             "path": [],
             "travel_time": float("inf"),
@@ -629,7 +806,8 @@ def count_crossings(spot_coords, dest_coords, G, ignore_edge=None, eps=1e-10):
     opposite_sides = False
 
     # Step 1: Check if spot and dest are on opposite sides of spot's own street
-    if ignore_edge is not None and ignore_edge in G.edges:
+    # if ignore_edge is not None and ignore_edge in G.edges:
+    if ignore_edge is not None and G.has_edge(*ignore_edge):
         spot_data = G.edges[ignore_edge]
         spot_street_name = normalize_street_name(spot_data.get("name"))
         spot_sign = _point_side_relative_to_edge(spot_coords, G, ignore_edge)
@@ -680,10 +858,17 @@ def _get_edge_data_for_path_pair(target_G, u, v):
     edge_data = target_G.get_edge_data(u, v)
     if not edge_data:
         return None
+    # if isinstance(edge_data, dict):
+    #     first_val = list(edge_data.values())[0]
+    #     if isinstance(first_val, dict):
+    #         return first_val
+    # return edge_data
     if isinstance(edge_data, dict):
         first_val = list(edge_data.values())[0]
         if isinstance(first_val, dict):
-            return first_val
+            return min(
+                edge_data.values(), key=lambda d: d.get("travel_time_new", float("inf"))
+            )
     return edge_data
 
 

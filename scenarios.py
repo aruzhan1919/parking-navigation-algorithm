@@ -7,7 +7,7 @@ SCENARIOS = {
     "Short Stay (10-40m)": {
         "description": "Errands, Parents - quickly find a spot near the target.",
         "params": {
-            "lambda_w": 4.0,  # штраф за пешую ходьбу 8 4
+            "lambda_w": 10.0,  # штраф за пешую ходьбу 8 4
             "lambda_e": 1.0,  # важность быстрого выезда 1
             "lambda_tr": 3.0,  # важность времени между парковками 3
             "lambda_turns_arr": 0.0,  # NEW
@@ -36,7 +36,7 @@ SCENARIOS = {
         "description": "Office, Students - walk is fine, exit must be fast for rush hour.",
         "params": {
             "lambda_w": 10.0,  # 6.0
-            "lambda_e": 8.0,
+            "lambda_e": 8.0,  # 8.0
             "lambda_tr": 5.0,  # 8.0
             "lambda_turns_arr": 2.0,  # NEW
             "lambda_turns_exit": 8.0,  # NEW

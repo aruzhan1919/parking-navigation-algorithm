@@ -296,6 +296,184 @@ class BaseAlgorithm(ABC):
 
 
 class MDP_Difference(BaseAlgorithm):
+    # def solve(self, **kwargs):
+    #     k, lw, le, ltr, lturn_arr, lturn_exit, lcross = (
+    #         int(kwargs.get("k", 3)),
+    #         kwargs.get("lambda_w", 1.0),
+    #         kwargs.get("lambda_e", 1.0),
+    #         kwargs.get("lambda_tr", 1.0),
+    #         kwargs.get("lambda_turns_arr", 1.0),
+    #         kwargs.get("lambda_turns_exit", 1.0),
+    #         kwargs.get("lambda_cross", 1.0),
+    #     )
+
+    #     beam = [(0.0, 1.0, -1, [], frozenset())]
+    #     best_chain = []
+
+    #     for _ in range(k):
+    #         candidates = []
+    #         for cost_so_far, fail_prob, curr, path, visited in beam:
+    #             phi_prev = self._get_phi(curr) if curr >= 0 else 0
+    #             norm_phi_prev = phi_prev / self.max_phi
+
+    #             for i in range(self.n):
+    #                 raw_drive = self.trans_matrix[curr + 1, i]
+    #                 raw_turn = self.turn_matrix[curr + 1, i]
+    #                 if (
+    #                     raw_drive == float("inf")
+    #                     or raw_turn == float("inf")
+    #                     or i in visited
+    #                 ):
+    #                     continue
+
+    #                 p_i = self.spots[i].get("p_i", 0.8)
+    #                 walk = self.walk_fn(self.spots[i]["coords"])
+    #                 if curr == -1 and walk > 180:
+    #                     continue
+
+    #                 r = self.drive_fn(("spot", self.spots[i]), ("node", "ref"))
+    #                 exit_d = r["travel_time"]
+    #                 exit_turn = r["turn_penalty"]
+    #                 raw_cross = self.cross_vector[i]
+
+    #                 drive_w = ltr if curr >= 0 else 1.0
+    #                 norm_drive = (drive_w * raw_drive) / self.max_drive
+    #                 norm_turn = (lturn_arr * raw_turn) / self.max_turn
+    #                 norm_cross = (lcross * raw_cross) / self.max_cross
+    #                 norm_exit_turn = (lturn_exit * exit_turn) / self.max_turn
+
+    #                 arrival_cost = norm_drive + norm_turn + norm_phi_prev
+    #                 success_cost = (
+    #                     (lw * (walk / self.max_walk))
+    #                     + (le * (exit_d / self.max_drive))
+    #                     + norm_cross
+    #                     + norm_exit_turn
+    #                 )
+    #                 expected_increment = (
+    #                     fail_prob * arrival_cost + fail_prob * p_i * success_cost
+    #                 )
+
+    #                 candidates.append(
+    #                     (
+    #                         cost_so_far + expected_increment,
+    #                         fail_prob * (1.0 - p_i),
+    #                         i,
+    #                         path + [i],
+    #                         visited | {i},
+    #                     )
+    #                 )
+
+    #         candidates.sort(key=lambda x: x[0])
+    #         beam = candidates[:1000]
+    #         if beam:
+    #             best_chain = beam[0][3]
+
+    #     # ── постобработка — идентична HeuristicLookahead ──
+    #     if not best_chain:
+    #         return [], calculate_metrics([], self.state), {}
+
+    #     import routing
+
+    #     def spot_node(idx):
+    #         return f"spot_{self.spots[idx]['id']}"
+
+    #     full_chain = []
+    #     used = set()
+
+    #     # 1. Insert free spots BEFORE the first chosen spot
+    #     first = best_chain[0]
+    #     first_node = spot_node(first)
+
+    #     route_sf = routing.get_route(
+    #         self.state["grid"].nodes["start"],
+    #         first_node,
+    #         custom_G=self.state["G_aug"],
+    #     )
+    #     route_nodes = route_sf["nodes"]
+    #     if first_node not in route_nodes:
+    #         route_nodes.append(first_node)
+
+    #     idx_first = route_nodes.index(first_node)
+    #     before_spots = []
+
+    #     for j in range(self.n):
+    #         if j == first:
+    #             continue
+    #         j_node = spot_node(j)
+    #         if j_node in route_nodes:
+    #             idx_j = route_nodes.index(j_node)
+    #             if idx_j < idx_first:
+    #                 walk_time = self.walk_fn(self.spots[j]["coords"])
+    #                 if walk_time <= 300:
+    #                     before_spots.append((idx_j, j))
+
+    #     before_spots.sort(key=lambda x: x[0])
+    #     for _, j in before_spots:
+    #         full_chain.append(j)
+    #         used.add(j)
+
+    #     # 2. Insert free spots BETWEEN consecutive chosen spots
+    #     full_chain_base = full_chain.copy()
+    #     for idx in best_chain:
+    #         if idx not in full_chain_base:
+    #             full_chain_base.append(idx)
+
+    #     for i in range(len(full_chain_base) - 1):
+    #         a = full_chain_base[i]
+    #         b = full_chain_base[i + 1]
+
+    #         if a not in used:
+    #             full_chain.append(a)
+    #             used.add(a)
+
+    #         route = routing.get_route(
+    #             spot_node(a),
+    #             spot_node(b),
+    #             custom_G=self.state["G_aug"],
+    #         )
+    #         route_nodes = route["nodes"]
+
+    #         route_edges = set()
+    #         for u, v in zip(route_nodes[:-1], route_nodes[1:]):
+    #             route_edges.add((u, v))
+    #             route_edges.add((v, u))
+
+    #         between_spots = []
+    #         for j in range(self.n):
+    #             if j in used:
+    #                 continue
+    #             j_node = spot_node(j)
+
+    #             if j_node in route_nodes:
+    #                 idx_j = route_nodes.index(j_node)
+    #                 between_spots.append((idx_j, j))
+    #                 continue
+
+    #             u, v, _ = self.spots[j]["_edge"]
+    #             if (u, v) in route_edges:
+    #                 if u in route_nodes:
+    #                     idx_j = route_nodes.index(u)
+    #                 elif v in route_nodes:
+    #                     idx_j = route_nodes.index(v)
+    #                 else:
+    #                     continue
+    #                 between_spots.append((idx_j, j))
+
+    #         between_spots.sort(key=lambda x: x[0])
+    #         for _, j in between_spots:
+    #             full_chain.append(j)
+    #             used.add(j)
+
+    #     # 3. Add the last chosen spot
+    #     last = best_chain[-1]
+    #     if last not in used:
+    #         full_chain.append(last)
+
+    #     # # trim to k spots
+    #     # full_chain = full_chain[:k]
+
+    #     return full_chain, calculate_metrics(full_chain, self.state), {}
+
     def solve(self, **kwargs):
         k, lw, le, ltr, lturn_arr, lturn_exit, lcross = (
             int(kwargs.get("k", 3)),
@@ -303,22 +481,32 @@ class MDP_Difference(BaseAlgorithm):
             kwargs.get("lambda_e", 1.0),
             kwargs.get("lambda_tr", 1.0),
             kwargs.get("lambda_turns_arr", 1.0),
-            kwargs.get("lambda_turns_exit", 1.0),
+            kwargs.get("lambda_turns_exit", 1.0),  # NEW
             kwargs.get("lambda_cross", 1.0),
         )
-
         beam = [(0.0, 1.0, -1, [], frozenset())]
-        best_chain = []
+        ############ CHANGE ###############
+        # first_idx = min(
+        #     range(self.n), key=lambda i: self.walk_fn(self.spots[i]["coords"])
+        # )
+
+        # beam = [(0.0, 1.0, first_idx, [first_idx], {first_idx})]
+        best_chain = []  # (cost_so_far, fail_probability, current_spot, path_taken, visited_spots)
 
         for _ in range(k):
             candidates = []
             for cost_so_far, fail_prob, curr, path, visited in beam:
+                # Search penalty of failed spot normalized by M_phi
                 phi_prev = self._get_phi(curr) if curr >= 0 else 0
                 norm_phi_prev = phi_prev / self.max_phi
 
                 for i in range(self.n):
-                    raw_drive = self.trans_matrix[curr + 1, i]
-                    raw_turn = self.turn_matrix[curr + 1, i]
+                    raw_drive = self.trans_matrix[
+                        curr + 1, i
+                    ]  # driving time from current position to spot  (curr +1 means current position in our matrix)
+                    raw_turn = self.turn_matrix[curr + 1, i]  # NEW
+                    # if raw_drive == float("inf") or i in visited:
+                    #     continue
                     if (
                         raw_drive == float("inf")
                         or raw_turn == float("inf")
@@ -328,33 +516,44 @@ class MDP_Difference(BaseAlgorithm):
 
                     p_i = self.spots[i].get("p_i", 0.8)
                     walk = self.walk_fn(self.spots[i]["coords"])
-                    if curr == -1 and walk > 180:
-                        continue
-
+                    # First choice constraint: must be within 3 min walking
+                    if curr == -1:
+                        if walk > 180:
+                            continue
                     r = self.drive_fn(("spot", self.spots[i]), ("node", "ref"))
-                    exit_d = r["travel_time"]
+                    exit_d = r["travel_time"]  # NEW
                     exit_turn = r["turn_penalty"]
-                    raw_cross = self.cross_vector[i]
+                    raw_cross = self.cross_vector[i]  # NEW
 
+                    # Transition: Phi_prev + Drive(u, v)
                     drive_w = ltr if curr >= 0 else 1.0
                     norm_drive = (drive_w * raw_drive) / self.max_drive
-                    norm_turn = (lturn_arr * raw_turn) / self.max_turn
-                    norm_cross = (lcross * raw_cross) / self.max_cross
+                    norm_turn = (lturn_arr * raw_turn) / self.max_turn  # NEW
+                    norm_cross = (lcross * raw_cross) / self.max_cross  # NEW
                     norm_exit_turn = (lturn_exit * exit_turn) / self.max_turn
+                    # norm_step = (
+                    #     norm_drive + norm_turn + norm_phi_prev  # NEW
+                    # )  # показывает нормализованную стоимость перехода к следующей парковке
 
+                    # # Quality: Normalized by respective M values
+                    # norm_quality = (lw * (walk / self.max_walk)) + (
+                    #     le * (exit_d / self.max_drive)
+                    # )  # нормализованная + взвешенная
+                    # q = (
+                    #     norm_step + norm_quality
+                    # )  # это стоимость добавить эту парковку как следующий шаг поиска
                     arrival_cost = norm_drive + norm_turn + norm_phi_prev
-                    success_cost = (
-                        (lw * (walk / self.max_walk))
-                        + (le * (exit_d / self.max_drive))
-                        + norm_cross
-                        + norm_exit_turn
+                    success_cost = (lw * (walk / self.max_walk)) + (
+                        le * (exit_d / self.max_drive) + norm_cross + norm_exit_turn
                     )
+
                     expected_increment = (
                         fail_prob * arrival_cost + fail_prob * p_i * success_cost
                     )
 
                     candidates.append(
                         (
+                            # cost_so_far + fail_prob * p_i * q,
                             cost_so_far + expected_increment,
                             fail_prob * (1.0 - p_i),
                             i,
@@ -362,372 +561,172 @@ class MDP_Difference(BaseAlgorithm):
                             visited | {i},
                         )
                     )
+                    ########## CHANGE ################
+                    # c_fail = (norm_drive + norm_phi_prev) + (phi_prev / self.max_phi)
+
+                    # candidates.append(
+                    #     (
+                    #         cost_so_far + fail_prob * (p_i * q + (1.0 - p_i) * c_fail),
+                    #         fail_prob * (1.0 - p_i),
+                    #         i,
+                    #         path + [i],
+                    #         visited | {i},
+                    #     )
+                    # )
+                    ########### CHANGE ################
 
             candidates.sort(key=lambda x: x[0])
+            # beam = candidates[:1000]
             beam = candidates[:1000]
             if beam:
                 best_chain = beam[0][3]
+            import routing
 
-        # ── постобработка — идентична HeuristicLookahead ──
-        if not best_chain:
-            return [], calculate_metrics([], self.state), {}
+            def spot_node(idx):
+                return f"spot_{self.spots[idx]['id']}"
 
-        import routing
+            full_chain = []
+            used = set()
 
-        def spot_node(idx):
-            return f"spot_{self.spots[idx]['id']}"
+            # 1️⃣ Add spots BEFORE first chosen (path-based, no drive calls)
+            if not best_chain:
+                return [], calculate_metrics([], self.state), {}
+            first = best_chain[0]
+            first_node = spot_node(first)
 
-        full_chain = []
-        used = set()
-
-        # 1. Insert free spots BEFORE the first chosen spot
-        first = best_chain[0]
-        first_node = spot_node(first)
-
-        route_sf = routing.get_route(
-            self.state["grid"].nodes["start"],
-            first_node,
-            custom_G=self.state["G_aug"],
-        )
-        route_nodes = route_sf["nodes"]
-        if first_node not in route_nodes:
-            route_nodes.append(first_node)
-
-        idx_first = route_nodes.index(first_node)
-        before_spots = []
-
-        for j in range(self.n):
-            if j == first:
-                continue
-            j_node = spot_node(j)
-            if j_node in route_nodes:
-                idx_j = route_nodes.index(j_node)
-                if idx_j < idx_first:
-                    walk_time = self.walk_fn(self.spots[j]["coords"])
-                    if walk_time <= 300:
-                        before_spots.append((idx_j, j))
-
-        before_spots.sort(key=lambda x: x[0])
-        for _, j in before_spots:
-            full_chain.append(j)
-            used.add(j)
-
-        # 2. Insert free spots BETWEEN consecutive chosen spots
-        full_chain_base = full_chain.copy()
-        for idx in best_chain:
-            if idx not in full_chain_base:
-                full_chain_base.append(idx)
-
-        for i in range(len(full_chain_base) - 1):
-            a = full_chain_base[i]
-            b = full_chain_base[i + 1]
-
-            if a not in used:
-                full_chain.append(a)
-                used.add(a)
-
-            route = routing.get_route(
-                spot_node(a),
-                spot_node(b),
+            route_sf = routing.get_route(
+                self.state["grid"].nodes["start"],
+                first_node,
                 custom_G=self.state["G_aug"],
             )
-            route_nodes = route["nodes"]
 
-            route_edges = set()
-            for u, v in zip(route_nodes[:-1], route_nodes[1:]):
-                route_edges.add((u, v))
-                route_edges.add((v, u))
+            route_nodes = route_sf["nodes"]
 
-            between_spots = []
+            if first_node not in route_nodes:
+                route_nodes.append(first_node)
+
+            idx_first = route_nodes.index(first_node)
+
+            before_spots = []
+
             for j in range(self.n):
-                if j in used:
+                if j == first:
                     continue
+
                 j_node = spot_node(j)
 
                 if j_node in route_nodes:
                     idx_j = route_nodes.index(j_node)
-                    between_spots.append((idx_j, j))
-                    continue
 
-                u, v, _ = self.spots[j]["_edge"]
-                if (u, v) in route_edges:
-                    if u in route_nodes:
-                        idx_j = route_nodes.index(u)
-                    elif v in route_nodes:
-                        idx_j = route_nodes.index(v)
-                    else:
-                        continue
-                    between_spots.append((idx_j, j))
+                    # must lie before first on path
+                    if idx_j < idx_first:
+                        walk_time = self.walk_fn(self.spots[j]["coords"])
 
-            between_spots.sort(key=lambda x: x[0])
-            for _, j in between_spots:
+                        # walk ≤ 7 minutes (420 sec)
+                        if walk_time <= 300:
+                            before_spots.append((idx_j, j))
+
+            # sort by real order along route
+            before_spots.sort(key=lambda x: x[0])
+
+            for _, j in before_spots:
                 full_chain.append(j)
                 used.add(j)
 
-        # 3. Add the last chosen spot
-        last = best_chain[-1]
-        if last not in used:
-            full_chain.append(last)
+            ############### LAST WORKED PART ########################
+            chain = full_chain.copy()
 
-        # # trim to k spots
+            for idx in best_chain:
+                if idx not in chain:
+                    chain.append(idx)
+
+            for i in range(len(chain) - 1):
+                a = chain[i]
+                b = chain[i + 1]
+
+                if a not in used:
+                    full_chain.append(a)
+                    used.add(a)
+
+                route = routing.get_route(
+                    spot_node(a),
+                    spot_node(b),
+                    custom_G=self.state["G_aug"],
+                )
+                route_nodes = route["nodes"]
+
+                # collect all edges of this path
+                route_edges = set()
+                for u, v in zip(route_nodes[:-1], route_nodes[1:]):
+                    route_edges.add((u, v))
+                    route_edges.add((v, u))
+
+                between_spots = []
+
+                for j in range(self.n):
+                    if j in used:
+                        continue
+
+                    j_node = spot_node(j)
+
+                    # check if spot node is directly on path
+                    if j_node in route_nodes:
+                        idx_j = route_nodes.index(j_node)
+                        between_spots.append((idx_j, j))
+                        continue
+
+                    # check if spot lies on one of the path edges
+                    u, v, _ = self.spots[j]["_edge"]
+                    if (u, v) in route_edges:
+                        # approximate position by first occurrence of u or v
+                        if u in route_nodes:
+                            idx_j = route_nodes.index(u)
+                        elif v in route_nodes:
+                            idx_j = route_nodes.index(v)
+                        else:
+                            continue
+
+                        between_spots.append((idx_j, j))
+
+                # sort by order along path
+                between_spots.sort(key=lambda x: x[0])
+
+                for _, j in between_spots:
+                    full_chain.append(j)
+                    used.add(j)
+
+            # 3️⃣ Add last chosen
+            if best_chain:
+                last = best_chain[-1]
+                if last not in used:
+                    full_chain.append(last)
+        # trim full_chain to k spots
         # full_chain = full_chain[:k]
+        # full_chain = self._postprocess_chain(best_chain, k)  ######## changeee
 
+        # # Пересортировать по реальному маршруту от start
+        # def spot_node(idx):
+        #     return f"spot_{self.spots[idx]['id']}"
+
+        # # Строим маршрут от start до последнего спота
+        # last_node = spot_node(full_chain[-1])
+        # route = routing.get_route(
+        #     self.state["grid"].nodes["start"],
+        #     last_node,
+        #     custom_G=self.state["G_aug"],
+        # )
+        # route_nodes = route["nodes"]
+
+        # # Сортируем full_chain по порядку появления в маршруте
+        # def position_in_route(idx):
+        #     node = spot_node(idx)
+        #     if node in route_nodes:
+        #         return route_nodes.index(node)
+        #     return float("inf")
+
+        # full_chain.sort(key=position_in_route)
         return full_chain, calculate_metrics(full_chain, self.state), {}
-
-
-#     def solve(self, **kwargs):
-#         k, lw, le, ltr, lturn_arr, lturn_exit, lcross = (
-#             int(kwargs.get("k", 3)),
-#             kwargs.get("lambda_w", 1.0),
-#             kwargs.get("lambda_e", 1.0),
-#             kwargs.get("lambda_tr", 1.0),
-#             kwargs.get("lambda_turns_arr", 1.0),
-#             kwargs.get("lambda_turns_exit", 1.0),  # NEW
-#             kwargs.get("lambda_cross", 1.0),
-#         )
-#         beam = [(0.0, 1.0, -1, [], frozenset())]
-#         ############ CHANGE ###############
-#         # first_idx = min(
-#         #     range(self.n), key=lambda i: self.walk_fn(self.spots[i]["coords"])
-#         # )
-
-#         # beam = [(0.0, 1.0, first_idx, [first_idx], {first_idx})]
-#         best_chain = []  # (cost_so_far, fail_probability, current_spot, path_taken, visited_spots)
-
-#         for _ in range(k):
-#             candidates = []
-#             for cost_so_far, fail_prob, curr, path, visited in beam:
-#                 # Search penalty of failed spot normalized by M_phi
-#                 phi_prev = self._get_phi(curr) if curr >= 0 else 0
-#                 norm_phi_prev = phi_prev / self.max_phi
-
-#                 for i in range(self.n):
-#                     raw_drive = self.trans_matrix[
-#                         curr + 1, i
-#                     ]  # driving time from current position to spot  (curr +1 means current position in our matrix)
-#                     raw_turn = self.turn_matrix[curr + 1, i]  # NEW
-#                     # if raw_drive == float("inf") or i in visited:
-#                     #     continue
-#                     if (
-#                         raw_drive == float("inf")
-#                         or raw_turn == float("inf")
-#                         or i in visited
-#                     ):
-#                         continue
-
-#                     p_i = self.spots[i].get("p_i", 0.8)
-#                     walk = self.walk_fn(self.spots[i]["coords"])
-#                     # First choice constraint: must be within 3 min walking
-#                     if curr == -1:
-#                         if walk > 180:
-#                             continue
-#                     r = self.drive_fn(("spot", self.spots[i]), ("node", "ref"))
-#                     exit_d = r["travel_time"]  # NEW
-#                     exit_turn = r["turn_penalty"]
-#                     raw_cross = self.cross_vector[i]  # NEW
-
-#                     # Transition: Phi_prev + Drive(u, v)
-#                     drive_w = ltr if curr >= 0 else 1.0
-#                     norm_drive = (drive_w * raw_drive) / self.max_drive
-#                     norm_turn = (lturn_arr * raw_turn) / self.max_turn  # NEW
-#                     norm_cross = (lcross * raw_cross) / self.max_cross  # NEW
-#                     norm_exit_turn = (lturn_exit * exit_turn) / self.max_turn
-#                     # norm_step = (
-#                     #     norm_drive + norm_turn + norm_phi_prev  # NEW
-#                     # )  # показывает нормализованную стоимость перехода к следующей парковке
-
-#                     # # Quality: Normalized by respective M values
-#                     # norm_quality = (lw * (walk / self.max_walk)) + (
-#                     #     le * (exit_d / self.max_drive)
-#                     # )  # нормализованная + взвешенная
-#                     # q = (
-#                     #     norm_step + norm_quality
-#                     # )  # это стоимость добавить эту парковку как следующий шаг поиска
-#                     arrival_cost = norm_drive + norm_turn + norm_phi_prev
-#                     success_cost = (lw * (walk / self.max_walk)) + (
-#                         le * (exit_d / self.max_drive) + norm_cross + norm_exit_turn
-#                     )
-
-#                     expected_increment = (
-#                         fail_prob * arrival_cost + fail_prob * p_i * success_cost
-#                     )
-
-#                     candidates.append(
-#                         (
-#                             # cost_so_far + fail_prob * p_i * q,
-#                             cost_so_far + expected_increment,
-#                             fail_prob * (1.0 - p_i),
-#                             i,
-#                             path + [i],
-#                             visited | {i},
-#                         )
-#                     )
-#                     ########## CHANGE ################
-#                     # c_fail = (norm_drive + norm_phi_prev) + (phi_prev / self.max_phi)
-
-#                     # candidates.append(
-#                     #     (
-#                     #         cost_so_far + fail_prob * (p_i * q + (1.0 - p_i) * c_fail),
-#                     #         fail_prob * (1.0 - p_i),
-#                     #         i,
-#                     #         path + [i],
-#                     #         visited | {i},
-#                     #     )
-#                     # )
-#                     ########### CHANGE ################
-
-#             candidates.sort(key=lambda x: x[0])
-#             # beam = candidates[:1000]
-#             beam = candidates[:1000]
-#             if beam:
-#                 best_chain = beam[0][3]
-#             import routing
-
-#             def spot_node(idx):
-#                 return f"spot_{self.spots[idx]['id']}"
-
-#             full_chain = []
-#             used = set()
-
-#             # 1️⃣ Add spots BEFORE first chosen (path-based, no drive calls)
-#             if not best_chain:
-#                 return [], calculate_metrics([], self.state), {}
-#             first = best_chain[0]
-#             first_node = spot_node(first)
-
-#             route_sf = routing.get_route(
-#                 self.state["grid"].nodes["start"],
-#                 first_node,
-#                 custom_G=self.state["G_aug"],
-#             )
-
-#             route_nodes = route_sf["nodes"]
-
-#             if first_node not in route_nodes:
-#                 route_nodes.append(first_node)
-
-#             idx_first = route_nodes.index(first_node)
-
-#             before_spots = []
-
-#             for j in range(self.n):
-#                 if j == first:
-#                     continue
-
-#                 j_node = spot_node(j)
-
-#                 if j_node in route_nodes:
-#                     idx_j = route_nodes.index(j_node)
-
-#                     # must lie before first on path
-#                     if idx_j < idx_first:
-#                         walk_time = self.walk_fn(self.spots[j]["coords"])
-
-#                         # walk ≤ 7 minutes (420 sec)
-#                         if walk_time <= 300:
-#                             before_spots.append((idx_j, j))
-
-#             # sort by real order along route
-#             before_spots.sort(key=lambda x: x[0])
-
-#             for _, j in before_spots:
-#                 full_chain.append(j)
-#                 used.add(j)
-
-#             ############### LAST WORKED PART ########################
-#             chain = full_chain.copy()
-
-#             for idx in best_chain:
-#                 if idx not in chain:
-#                     chain.append(idx)
-
-#             for i in range(len(chain) - 1):
-#                 a = chain[i]
-#                 b = chain[i + 1]
-
-#                 if a not in used:
-#                     full_chain.append(a)
-#                     used.add(a)
-
-#                 route = routing.get_route(
-#                     spot_node(a),
-#                     spot_node(b),
-#                     custom_G=self.state["G_aug"],
-#                 )
-#                 route_nodes = route["nodes"]
-
-#                 # collect all edges of this path
-#                 route_edges = set()
-#                 for u, v in zip(route_nodes[:-1], route_nodes[1:]):
-#                     route_edges.add((u, v))
-#                     route_edges.add((v, u))
-
-#                 between_spots = []
-
-#                 for j in range(self.n):
-#                     if j in used:
-#                         continue
-
-#                     j_node = spot_node(j)
-
-#                     # check if spot node is directly on path
-#                     if j_node in route_nodes:
-#                         idx_j = route_nodes.index(j_node)
-#                         between_spots.append((idx_j, j))
-#                         continue
-
-#                     # check if spot lies on one of the path edges
-#                     u, v, _ = self.spots[j]["_edge"]
-#                     if (u, v) in route_edges:
-#                         # approximate position by first occurrence of u or v
-#                         if u in route_nodes:
-#                             idx_j = route_nodes.index(u)
-#                         elif v in route_nodes:
-#                             idx_j = route_nodes.index(v)
-#                         else:
-#                             continue
-
-#                         between_spots.append((idx_j, j))
-
-#                 # sort by order along path
-#                 between_spots.sort(key=lambda x: x[0])
-
-#                 for _, j in between_spots:
-#                     full_chain.append(j)
-#                     used.add(j)
-
-#             # 3️⃣ Add last chosen
-#             if best_chain:
-#                 last = best_chain[-1]
-#                 if last not in used:
-#                     full_chain.append(last)
-#         # trim full_chain to k spots
-#         # full_chain = full_chain[:k]
-#         # full_chain = self._postprocess_chain(best_chain, k)  ######## changeee
-
-#         # # Пересортировать по реальному маршруту от start
-#         # def spot_node(idx):
-#         #     return f"spot_{self.spots[idx]['id']}"
-
-#         # # Строим маршрут от start до последнего спота
-#         # last_node = spot_node(full_chain[-1])
-#         # route = routing.get_route(
-#         #     self.state["grid"].nodes["start"],
-#         #     last_node,
-#         #     custom_G=self.state["G_aug"],
-#         # )
-#         # route_nodes = route["nodes"]
-
-#         # # Сортируем full_chain по порядку появления в маршруте
-#         # def position_in_route(idx):
-#         #     node = spot_node(idx)
-#         #     if node in route_nodes:
-#         #         return route_nodes.index(node)
-#         #     return float("inf")
-
-#         # full_chain.sort(key=position_in_route)
-#         return full_chain, calculate_metrics(full_chain, self.state), {}
-#         # return best_chain, calculate_metrics(best_chain, self.state), {}
+        # return best_chain, calculate_metrics(best_chain, self.state), {}
 
 
 # class FiniteHorizonMDP(BaseAlgorithm):
@@ -1025,181 +1024,8 @@ class FiniteHorizonMDP(BaseAlgorithm):
 #             chain.append(best_i)
 #             curr = best_i
 #         return chain, calculate_metrics(chain, self.state), {}
-# class HeuristicLookahead(BaseAlgorithm):
-#     def solve(self, **kwargs):
-#         k, lw, le, ltr, lturn_arr, lturn_exit, lcross = (
-#             int(kwargs.get("k", 3)),
-#             kwargs.get("lambda_w", 1.0),
-#             kwargs.get("lambda_e", 1.0),
-#             kwargs.get("lambda_tr", 1.0),
-#             kwargs.get("lambda_turns_arr", 1.0),
-#             kwargs.get("lambda_turns_exit", 1.0),
-#             kwargs.get("lambda_cross", 1.0),
-#         )
-
-#         chain, curr = [], -1
-
-#         for _ in range(k):
-#             best_i, min_q = -1, float("inf")
-#             phi_prev = self._get_phi(curr) if curr >= 0 else 0
-#             norm_phi_prev = phi_prev / self.max_phi
-
-#             for i in range(self.n):
-#                 raw_drive = self.trans_matrix[curr + 1, i]
-#                 raw_turn = self.turn_matrix[curr + 1, i]
-
-#                 if raw_drive == float("inf") or raw_turn == float("inf") or i in chain:
-#                     continue
-
-#                 p_i = self.spots[i].get("p_i", 0.8)
-#                 walk = self.walk_fn(self.spots[i]["coords"])
-
-#                 if curr == -1:
-#                     if walk > 180:
-#                         continue
-
-#                 r = self.drive_fn(("spot", self.spots[i]), ("node", "ref"))
-#                 exit_d = r["travel_time"]
-#                 exit_turn = r["turn_penalty"]
-#                 raw_cross = self.cross_vector[i]
-
-#                 drive_w = ltr if curr >= 0 else 1.0
-#                 norm_drive = (drive_w * raw_drive) / self.max_drive
-#                 norm_turn = (lturn_arr * raw_turn) / self.max_turn
-#                 norm_cross = (lcross * raw_cross) / self.max_cross
-#                 norm_exit_turn = (lturn_exit * exit_turn) / self.max_turn
-
-#                 arrival_cost = norm_drive + norm_turn + norm_phi_prev
-#                 success_cost = (
-#                     (lw * (walk / self.max_walk))
-#                     + (le * (exit_d / self.max_drive))
-#                     + norm_cross
-#                     + norm_exit_turn
-#                 )
-
-#                 # Heuristic difference: no beam, no probabilities, greedy one step at a time
-#                 # divides success_cost by p_i — penalizes unreliable spots
-#                 q = arrival_cost + (success_cost / max(p_i, 0.1))
-
-#                 if q < min_q:
-#                     min_q, best_i = q, i
-
-#             if best_i == -1:
-#                 break
-#             chain.append(best_i)
-#             curr = best_i
-
-#         # ---- post-processing: insert free spots along the route ----
-#         if not chain:
-#             return [], calculate_metrics([], self.state), {}
-
-#         import routing
-
-#         def spot_node(idx):
-#             return f"spot_{self.spots[idx]['id']}"
-
-#         full_chain = []
-#         used = set()
-
-#         # 1. Insert free spots BEFORE the first chosen spot
-#         first = chain[0]
-#         first_node = spot_node(first)
-
-#         route_sf = routing.get_route(
-#             self.state["grid"].nodes["start"],
-#             first_node,
-#             custom_G=self.state["G_aug"],
-#         )
-#         route_nodes = route_sf["nodes"]
-
-#         if first_node not in route_nodes:
-#             route_nodes.append(first_node)
-
-#         idx_first = route_nodes.index(first_node)
-#         before_spots = []
-
-#         for j in range(self.n):
-#             if j == first:
-#                 continue
-#             j_node = spot_node(j)
-#             if j_node in route_nodes:
-#                 idx_j = route_nodes.index(j_node)
-#                 if idx_j < idx_first:
-#                     walk_time = self.walk_fn(self.spots[j]["coords"])
-#                     if walk_time <= 300:
-#                         before_spots.append((idx_j, j))
-
-#         before_spots.sort(key=lambda x: x[0])
-#         for _, j in before_spots:
-#             full_chain.append(j)
-#             used.add(j)
-
-#         # 2. Insert free spots BETWEEN consecutive chosen spots
-#         full_chain_base = full_chain.copy()
-#         for idx in chain:
-#             if idx not in full_chain_base:
-#                 full_chain_base.append(idx)
-
-#         for i in range(len(full_chain_base) - 1):
-#             a = full_chain_base[i]
-#             b = full_chain_base[i + 1]
-
-#             if a not in used:
-#                 full_chain.append(a)
-#                 used.add(a)
-
-#             route = routing.get_route(
-#                 spot_node(a),
-#                 spot_node(b),
-#                 custom_G=self.state["G_aug"],
-#             )
-#             route_nodes = route["nodes"]
-
-#             route_edges = set()
-#             for u, v in zip(route_nodes[:-1], route_nodes[1:]):
-#                 route_edges.add((u, v))
-#                 route_edges.add((v, u))
-
-#             between_spots = []
-#             for j in range(self.n):
-#                 if j in used:
-#                     continue
-#                 j_node = spot_node(j)
-
-#                 if j_node in route_nodes:
-#                     idx_j = route_nodes.index(j_node)
-#                     between_spots.append((idx_j, j))
-#                     continue
-
-#                 u, v, _ = self.spots[j]["_edge"]
-#                 if (u, v) in route_edges:
-#                     if u in route_nodes:
-#                         idx_j = route_nodes.index(u)
-#                     elif v in route_nodes:
-#                         idx_j = route_nodes.index(v)
-#                     else:
-#                         continue
-#                     between_spots.append((idx_j, j))
-
-#             between_spots.sort(key=lambda x: x[0])
-#             for _, j in between_spots:
-#                 full_chain.append(j)
-#                 used.add(j)
-
-#         # 3. Add the last chosen spot
-#         last = chain[-1]
-#         if last not in used:
-#             full_chain.append(last)
-#         # trim full_chain to k spots
-#         full_chain = full_chain[:k]
-#         return full_chain, calculate_metrics(full_chain, self.state), {}
-
-
 class HeuristicLookahead(BaseAlgorithm):
     def solve(self, **kwargs):
-        import itertools
-        import routing
-
         k, lw, le, ltr, lturn_arr, lturn_exit, lcross = (
             int(kwargs.get("k", 3)),
             kwargs.get("lambda_w", 1.0),
@@ -1210,37 +1036,26 @@ class HeuristicLookahead(BaseAlgorithm):
             kwargs.get("lambda_cross", 1.0),
         )
 
-        best_chain = []
-        best_cost = float("inf")
+        chain, curr = [], -1
 
-        for chain in itertools.permutations(range(self.n), k):
-            cost_so_far = 0.0
-            fail_prob = 1.0
-            curr = -1
-            visited = set()
-            valid = True
+        for _ in range(k):
+            best_i, min_q = -1, float("inf")
+            phi_prev = self._get_phi(curr) if curr >= 0 else 0
+            norm_phi_prev = phi_prev / self.max_phi
 
-            for i in chain:
+            for i in range(self.n):
                 raw_drive = self.trans_matrix[curr + 1, i]
                 raw_turn = self.turn_matrix[curr + 1, i]
 
-                if (
-                    raw_drive == float("inf")
-                    or raw_turn == float("inf")
-                    or i in visited
-                ):
-                    valid = False
-                    break
+                if raw_drive == float("inf") or raw_turn == float("inf") or i in chain:
+                    continue
 
                 p_i = self.spots[i].get("p_i", 0.8)
                 walk = self.walk_fn(self.spots[i]["coords"])
 
-                if curr == -1 and walk > 180:
-                    valid = False
-                    break
-
-                phi_prev = self._get_phi(curr) if curr >= 0 else 0
-                norm_phi_prev = phi_prev / self.max_phi
+                if curr == -1:
+                    if walk > 180:
+                        continue
 
                 r = self.drive_fn(("spot", self.spots[i]), ("node", "ref"))
                 exit_d = r["travel_time"]
@@ -1254,22 +1069,30 @@ class HeuristicLookahead(BaseAlgorithm):
                 norm_exit_turn = (lturn_exit * exit_turn) / self.max_turn
 
                 arrival_cost = norm_drive + norm_turn + norm_phi_prev
-                success_cost = (lw * (walk / self.max_walk)) + (
-                    le * (exit_d / self.max_drive) + norm_cross + norm_exit_turn
+                success_cost = (
+                    (lw * (walk / self.max_walk))
+                    + (le * (exit_d / self.max_drive))
+                    + norm_cross
+                    + norm_exit_turn
                 )
 
-                expected_increment = (
-                    fail_prob * arrival_cost + fail_prob * p_i * success_cost
-                )
+                # Heuristic difference: no beam, no probabilities, greedy one step at a time
+                # divides success_cost by p_i — penalizes unreliable spots
+                q = arrival_cost + (success_cost / max(p_i, 0.1))
 
-                cost_so_far += expected_increment
-                fail_prob *= 1.0 - p_i
-                visited.add(i)
-                curr = i
+                if q < min_q:
+                    min_q, best_i = q, i
 
-            if valid and cost_so_far < best_cost:
-                best_cost = cost_so_far
-                best_chain = list(chain)
+            if best_i == -1:
+                break
+            chain.append(best_i)
+            curr = best_i
+
+        # ---- post-processing: insert free spots along the route ----
+        if not chain:
+            return [], calculate_metrics([], self.state), {}
+
+        import routing
 
         def spot_node(idx):
             return f"spot_{self.spots[idx]['id']}"
@@ -1277,17 +1100,8 @@ class HeuristicLookahead(BaseAlgorithm):
         full_chain = []
         used = set()
 
-        if not best_chain:
-            return (
-                [],
-                calculate_metrics([], self.state),
-                {
-                    "raw_best_chain": [],
-                    "raw_best_cost": float("inf"),
-                },
-            )
-
-        first = best_chain[0]
+        # 1. Insert free spots BEFORE the first chosen spot
+        first = chain[0]
         first_node = spot_node(first)
 
         route_sf = routing.get_route(
@@ -1295,45 +1109,39 @@ class HeuristicLookahead(BaseAlgorithm):
             first_node,
             custom_G=self.state["G_aug"],
         )
-
         route_nodes = route_sf["nodes"]
 
         if first_node not in route_nodes:
             route_nodes.append(first_node)
 
         idx_first = route_nodes.index(first_node)
-
         before_spots = []
 
         for j in range(self.n):
             if j == first:
                 continue
-
             j_node = spot_node(j)
-
             if j_node in route_nodes:
                 idx_j = route_nodes.index(j_node)
-
                 if idx_j < idx_first:
                     walk_time = self.walk_fn(self.spots[j]["coords"])
                     if walk_time <= 300:
                         before_spots.append((idx_j, j))
 
         before_spots.sort(key=lambda x: x[0])
-
         for _, j in before_spots:
             full_chain.append(j)
             used.add(j)
 
-        chain = full_chain.copy()
+        # 2. Insert free spots BETWEEN consecutive chosen spots
+        full_chain_base = full_chain.copy()
+        for idx in chain:
+            if idx not in full_chain_base:
+                full_chain_base.append(idx)
 
-        for idx in best_chain:
-            if idx not in chain:
-                chain.append(idx)
-
-        for i in range(len(chain) - 1):
-            a = chain[i]
-            b = chain[i + 1]
+        for i in range(len(full_chain_base) - 1):
+            a = full_chain_base[i]
+            b = full_chain_base[i + 1]
 
             if a not in used:
                 full_chain.append(a)
@@ -1352,11 +1160,9 @@ class HeuristicLookahead(BaseAlgorithm):
                 route_edges.add((v, u))
 
             between_spots = []
-
             for j in range(self.n):
                 if j in used:
                     continue
-
                 j_node = spot_node(j)
 
                 if j_node in route_nodes:
@@ -1372,27 +1178,220 @@ class HeuristicLookahead(BaseAlgorithm):
                         idx_j = route_nodes.index(v)
                     else:
                         continue
-
                     between_spots.append((idx_j, j))
 
             between_spots.sort(key=lambda x: x[0])
-
             for _, j in between_spots:
                 full_chain.append(j)
                 used.add(j)
 
-        if best_chain:
-            last = best_chain[-1]
-            if last not in used:
-                full_chain.append(last)
+        # 3. Add the last chosen spot
+        last = chain[-1]
+        if last not in used:
+            full_chain.append(last)
+        # trim full_chain to k spots
+        full_chain = full_chain[:k]
+        return full_chain, calculate_metrics(full_chain, self.state), {}
 
-        # full_chain = full_chain[:k]
 
-        return (
-            full_chain,
-            calculate_metrics(full_chain, self.state),
-            {
-                "raw_best_chain": best_chain,
-                "raw_best_cost": best_cost,
-            },
-        )
+# class HeuristicLookahead(BaseAlgorithm):
+#     def solve(self, **kwargs):
+#         import itertools
+#         import routing
+
+#         k, lw, le, ltr, lturn_arr, lturn_exit, lcross = (
+#             int(kwargs.get("k", 3)),
+#             kwargs.get("lambda_w", 1.0),
+#             kwargs.get("lambda_e", 1.0),
+#             kwargs.get("lambda_tr", 1.0),
+#             kwargs.get("lambda_turns_arr", 1.0),
+#             kwargs.get("lambda_turns_exit", 1.0),
+#             kwargs.get("lambda_cross", 1.0),
+#         )
+
+#         best_chain = []
+#         best_cost = float("inf")
+
+#         for chain in itertools.permutations(range(self.n), k):
+#             cost_so_far = 0.0
+#             fail_prob = 1.0
+#             curr = -1
+#             visited = set()
+#             valid = True
+
+#             for i in chain:
+#                 raw_drive = self.trans_matrix[curr + 1, i]
+#                 raw_turn = self.turn_matrix[curr + 1, i]
+
+#                 if (
+#                     raw_drive == float("inf")
+#                     or raw_turn == float("inf")
+#                     or i in visited
+#                 ):
+#                     valid = False
+#                     break
+
+#                 p_i = self.spots[i].get("p_i", 0.8)
+#                 walk = self.walk_fn(self.spots[i]["coords"])
+
+#                 if curr == -1 and walk > 180:
+#                     valid = False
+#                     break
+
+#                 phi_prev = self._get_phi(curr) if curr >= 0 else 0
+#                 norm_phi_prev = phi_prev / self.max_phi
+
+#                 r = self.drive_fn(("spot", self.spots[i]), ("node", "ref"))
+#                 exit_d = r["travel_time"]
+#                 exit_turn = r["turn_penalty"]
+#                 raw_cross = self.cross_vector[i]
+
+#                 drive_w = ltr if curr >= 0 else 1.0
+#                 norm_drive = (drive_w * raw_drive) / self.max_drive
+#                 norm_turn = (lturn_arr * raw_turn) / self.max_turn
+#                 norm_cross = (lcross * raw_cross) / self.max_cross
+#                 norm_exit_turn = (lturn_exit * exit_turn) / self.max_turn
+
+#                 arrival_cost = norm_drive + norm_turn + norm_phi_prev
+#                 success_cost = (lw * (walk / self.max_walk)) + (
+#                     le * (exit_d / self.max_drive) + norm_cross + norm_exit_turn
+#                 )
+
+#                 expected_increment = (
+#                     fail_prob * arrival_cost + fail_prob * p_i * success_cost
+#                 )
+
+#                 cost_so_far += expected_increment
+#                 fail_prob *= 1.0 - p_i
+#                 visited.add(i)
+#                 curr = i
+
+#             if valid and cost_so_far < best_cost:
+#                 best_cost = cost_so_far
+#                 best_chain = list(chain)
+
+#         def spot_node(idx):
+#             return f"spot_{self.spots[idx]['id']}"
+
+#         full_chain = []
+#         used = set()
+
+#         if not best_chain:
+#             return (
+#                 [],
+#                 calculate_metrics([], self.state),
+#                 {
+#                     "raw_best_chain": [],
+#                     "raw_best_cost": float("inf"),
+#                 },
+#             )
+
+#         first = best_chain[0]
+#         first_node = spot_node(first)
+
+#         route_sf = routing.get_route(
+#             self.state["grid"].nodes["start"],
+#             first_node,
+#             custom_G=self.state["G_aug"],
+#         )
+
+#         route_nodes = route_sf["nodes"]
+
+#         if first_node not in route_nodes:
+#             route_nodes.append(first_node)
+
+#         idx_first = route_nodes.index(first_node)
+
+#         before_spots = []
+
+#         for j in range(self.n):
+#             if j == first:
+#                 continue
+
+#             j_node = spot_node(j)
+
+#             if j_node in route_nodes:
+#                 idx_j = route_nodes.index(j_node)
+
+#                 if idx_j < idx_first:
+#                     walk_time = self.walk_fn(self.spots[j]["coords"])
+#                     if walk_time <= 300:
+#                         before_spots.append((idx_j, j))
+
+#         before_spots.sort(key=lambda x: x[0])
+
+#         for _, j in before_spots:
+#             full_chain.append(j)
+#             used.add(j)
+
+#         chain = full_chain.copy()
+
+#         for idx in best_chain:
+#             if idx not in chain:
+#                 chain.append(idx)
+
+#         for i in range(len(chain) - 1):
+#             a = chain[i]
+#             b = chain[i + 1]
+
+#             if a not in used:
+#                 full_chain.append(a)
+#                 used.add(a)
+
+#             route = routing.get_route(
+#                 spot_node(a),
+#                 spot_node(b),
+#                 custom_G=self.state["G_aug"],
+#             )
+#             route_nodes = route["nodes"]
+
+#             route_edges = set()
+#             for u, v in zip(route_nodes[:-1], route_nodes[1:]):
+#                 route_edges.add((u, v))
+#                 route_edges.add((v, u))
+
+#             between_spots = []
+
+#             for j in range(self.n):
+#                 if j in used:
+#                     continue
+
+#                 j_node = spot_node(j)
+
+#                 if j_node in route_nodes:
+#                     idx_j = route_nodes.index(j_node)
+#                     between_spots.append((idx_j, j))
+#                     continue
+
+#                 u, v, _ = self.spots[j]["_edge"]
+#                 if (u, v) in route_edges:
+#                     if u in route_nodes:
+#                         idx_j = route_nodes.index(u)
+#                     elif v in route_nodes:
+#                         idx_j = route_nodes.index(v)
+#                     else:
+#                         continue
+
+#                     between_spots.append((idx_j, j))
+
+#             between_spots.sort(key=lambda x: x[0])
+
+#             for _, j in between_spots:
+#                 full_chain.append(j)
+#                 used.add(j)
+
+#         if best_chain:
+#             last = best_chain[-1]
+#             if last not in used:
+#                 full_chain.append(last)
+
+#         # full_chain = full_chain[:k]
+
+#         return (
+#             full_chain,
+#             calculate_metrics(full_chain, self.state),
+#             {
+#                 "raw_best_chain": best_chain,
+#                 "raw_best_cost": best_cost,
+#             },
+#         )

@@ -3,7 +3,7 @@ import csv
 import json
 from locations import LOCATIONS
 from scenarios import SCENARIOS
-from app_2 import build_solution
+from app__ import build_solution
 
 ALGORITHMS = ["MDP_Difference", "MDP", "Heuristic"]
 

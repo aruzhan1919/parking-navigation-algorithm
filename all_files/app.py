@@ -8,8 +8,8 @@ import requests as http_requests
 import routing
 from scenarios import SCENARIOS
 from locations import LOCATIONS
-from transformation_experiment_recent import StateAdapter
-from algorithms_final import (
+from all_files.transformation_experiment_recent import StateAdapter
+from all_files.algorithms_final import (
     FiniteHorizonMDP,
     HeuristicLookahead,
     MDP_Difference,

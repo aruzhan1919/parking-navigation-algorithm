@@ -123,6 +123,82 @@ def calculate_metrics(chain, state):
     )
 
 
+# def calculate_metrics(chain, state):
+#     if not chain:
+#         return {
+#             "expected_total_sec": 999999.0,
+#             "expected_drive_sec": 0.0,
+#             "expected_walk_sec": 0.0,
+#             "expected_exit_sec": 0.0,
+#             "expected_cross_sec": 0.0,
+#             "expected_arrival_turn_sec": 0.0,
+#             "expected_exit_turn_sec": 0.0,
+#             "success_probability": 0.0,
+#         }
+
+#     spots = state["spots"]
+#     drive_fn = state["drive_fn"]
+#     walk_fn = state["walk_fn"]
+#     exit_mult = state.get("exit_multiplier", 1.0)
+
+#     expected_drive = 0.0
+#     expected_walk = 0.0
+#     expected_exit = 0.0
+#     expected_cross = 0.0
+#     expected_arrival_turn = 0.0
+#     expected_exit_turn = 0.0
+
+#     reach_prob = 1.0
+#     prev_node = ("node", "start")
+
+#     for idx in chain:
+#         spot = spots[idx]
+#         p_i = spot.get("p_i", 0.8)
+
+#         arrival = drive_fn(prev_node, ("spot", spot))
+#         exit_r = drive_fn(("spot", spot), ("node", "ref"))
+
+#         drive_time = arrival["travel_time"]
+#         arrival_turn = arrival["turn_penalty"]
+#         walk_time = walk_fn(spot["coords"])
+#         exit_time = exit_r["travel_time"] * exit_mult
+#         exit_turn = exit_r["turn_penalty"]
+#         cross_penalty = spot.get("cross_penalty", 0.0)
+
+#         expected_drive += reach_prob * drive_time
+#         expected_arrival_turn += reach_prob * arrival_turn
+
+#         expected_walk += reach_prob * p_i * walk_time
+#         expected_exit += reach_prob * p_i * exit_time
+#         expected_exit_turn += reach_prob * p_i * exit_turn
+#         expected_cross += reach_prob * p_i * cross_penalty
+
+#         reach_prob *= 1.0 - p_i
+#         prev_node = ("spot", spot)
+
+#     expected_drive += reach_prob * 1800.0
+
+#     expected_total = (
+#         expected_drive
+#         + expected_walk
+#         + expected_exit
+#         + expected_cross
+#         + expected_arrival_turn
+#         + expected_exit_turn
+#     )
+
+#     return {
+#         "expected_total_sec": expected_total,
+#         "expected_drive_sec": expected_drive,
+#         "expected_walk_sec": expected_walk,
+#         "expected_exit_sec": expected_exit,
+#         "expected_cross_sec": expected_cross,
+#         "expected_arrival_turn_sec": expected_arrival_turn,
+#         "expected_exit_turn_sec": expected_exit_turn,
+#         "success_probability": 1.0 - reach_prob,
+#     }
+
+
 """
 The logic per spot:
 ```

@@ -380,6 +380,7 @@
                         <option value="MDP_Difference">Progress-Differential MDP</option>
                         <option value="MDP">Finite Horizon MDP</option>
                         <option value="Heuristic">Greedy Lookahead</option>
+                        <option value="TwoStage">Two-Stage MDP</option>
                     </select>
                 </div>
             </section>
@@ -524,8 +525,8 @@
             });
 
             document.getElementById('r-option').innerText = sol.name || '-';
-            document.getElementById('r-time').innerText = (sol.metrics[0] / 60).toFixed(1) + " min";
-            document.getElementById('r-conf').innerText = (sol.metrics[4] * 100).toFixed(0) + "%";
+            document.getElementById('r-time').innerText = (sol.metrics.expected_total_sec / 60).toFixed(1) + " min";
+            document.getElementById('r-conf').innerText = (sol.metrics.success_probability * 100).toFixed(0) + "%";
 
             if (sol.penalized_street) {
                 document.getElementById('r-street').innerText = `Alternative scenario: main street penalized → ${sol.penalized_street}`;

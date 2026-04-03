@@ -713,40 +713,36 @@ class HeuristicLookahead(BaseAlgorithm):
         # return chain, calculate_metrics(chain, self.state), {}
 
 
+import routing
+
+
 class MDP_Difference(BaseAlgorithm):
     def solve(self, **kwargs):
-        k, lw, le, ltr, lturn_arr, lturn_exit, lcross = (
-            int(kwargs.get("k", 3)),
-            kwargs.get("lambda_w", 1.0),
-            kwargs.get("lambda_e", 1.0),
-            kwargs.get("lambda_tr", 1.0),
-            kwargs.get("lambda_turns_arr", 1.0),
-            kwargs.get("lambda_turns_exit", 1.0),  # NEW
-            kwargs.get("lambda_cross", 1.0),
-        )
-        beam = [(0.0, 1.0, -1, [], frozenset())]
-        ############ CHANGE ###############
-        # first_idx = min(
-        #     range(self.n), key=lambda i: self.walk_fn(self.spots[i]["coords"])
-        # )
+        k = int(kwargs.get("k", 3))
+        lw = kwargs.get("lambda_w", 1.0)
+        le = kwargs.get("lambda_e", 1.0)
+        ltr = kwargs.get("lambda_tr", 1.0)
+        lturn_arr = kwargs.get("lambda_turns_arr", 1.0)
+        lturn_exit = kwargs.get("lambda_turns_exit", 1.0)
+        lcross = kwargs.get("lambda_cross", 1.0)
 
-        # beam = [(0.0, 1.0, first_idx, [first_idx], {first_idx})]
-        best_chain = []  # (cost_so_far, fail_probability, current_spot, path_taken, visited_spots)
+        WALK_LIMIT_FIRST = 180  # 3 min: constraint for first spot from start
+        WALK_LIMIT_ENROUTE = 420  # 7 min: filter for spots found along the route
+
+        # ── beam search ───────────────────────────────────────────────────────
+        beam = [(0.0, 1.0, -1, [], frozenset())]
+        best_chain = []
 
         for _ in range(k):
             candidates = []
             for cost_so_far, fail_prob, curr, path, visited in beam:
-                # Search penalty of failed spot normalized by M_phi
                 phi_prev = self._get_phi(curr) if curr >= 0 else 0
                 norm_phi_prev = phi_prev / self.max_phi
 
                 for i in range(self.n):
-                    raw_drive = self.trans_matrix[
-                        curr + 1, i
-                    ]  # driving time from current position to spot  (curr +1 means current position in our matrix)
-                    raw_turn = self.turn_matrix[curr + 1, i]  # NEW
-                    # if raw_drive == float("inf") or i in visited:
-                    #     continue
+                    raw_drive = self.trans_matrix[curr + 1, i]
+                    raw_turn = self.turn_matrix[curr + 1, i]
+
                     if (
                         raw_drive == float("inf")
                         or raw_turn == float("inf")
@@ -756,44 +752,35 @@ class MDP_Difference(BaseAlgorithm):
 
                     p_i = self.spots[i].get("p_i", 0.8)
                     walk = self.walk_fn(self.spots[i]["coords"])
-                    # 🔹 First choice constraint: must be within 3 min walking
-                    if curr == -1:
-                        if walk > 180:
-                            continue
-                    r = self.drive_fn(("spot", self.spots[i]), ("node", "ref"))
-                    exit_d = r["travel_time"]  # NEW
-                    exit_turn = r["turn_penalty"]
-                    raw_cross = self.cross_vector[i]  # NEW
 
-                    # Transition: Phi_prev + Drive(u, v)
+                    # first step must be reachable on foot within 3 min
+                    if curr == -1 and walk > WALK_LIMIT_FIRST:
+                        continue
+
+                    r = self.drive_fn(("spot", self.spots[i]), ("node", "ref"))
+                    exit_d = r["travel_time"]
+                    exit_turn = r["turn_penalty"]
+                    raw_cross = self.cross_vector[i]
+
                     drive_w = ltr if curr >= 0 else 1.0
                     norm_drive = (drive_w * raw_drive) / self.max_drive
-                    norm_turn = (lturn_arr * raw_turn) / self.max_turn  # NEW
-                    norm_cross = (lcross * raw_cross) / self.max_cross  # NEW
+                    norm_turn = (lturn_arr * raw_turn) / self.max_turn
+                    norm_cross = (lcross * raw_cross) / self.max_cross
                     norm_exit_turn = (lturn_exit * exit_turn) / self.max_turn
-                    # norm_step = (
-                    #     norm_drive + norm_turn + norm_phi_prev  # NEW
-                    # )  # показывает нормализованную стоимость перехода к следующей парковке
 
-                    # # Quality: Normalized by respective M values
-                    # norm_quality = (lw * (walk / self.max_walk)) + (
-                    #     le * (exit_d / self.max_drive)
-                    # )  # нормализованная + взвешенная
-                    # q = (
-                    #     norm_step + norm_quality
-                    # )  # это стоимость добавить эту парковку как следующий шаг поиска
                     arrival_cost = norm_drive + norm_turn + norm_phi_prev
-                    success_cost = (lw * (walk / self.max_walk)) + (
-                        le * (exit_d / self.max_drive) + norm_cross + norm_exit_turn
+                    success_cost = (
+                        lw * (walk / self.max_walk)
+                        + le * (exit_d / self.max_drive)
+                        + norm_cross
+                        + norm_exit_turn
                     )
-
                     expected_increment = (
                         fail_prob * arrival_cost + fail_prob * p_i * success_cost
                     )
 
                     candidates.append(
                         (
-                            # cost_so_far + fail_prob * p_i * q,
                             cost_so_far + expected_increment,
                             fail_prob * (1.0 - p_i),
                             i,
@@ -801,148 +788,117 @@ class MDP_Difference(BaseAlgorithm):
                             visited | {i},
                         )
                     )
-                    ########## CHANGE ################
-                    # c_fail = (norm_drive + norm_phi_prev) + (phi_prev / self.max_phi)
-
-                    # candidates.append(
-                    #     (
-                    #         cost_so_far + fail_prob * (p_i * q + (1.0 - p_i) * c_fail),
-                    #         fail_prob * (1.0 - p_i),
-                    #         i,
-                    #         path + [i],
-                    #         visited | {i},
-                    #     )
-                    # )
-                    ########### CHANGE ################
 
             candidates.sort(key=lambda x: x[0])
-            # beam = candidates[:1000]
             beam = candidates[:1000]
             if beam:
                 best_chain = beam[0][3]
-            import routing
 
-            def spot_node(idx):
-                return f"spot_{self.spots[idx]['id']}"
+        # ── postprocessing ────────────────────────────────────────────────────
+        if not best_chain:
+            return [], calculate_metrics([], self.state), {}
 
-            full_chain = []
-            used = set()
+        def spot_node(idx):
+            return f"spot_{self.spots[idx]['id']}"
 
-            # 1️⃣ Add spots BEFORE first chosen (path-based, no drive calls)
-            if not best_chain:
-                return [], calculate_metrics([], self.state), {}
-            first = best_chain[0]
-            first_node = spot_node(first)
+        full_chain: list[int] = []
+        used: set[int] = set()
 
-            route_sf = routing.get_route(
-                self.state["grid"].nodes["start"],
-                first_node,
-                custom_G=self.state["G_aug"],
+        # 1️⃣  Spots that lie BEFORE the first chosen spot on the start→first route
+        first = best_chain[0]
+        first_node = spot_node(first)
+
+        route_sf = routing.get_route(
+            self.state["grid"].nodes["start"],
+            first_node,
+            custom_G=self.state["G_aug"],
+        )
+        route_nodes = route_sf["nodes"]
+        if first_node not in route_nodes:
+            route_nodes.append(first_node)
+
+        idx_first = route_nodes.index(first_node)
+        before_spots = []
+
+        for j in range(self.n):
+            if j == first:
+                continue
+            j_node = spot_node(j)
+            if j_node not in route_nodes:
+                continue
+            idx_j = route_nodes.index(j_node)
+            if idx_j >= idx_first:
+                continue
+            if self.walk_fn(self.spots[j]["coords"]) <= WALK_LIMIT_ENROUTE:
+                before_spots.append((idx_j, j))
+
+        before_spots.sort(key=lambda x: x[0])
+        for _, j in before_spots:
+            full_chain.append(j)
+            used.add(j)
+
+        # 2️⃣  Walk every consecutive segment a→b in the ordered chain,
+        #     collecting spots that sit physically on each path segment.
+        #
+        #     `chain` = before_spots  +  best_chain nodes not already included
+        chain = list(full_chain)  # starts with before_spots in order
+        for idx in best_chain:
+            if idx not in used:
+                chain.append(idx)
+
+        for i in range(len(chain) - 1):
+            a = chain[i]
+            b = chain[i + 1]
+
+            # Ensure `a` is committed to full_chain exactly once
+            if a not in used:
+                full_chain.append(a)
+                used.add(a)
+
+            route = routing.get_route(
+                spot_node(a), spot_node(b), custom_G=self.state["G_aug"]
             )
+            route_nodes = route["nodes"]
 
-            route_nodes = route_sf["nodes"]
+            route_edges: set[tuple] = set()
+            for u, v in zip(route_nodes[:-1], route_nodes[1:]):
+                route_edges.add((u, v))
+                route_edges.add((v, u))
 
-            if first_node not in route_nodes:
-                route_nodes.append(first_node)
-
-            idx_first = route_nodes.index(first_node)
-
-            before_spots = []
-
+            between_spots = []
             for j in range(self.n):
-                if j == first:
+                if j in used:
                     continue
-
                 j_node = spot_node(j)
 
                 if j_node in route_nodes:
-                    idx_j = route_nodes.index(j_node)
+                    between_spots.append((route_nodes.index(j_node), j))
+                    continue
 
-                    # must lie before first on path
-                    if idx_j < idx_first:
-                        walk_time = self.walk_fn(self.spots[j]["coords"])
+                u, v, _ = self.spots[j]["_edge"]
+                if (u, v) in route_edges:
+                    idx_j = (
+                        route_nodes.index(u)
+                        if u in route_nodes
+                        else route_nodes.index(v)
+                        if v in route_nodes
+                        else None
+                    )
+                    if idx_j is not None:
+                        between_spots.append((idx_j, j))
 
-                        # walk ≤ 7 minutes (420 sec)
-                        if walk_time <= 300:
-                            before_spots.append((idx_j, j))
-
-            # sort by real order along route
-            before_spots.sort(key=lambda x: x[0])
-
-            for _, j in before_spots:
+            between_spots.sort(key=lambda x: x[0])
+            for _, j in between_spots:
                 full_chain.append(j)
                 used.add(j)
 
-            ############### LAST WORKED PART ########################
-            chain = full_chain.copy()
-
-            for idx in best_chain:
-                if idx not in chain:
-                    chain.append(idx)
-
-            for i in range(len(chain) - 1):
-                a = chain[i]
-                b = chain[i + 1]
-
-                if a not in used:
-                    full_chain.append(a)
-                    used.add(a)
-
-                route = routing.get_route(
-                    spot_node(a),
-                    spot_node(b),
-                    custom_G=self.state["G_aug"],
-                )
-                route_nodes = route["nodes"]
-
-                # collect all edges of this path
-                route_edges = set()
-                for u, v in zip(route_nodes[:-1], route_nodes[1:]):
-                    route_edges.add((u, v))
-                    route_edges.add((v, u))
-
-                between_spots = []
-
-                for j in range(self.n):
-                    if j in used:
-                        continue
-
-                    j_node = spot_node(j)
-
-                    # check if spot node is directly on path
-                    if j_node in route_nodes:
-                        idx_j = route_nodes.index(j_node)
-                        between_spots.append((idx_j, j))
-                        continue
-
-                    # check if spot lies on one of the path edges
-                    u, v, _ = self.spots[j]["_edge"]
-                    if (u, v) in route_edges:
-                        # approximate position by first occurrence of u or v
-                        if u in route_nodes:
-                            idx_j = route_nodes.index(u)
-                        elif v in route_nodes:
-                            idx_j = route_nodes.index(v)
-                        else:
-                            continue
-
-                        between_spots.append((idx_j, j))
-
-                # sort by order along path
-                between_spots.sort(key=lambda x: x[0])
-
-                for _, j in between_spots:
-                    full_chain.append(j)
-                    used.add(j)
-
-            # 3️⃣ Add last chosen
-            if best_chain:
-                last = best_chain[-1]
-                if last not in used:
-                    full_chain.append(last)
+        # 3️⃣  Commit the final node of the chain
+        last = chain[-1]
+        if last not in used:
+            full_chain.append(last)
+            used.add(last)
 
         return full_chain, calculate_metrics(full_chain, self.state), {}
-        # return best_chain, calculate_metrics(best_chain, self.state), {}
 
 
 class FiniteHorizonMDP(BaseAlgorithm):
