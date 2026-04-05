@@ -26,6 +26,44 @@ from shapely.geometry import LineString, Point
 # ==========================================
 # CONFIGURATION
 # ==========================================
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
+
+import twogis_routing
+
+
+def _routing_provider() -> str:
+    p = os.getenv("ROUTING_PROVIDER", "auto").lower().strip()
+    key = (os.getenv("TWOGIS_API_KEY") or "").strip()
+    if p == "internal":
+        return "internal"
+    if p == "twogis":
+        return "twogis" if key else "internal"
+    # auto: use 2GIS when a key is present
+    return "twogis" if key else "internal"
+
+
+def _use_twogis() -> bool:
+    return _routing_provider() == "twogis"
+
+
+def _endpoint_lat_lon(u_coords, u_node, target_G):
+    """Resolve (lat, lon) for 2GIS from tuple, spot dict, or graph node id."""
+    if isinstance(u_coords, (list, tuple)) and len(u_coords) >= 2:
+        return float(u_coords[0]), float(u_coords[1])
+    if isinstance(u_coords, dict):
+        if "_proj_coords" in u_coords:
+            la, lo = u_coords["_proj_coords"]
+            return float(la), float(lo)
+        if "coords" in u_coords:
+            la, lo = u_coords["coords"]
+            return float(la), float(lo)
+    nd = target_G.nodes[u_node]
+    return float(nd["y"]), float(nd["x"])
+
 
 PLACE_NAME = "Astana, Kazakhstan"
 GRAPH_FILENAME = "astana_drive.graphml"
@@ -731,6 +769,21 @@ def get_route(u_coords, v_coords, custom_G=None):
                     }[turn_type]
 
             turn_penalty += base_turn + signal_penalty + extra_penalty
+
+        if _use_twogis():
+            try:
+                la1, lo1 = _endpoint_lat_lon(u_coords, u_node, target_G)
+                la2, lo2 = _endpoint_lat_lon(v_coords, v_node, target_G)
+                tw = twogis_routing.request_driving_route(la1, lo1, la2, lo2)
+                if tw and tw.get("path") and len(tw["path"]) >= 2:
+                    return {
+                        "path": tw["path"],
+                        "travel_time": float(tw["duration_sec"]),
+                        "turn_penalty": 0.0,
+                        "nodes": path,
+                    }
+            except Exception as ex:
+                print(f"[2GIS] fallback to internal route: {ex}")
 
         return {
             "path": path_coords,
