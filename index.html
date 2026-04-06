@@ -1,290 +1,125 @@
-<!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Astana Parking Studio | Optimizer</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
-        #map { height: 100vh; width: 100%; z-index: 1; }
-        .sidebar { z-index: 1000; height: 100vh; width: 380px; position: absolute; left: 0; top: 0; background: white; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; }
-        .drawer { position: fixed; bottom: -100%; left: 380px; right: 0; background: white; border-top: 2px solid #e2e8f0; z-index: 2000; transition: bottom 0.4s ease; max-height: 55vh; overflow-y: auto; box-shadow: 0 -10px 30px rgba(0,0,0,0.08); }
-        .drawer.open { bottom: 0; }
-        .spot-node { background: #f97316; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-        input[type=range] { width: 100%; height: 6px; background: #e2e8f0; border-radius: 5px; appearance: none; outline: none; }
-        input[type=range]::-webkit-slider-thumb { appearance: none; width: 16px; height: 16px; background: #4f46e5; border-radius: 50%; cursor: pointer; border: 2px solid white; }
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-    </style>
-</head>
-<body class="overflow-hidden">
-
-    <div class="sidebar">
-        <div class="p-6 bg-slate-900 text-white">
-            <h1 class="text-lg font-bold tracking-tight">Parking Optimizer</h1>
-            <p class="text-[10px] text-slate-400 uppercase tracking-widest font-bold">Scenario-Based Solver</p>
-        </div>
-
-        <div class="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar">
-            <section>
-                <label class="text-[10px] font-bold text-slate-400 uppercase block mb-2">1. Geometry</label>
-                <select id="loc-select" onchange="loadPreset()" class="w-full text-xs border p-2.5 rounded-lg bg-slate-50 mb-2 outline-none">
-                    <option value="" disabled selected>Select Location Preset...</option>
-                </select>
-                <div class="grid grid-cols-2 gap-2 bg-slate-100 p-1 rounded-xl">
-                    <button onclick="setMode('points')" id="btn-p" class="py-2 text-[11px] font-bold rounded-lg bg-white shadow-sm">Set A/B/C</button>
-                    <button onclick="setMode('spots')" id="btn-s" class="py-2 text-[11px] font-bold rounded-lg text-slate-500">Add Spots</button>
-                </div>
-            </section>
-
-            <section class="space-y-2">
-                <div class="flex justify-between items-center p-3 bg-slate-50 rounded-xl text-xs border border-slate-100">
-                    <div class="flex items-center space-x-2"><div class="w-1.5 h-1.5 rounded-full bg-green-500"></div><span>Start (A)</span></div>
-                    <span id="st-a" class="font-bold text-slate-300">MISSING</span>
-                </div>
-                <div class="flex justify-between items-center p-3 bg-slate-50 rounded-xl text-xs border border-slate-100">
-                    <div class="flex items-center space-x-2"><div class="w-1.5 h-1.5 rounded-full bg-red-500"></div><span>Dest (B)</span></div>
-                    <span id="st-b" class="font-bold text-slate-300">MISSING</span>
-                </div>
-                <div class="p-3 bg-slate-50 rounded-xl text-xs border border-slate-100">
-                    <div class="flex justify-between items-center mb-2">
-                        <div class="flex items-center space-x-2"><div class="w-1.5 h-1.5 rounded-full bg-blue-500"></div><span>Exit (C)</span></div>
-                        <span id="st-c" class="font-bold text-slate-300">MISSING</span>
-                    </div>
-                    <label class="flex items-center space-x-2 text-[10px] text-slate-500 cursor-pointer">
-                        <input type="checkbox" id="check-congest" class="w-3 h-3 rounded">
-                        <span>Exit Traffic Congestion?</span>
-                    </label>
-                </div>
-                <button onclick="resetPoints()" class="w-full text-[10px] text-red-500 font-bold uppercase py-2 hover:bg-red-50 rounded-lg">Clear Map</button>
-            </section>
-
-            <section id="spot-ctrl" class="opacity-40 pointer-events-none transition-all">
-                <label class="text-[10px] font-bold text-slate-400 uppercase block mb-2">2. Spot Properties</label>
-                <div class="p-4 bg-indigo-50 border border-indigo-100 rounded-2xl space-y-4">
-                    <div class="flex justify-between text-[11px] font-bold text-indigo-900"><span>Search Overhead ($\phi$)</span><span id="v-phi">60s</span></div>
-                    <input type="range" id="i-phi" min="0" max="1200" step="10" value="60" oninput="document.getElementById('v-phi').innerText=this.value+'s'">
-                    <div class="flex justify-between text-[11px] font-bold text-indigo-900"><span>Success Prob ($P$)</span><span id="v-pi">80%</span></div>
-                    <input type="range" id="i-pi" min="0" max="100" step="1" value="80" oninput="document.getElementById('v-pi').innerText=this.value+'%'">
-                </div>
-            </section>
-
-            <section class="space-y-4">
-                <label class="text-[10px] font-bold text-slate-400 uppercase block">3. User Scenario</label>
-                <div>
-                    <label class="text-[11px] text-slate-600 block mb-1">Stay Type</label>
-                    <select id="scenario" onchange="toggleTuner()" class="w-full text-xs border p-2.5 rounded-lg bg-white outline-none focus:ring-2 focus:ring-indigo-500">
-                        <option value="Short Stay (10-40m)">Short Stay (10-40m)</option>
-                        <option value="Mid Stay (1-2h)">Mid Stay (1-2h)</option>
-                        <option value="Long Stay - Day (6-10h)">Long Stay - Day (6-10h)</option>
-                        <option value="Long Stay - Night (8-12h)">Long Stay - Night (8-12h)</option>
-                        <option value="Evening Stay (2-4h)">Evening Stay (2-4h)</option>
-                        <option value="Taxi (5-10m)">Taxi (5-10m)</option>
-                        <option value="Delivery (1-4m)">Delivery (1-4m)</option>
-                        <option value="Custom">Custom Tuning...</option>
-                    </select>
-                </div>
-
-                <div id="custom-tuner" class="hidden p-4 bg-slate-50 border rounded-2xl space-y-5">
-                    <div>
-                        <div class="flex justify-between text-[10px] font-bold text-slate-600 mb-1"><span>Walk Weight ($\lambda_w$)</span><span id="v-lw">1.5</span></div>
-                        <input type="range" id="i-lw" min="0.1" max="50" step="0.1" value="1.5" oninput="document.getElementById('v-lw').innerText=this.value">
-                    </div>
-                    <div>
-                        <div class="flex justify-between text-[10px] font-bold text-slate-600 mb-1"><span>Exit Weight ($\lambda_e$)</span><span id="v-le">1.0</span></div>
-                        <input type="range" id="i-le" min="0.1" max="10" step="0.1" value="1.0" oninput="document.getElementById('v-le').innerText=this.value">
-                    </div>
-                    <div>
-                        <div class="flex justify-between text-[10px] font-bold text-indigo-700 mb-1"><span>Transition ($\lambda_{tr}$)</span><span id="v-ltr">1.0</span></div>
-                        <input type="range" id="i-ltr" min="0.1" max="10" step="0.1" value="1.0" oninput="document.getElementById('v-ltr').innerText=this.value">
-                    </div>
-                    <div>
-                        <div class="flex justify-between text-[10px] font-bold text-slate-600 mb-1"><span>Chain Length ($K$)</span><span id="v-k">5</span></div>
-                        <input type="range" id="i-k" min="1" max="20" step="1" value="5" oninput="document.getElementById('v-k').innerText=this.value">
-                    </div>
-                </div>
-
-                <div>
-                    <label class="text-[11px] text-slate-600 block mb-1">Algorithm Strategy</label>
-                    <select id="algo" class="w-full text-xs border p-2.5 rounded-lg bg-white outline-none">
-                        <option value="MDP_Difference">Progress-Differential MDP</option>
-                        <option value="MDP">Finite Horizon MDP</option>
-                        <option value="Heuristic">Greedy Lookahead</option>
-                    </select>
-                </div>
-            </section>
-        </div>
-
-        <div class="p-6 bg-slate-50 border-t">
-            <button onclick="solve()" id="solve-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-xl shadow-lg active:scale-95 transition-all">Calculate Best Path</button>
-        </div>
-    </div>
-
-    <div id="map" class="ml-[380px]"></div>
-
-    <div id="dr" class="drawer ml-[380px]">
-        <div class="p-6 border-b flex items-center justify-between sticky top-0 bg-white/95 backdrop-blur-sm">
-            <div class="flex space-x-12">
-                <div><span class="text-[10px] text-slate-400 font-bold uppercase block">Exp. Time</span><span id="r-time" class="text-xl font-bold">-</span></div>
-                <div><span class="text-[10px] text-slate-400 font-bold uppercase block">Chain Reliability</span><span id="r-conf" class="text-xl font-bold text-green-600">-</span></div>
-            </div>
-            <button onclick="document.getElementById('dr').classList.remove('open')" class="text-slate-300 hover:text-slate-600"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
-        </div>
-        <div class="p-6 overflow-x-auto">
-            <table class="w-full text-left text-xs">
-                <thead>
-                    <tr class="border-b uppercase text-[10px] text-slate-400 tracking-widest font-bold">
-                        <th class="pb-3">Order</th>
-                        <th class="pb-3">Spot Street</th>
-                        <th class="pb-3">Prob</th>
-                        <th class="pb-3 text-indigo-600">Arrival (Drive + $\phi_{prev}$)</th>
-                        <th class="pb-3 text-blue-500">Search ($\phi$)</th>
-                        <th class="pb-3">Walk</th>
-                        <th class="pb-3">Exit</th>
-                    </tr>
-                </thead>
-                <tbody id="r-body"></tbody>
-            </table>
-        </div>
-    </div>
-
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script>
-        const map = L.map('map', {zoomControl: false}).setView([51.128, 71.430], 14);
-        L.control.zoom({position: 'topright'}).addTo(map);
-        L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png').addTo(map);
-
-        const markers = { start: null, dest: null, ref: null, spots: [], solution: [] };
-        const paths = [];
-        const pts = { start: null, dest: null, ref: null };
-        let mode = 'points';
-        const icons = {
-            green: new L.Icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png', iconSize: [25, 41], iconAnchor: [12, 41] }),
-            red: new L.Icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png', iconSize: [25, 41], iconAnchor: [12, 41] }),
-            blue: new L.Icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png', iconSize: [25, 41], iconAnchor: [12, 41] }),
-            violet: new L.Icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-violet.png', iconSize: [25, 41], iconAnchor: [12, 41] }),
-        };
-
-        map.on('click', e => mode === 'points' ? handlePt(e.latlng) : handleSp(e.latlng));
-
-        function setMode(m) {
-            mode = m;
-            document.getElementById('btn-p').className = m==='points' ? "py-2 text-[11px] font-bold rounded-lg bg-white shadow-sm" : "py-2 text-[11px] font-bold rounded-lg text-slate-500";
-            document.getElementById('btn-s').className = m==='spots' ? "py-2 text-[11px] font-bold rounded-lg bg-white shadow-sm" : "py-2 text-[11px] font-bold rounded-lg text-slate-500";
-            document.getElementById('spot-ctrl').className = m==='spots' ? "opacity-100 transition-all" : "opacity-40 pointer-events-none transition-all";
-        }
-
-        function handlePt(ll) {
-            const {lat, lng} = ll;
-            if (!pts.start) { pts.start = [lat, lng]; markers.start = L.marker(pts.start, {icon: icons.green}).addTo(map); updateSt('a', true); }
-            else if (!pts.dest) { pts.dest = [lat, lng]; markers.dest = L.marker(pts.dest, {icon: icons.red}).addTo(map); updateSt('b', true); }
-            else if (!pts.ref) { pts.ref = [lat, lng]; markers.ref = L.marker(pts.ref, {icon: icons.blue}).addTo(map); updateSt('c', true); }
-        }
-
-        async function handleSp(ll) {
-            const phi = document.getElementById('i-phi').value, pi = document.getElementById('i-pi').value / 100;
-            await fetch('/add_manual_spot', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ lat: ll.lat, lng: ll.lng, phi, pi }) });
-            fetchSpots();
-        }
-
-        async function fetchSpots() {
-            const res = await fetch('/get_manual_spots'), data = await res.json();
-            markers.spots.forEach(m => map.removeLayer(m));
-            markers.spots = data.map(s => L.marker(s.coords, {icon: icons.violet}).addTo(map).bindPopup(`<div class="p-2"><b class="text-xs">Spot Settings</b><br/><button onclick="deleteSpot('${s.id}')" class="text-[10px] text-red-500 font-bold uppercase mt-2">Delete Marker</button></div>`));
-        }
-
-        window.deleteSpot = async id => { await fetch('/delete_spot', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ id }) }); fetchSpots(); };
-
-        async function solve() {
-            if (!pts.start || !pts.dest) return alert("Please set Start (A) and Destination (B).");
-            const btn = document.getElementById('solve-btn'); btn.innerText = "Finding Path..."; btn.disabled = true;
-            const payload = {
-                start: pts.start, dest: pts.dest, ref: pts.ref || pts.start,
-                scenario: document.getElementById('scenario').value,
-                algo: document.getElementById('algo').value,
-                exit_multiplier: document.getElementById('check-congest').checked ? 3.0 : 1.0,
-                custom_params: {
-                    lambda_w: parseFloat(document.getElementById('i-lw').value),
-                    lambda_e: parseFloat(document.getElementById('i-le').value),
-                    lambda_tr: parseFloat(document.getElementById('i-ltr').value),
-                    k: parseInt(document.getElementById('i-k').value)
-                }
-            };
-            try {
-                const res = await fetch('/solve', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(payload) });
-                const data = await res.json();
-                if (data.status === 'success') {
-                    paths.forEach(p => map.removeLayer(p)); paths.length = 0;
-                    markers.solution.forEach(m => map.removeLayer(m)); markers.solution = [];
-                    data.segments.forEach(seg => {
-                        const color = seg.type === 'walk' ? '#ef4444' : (seg.type === 'drive_transition' ? '#f97316' : '#3b82f6');
-                        const poly = L.polyline(seg.coords, { color, weight: seg.type==='drive_primary'?5:3, dashArray: (seg.type==='walk'||seg.type==='drive_exit')?'5,10':null, opacity: 0.8 }).addTo(map);
-                        paths.push(poly);
-                    });
-                    data.details.forEach(d => {
-                        const m = L.marker(d.coords, { icon: L.divIcon({ className: 'spot-node', html: d.order, iconSize: [24, 24] }) }).addTo(map);
-                        markers.solution.push(m);
-                    });
-                    document.getElementById('r-time').innerText = (data.metrics[0]/60).toFixed(1) + " min";
-                    document.getElementById('r-conf').innerText = (data.metrics[4]*100).toFixed(0) + "%";
-                    document.getElementById('r-body').innerHTML = data.details.map(d => {
-                        const arrivalDisplay = d.phi_prev > 0 
-                            ? `${(d.arrival_time/60).toFixed(1)}m <span class="text-[9px] text-slate-400">(${(d.drive_leg/60).toFixed(1)}+${(d.phi_prev/60).toFixed(1)})</span>`
-                            : `${(d.arrival_time/60).toFixed(1)}m`;
-
-                        return `
-                            <tr class="border-b hover:bg-slate-50 transition-colors">
-                                <td class="py-3 font-bold text-orange-500">#${d.order}</td>
-                                <td class="py-3 font-semibold text-slate-700">${d.street}</td>
-                                <td class="py-3">${(d.p*100).toFixed(0)}%</td>
-                                <td class="py-3 font-mono text-indigo-700 font-bold">${arrivalDisplay}</td>
-                                <td class="py-3 text-blue-500 font-mono">${(d.phi/60).toFixed(1)}m</td>
-                                <td class="py-3 font-mono">${(d.walk_b/60).toFixed(1)}m</td>
-                                <td class="py-3 font-bold font-mono">${(d.exit_ref/60).toFixed(1)}m</td>
-                            </tr>`;
-                    }).join('');
-                    document.getElementById('dr').classList.add('open');
-                    map.fitBounds(L.featureGroup(paths).getBounds(), { padding: [80, 80] });
-                } else alert(data.message);
-            } catch(e) { console.error(e); }
-            finally { btn.innerText = "Calculate Best Path"; btn.disabled = false; }
-        }
-
-        function updateSt(k, ok) { const el = document.getElementById(`st-${k}`); el.innerText = ok ? "ACTIVE" : "MISSING"; el.className = ok ? "font-bold text-green-500" : "font-bold text-slate-300"; }
-        function resetPoints() { ['start', 'dest', 'ref'].forEach(k => { if(markers[k]) map.removeLayer(markers[k]); pts[k] = null; updateSt(k === 'start' ? 'a' : k === 'dest' ? 'b' : 'c', false); }); paths.forEach(p => map.removeLayer(p)); markers.solution.forEach(m => map.removeLayer(m)); }
-        function toggleTuner() { document.getElementById('custom-tuner').className = document.getElementById('scenario').value === 'Custom' ? "p-4 bg-slate-50 border rounded-2xl space-y-5" : "hidden"; }
-        async function fetchLocs() { const res = await fetch('/get_locations'); const data = await res.json(); Object.keys(data).forEach(k => { const opt = document.createElement('option'); opt.value = k; opt.innerText = k; document.getElementById('loc-select').appendChild(opt); }); window.presets = data; }
-        function loadPreset() { const loc = window.presets[document.getElementById('loc-select').value]; resetPoints(); pts.start = loc.start; markers.start = L.marker(pts.start, {icon: icons.green}).addTo(map); updateSt('a', true); pts.dest = loc.dest; markers.dest = L.marker(pts.dest, {icon: icons.red}).addTo(map); updateSt('b', true); pts.ref = loc.ref; markers.ref = L.marker(pts.ref, {icon: icons.blue}).addTo(map); updateSt('c', true); map.fitBounds([pts.start, pts.dest, pts.ref], { padding: [100, 100] }); }
-        fetchLocs(); fetchSpots(); setMode('points');
-    </script>
-</body>
-</html> -->
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Astana Parking Studio | Optimizer</title>
+
+    <script src="https://mapgl.2gis.com/api/js/v1"></script>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
     <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
-        #map { height: 100vh; width: 100%; z-index: 1; }
-        .sidebar { z-index: 1000; height: 100vh; width: 380px; position: absolute; left: 0; top: 0; background: white; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; }
-        .drawer { position: fixed; bottom: -100%; left: 380px; right: 0; background: white; border-top: 2px solid #e2e8f0; z-index: 2000; transition: bottom 0.4s ease; max-height: 55vh; overflow-y: auto; box-shadow: 0 -10px 30px rgba(0,0,0,0.08); }
-        .drawer.open { bottom: 0; }
-        .spot-node { background: #f97316; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-        input[type=range] { width: 100%; height: 6px; background: #e2e8f0; border-radius: 5px; appearance: none; outline: none; }
-        input[type=range]::-webkit-slider-thumb { appearance: none; width: 16px; height: 16px; background: #4f46e5; border-radius: 50%; cursor: pointer; border: 2px solid white; }
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        .option-btn-active { background: #4f46e5; color: white; box-shadow: 0 4px 14px rgba(79, 70, 229, 0.25); }
-        .option-btn-inactive { background: white; color: #475569; border: 1px solid #e2e8f0; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        #map {
+            height: 100vh;
+            width: 100%;
+            z-index: 1;
+        }
+
+        .sidebar {
+            z-index: 1000;
+            height: 100vh;
+            width: 380px;
+            position: absolute;
+            left: 0;
+            top: 0;
+            background: white;
+            border-right: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .drawer {
+            position: fixed;
+            bottom: -100%;
+            left: 380px;
+            right: 0;
+            background: white;
+            border-top: 2px solid #e2e8f0;
+            z-index: 2000;
+            transition: bottom 0.4s ease;
+            max-height: 55vh;
+            overflow-y: auto;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.08);
+        }
+
+        .drawer.open {
+            bottom: 0;
+        }
+
+        .spot-node {
+            background: #f97316;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            border: 2px solid white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            font-size: 10px;
+            width: 20px;
+            height: 20px;
+        }
+
+        input[type=range] {
+            width: 100%;
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 5px;
+            appearance: none;
+            outline: none;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            background: #4f46e5;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid white;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+
+        .option-btn-active {
+            background: #4f46e5;
+            color: white;
+            box-shadow: 0 4px 14px rgba(79, 70, 229, 0.25);
+        }
+
+        .option-btn-inactive {
+            background: white;
+            color: #475569;
+            border: 1px solid #e2e8f0;
+        }
+
+        #map-badge {
+            position: absolute;
+            bottom: 8px;
+            right: 8px;
+            z-index: 10;
+            background: rgba(255,255,255,0.85);
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #64748b;
+            pointer-events: none;
+        }
     </style>
 </head>
 <body class="overflow-hidden">
@@ -301,6 +136,7 @@
                 <select id="loc-select" onchange="loadPreset()" class="w-full text-xs border p-2.5 rounded-lg bg-slate-50 mb-2 outline-none">
                     <option value="" disabled selected>Select Location Preset...</option>
                 </select>
+
                 <div class="grid grid-cols-2 gap-2 bg-slate-100 p-1 rounded-xl">
                     <button onclick="setMode('points')" id="btn-p" class="py-2 text-[11px] font-bold rounded-lg bg-white shadow-sm">Set A/B/C</button>
                     <button onclick="setMode('spots')" id="btn-s" class="py-2 text-[11px] font-bold rounded-lg text-slate-500">Add Spots</button>
@@ -309,38 +145,62 @@
 
             <section class="space-y-2">
                 <div class="flex justify-between items-center p-3 bg-slate-50 rounded-xl text-xs border border-slate-100">
-                    <div class="flex items-center space-x-2"><div class="w-1.5 h-1.5 rounded-full bg-green-500"></div><span>Start (A)</span></div>
+                    <div class="flex items-center space-x-2">
+                        <div class="w-1.5 h-1.5 rounded-full bg-green-500"></div>
+                        <span>Start (A)</span>
+                    </div>
                     <span id="st-a" class="font-bold text-slate-300">MISSING</span>
                 </div>
+
                 <div class="flex justify-between items-center p-3 bg-slate-50 rounded-xl text-xs border border-slate-100">
-                    <div class="flex items-center space-x-2"><div class="w-1.5 h-1.5 rounded-full bg-red-500"></div><span>Dest (B)</span></div>
+                    <div class="flex items-center space-x-2">
+                        <div class="w-1.5 h-1.5 rounded-full bg-red-500"></div>
+                        <span>Dest (B)</span>
+                    </div>
                     <span id="st-b" class="font-bold text-slate-300">MISSING</span>
                 </div>
+
                 <div class="p-3 bg-slate-50 rounded-xl text-xs border border-slate-100">
                     <div class="flex justify-between items-center mb-2">
-                        <div class="flex items-center space-x-2"><div class="w-1.5 h-1.5 rounded-full bg-blue-500"></div><span>Exit (C)</span></div>
+                        <div class="flex items-center space-x-2">
+                            <div class="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
+                            <span>Exit (C)</span>
+                        </div>
                         <span id="st-c" class="font-bold text-slate-300">MISSING</span>
                     </div>
+
                     <label class="flex items-center space-x-2 text-[10px] text-slate-500 cursor-pointer">
                         <input type="checkbox" id="check-congest" class="w-3 h-3 rounded">
                         <span>Exit Traffic Congestion?</span>
                     </label>
                 </div>
-                <button onclick="resetPoints()" class="w-full text-[10px] text-red-500 font-bold uppercase py-2 hover:bg-red-50 rounded-lg">Clear Map</button>
+
+                <button onclick="resetPoints()" class="w-full text-[10px] text-red-500 font-bold uppercase py-2 hover:bg-red-50 rounded-lg">
+                    Clear Map
+                </button>
             </section>
 
             <section id="spot-ctrl" class="opacity-40 pointer-events-none transition-all">
                 <label class="text-[10px] font-bold text-slate-400 uppercase block mb-2">2. Spot Properties</label>
+
                 <div class="p-4 bg-indigo-50 border border-indigo-100 rounded-2xl space-y-4">
-                    <div class="flex justify-between text-[11px] font-bold text-indigo-900"><span>Search Overhead ($\phi$)</span><span id="v-phi">60s</span></div>
+                    <div class="flex justify-between text-[11px] font-bold text-indigo-900">
+                        <span>Search Overhead (φ)</span>
+                        <span id="v-phi">60s</span>
+                    </div>
                     <input type="range" id="i-phi" min="0" max="1200" step="10" value="60" oninput="document.getElementById('v-phi').innerText=this.value+'s'">
-                    <div class="flex justify-between text-[11px] font-bold text-indigo-900"><span>Success Prob ($P$)</span><span id="v-pi">80%</span></div>
+
+                    <div class="flex justify-between text-[11px] font-bold text-indigo-900">
+                        <span>Success Prob (P)</span>
+                        <span id="v-pi">80%</span>
+                    </div>
                     <input type="range" id="i-pi" min="0" max="100" step="1" value="80" oninput="document.getElementById('v-pi').innerText=this.value+'%'">
                 </div>
             </section>
 
             <section class="space-y-4">
                 <label class="text-[10px] font-bold text-slate-400 uppercase block">3. User Scenario</label>
+
                 <div>
                     <label class="text-[11px] text-slate-600 block mb-1">Stay Type</label>
                     <select id="scenario" onchange="toggleTuner()" class="w-full text-xs border p-2.5 rounded-lg bg-white outline-none focus:ring-2 focus:ring-indigo-500">
@@ -357,19 +217,34 @@
 
                 <div id="custom-tuner" class="hidden p-4 bg-slate-50 border rounded-2xl space-y-5">
                     <div>
-                        <div class="flex justify-between text-[10px] font-bold text-slate-600 mb-1"><span>Walk Weight ($\lambda_w$)</span><span id="v-lw">1.5</span></div>
+                        <div class="flex justify-between text-[10px] font-bold text-slate-600 mb-1">
+                            <span>Walk Weight (λw)</span>
+                            <span id="v-lw">1.5</span>
+                        </div>
                         <input type="range" id="i-lw" min="0.1" max="50" step="0.1" value="1.5" oninput="document.getElementById('v-lw').innerText=this.value">
                     </div>
+
                     <div>
-                        <div class="flex justify-between text-[10px] font-bold text-slate-600 mb-1"><span>Exit Weight ($\lambda_e$)</span><span id="v-le">1.0</span></div>
+                        <div class="flex justify-between text-[10px] font-bold text-slate-600 mb-1">
+                            <span>Exit Weight (λe)</span>
+                            <span id="v-le">1.0</span>
+                        </div>
                         <input type="range" id="i-le" min="0.1" max="10" step="0.1" value="1.0" oninput="document.getElementById('v-le').innerText=this.value">
                     </div>
+
                     <div>
-                        <div class="flex justify-between text-[10px] font-bold text-indigo-700 mb-1"><span>Transition ($\lambda_{tr}$)</span><span id="v-ltr">1.0</span></div>
+                        <div class="flex justify-between text-[10px] font-bold text-indigo-700 mb-1">
+                            <span>Transition (λtr)</span>
+                            <span id="v-ltr">1.0</span>
+                        </div>
                         <input type="range" id="i-ltr" min="0.1" max="10" step="0.1" value="1.0" oninput="document.getElementById('v-ltr').innerText=this.value">
                     </div>
+
                     <div>
-                        <div class="flex justify-between text-[10px] font-bold text-slate-600 mb-1"><span>Chain Length ($K$)</span><span id="v-k">5</span></div>
+                        <div class="flex justify-between text-[10px] font-bold text-slate-600 mb-1">
+                            <span>Chain Length (K)</span>
+                            <span id="v-k">5</span>
+                        </div>
                         <input type="range" id="i-k" min="1" max="20" step="1" value="5" oninput="document.getElementById('v-k').innerText=this.value">
                     </div>
                 </div>
@@ -389,18 +264,24 @@
         <div class="p-6 bg-slate-50 border-t space-y-3">
             <div id="option-switcher" class="hidden">
                 <div class="text-[10px] font-bold text-slate-400 uppercase block mb-2">4. Route Options</div>
+
                 <div class="grid grid-cols-2 gap-2">
                     <button id="btn-option-1" type="button" class="py-2 text-[11px] font-bold rounded-lg option-btn-active">Option 1</button>
                     <button id="btn-option-2" type="button" class="py-2 text-[11px] font-bold rounded-lg option-btn-inactive">Option 2</button>
                 </div>
+
                 <div id="option-meta" class="mt-2 text-[10px] text-slate-500"></div>
             </div>
 
-            <button onclick="solve()" id="solve-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-xl shadow-lg active:scale-95 transition-all">Calculate Best Path</button>
+            <button onclick="solve()" id="solve-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-xl shadow-lg active:scale-95 transition-all">
+                Calculate Best Path
+            </button>
         </div>
     </div>
 
-    <div id="map" class="ml-[380px]"></div>
+    <div id="map" class="ml-[380px]" style="position:relative;">
+        <div id="map-badge">Loading map...</div>
+    </div>
 
     <div id="dr" class="drawer ml-[380px]">
         <div class="p-6 border-b flex items-center justify-between sticky top-0 bg-white/95 backdrop-blur-sm">
@@ -418,11 +299,18 @@
                     <span id="r-conf" class="text-xl font-bold text-green-600">-</span>
                 </div>
             </div>
-            <button onclick="document.getElementById('dr').classList.remove('open')" class="text-slate-300 hover:text-slate-600"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+
+            <button onclick="document.getElementById('dr').classList.remove('open')" class="text-slate-300 hover:text-slate-600">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
         </div>
+
         <div class="px-6 pt-4">
             <div id="r-street" class="text-xs text-slate-500"></div>
         </div>
+
         <div class="p-6 overflow-x-auto">
             <table class="w-full text-left text-xs">
                 <thead>
@@ -430,8 +318,8 @@
                         <th class="pb-3">Order</th>
                         <th class="pb-3">Spot Street</th>
                         <th class="pb-3">Prob</th>
-                        <th class="pb-3 text-indigo-600">Arrival (Drive + $\phi_{prev}$)</th>
-                        <th class="pb-3 text-blue-500">Search ($\phi$)</th>
+                        <th class="pb-3 text-indigo-600">Arrival (Drive + prev φ)</th>
+                        <th class="pb-3 text-blue-500">Search (φ)</th>
                         <th class="pb-3">Walk</th>
                         <th class="pb-3">Exit</th>
                     </tr>
@@ -441,540 +329,241 @@
         </div>
     </div>
 
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
-        
-        const map = L.map('map', {zoomControl: false}).setView([51.128, 71.430], 14);
-        L.control.zoom({position: 'topright'}).addTo(map);
-        L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png').addTo(map);
+        const TWOGIS_KEY = '51e15411-93a6-468f-8dae-ee1e9c95384d';
+        const MAP_CENTER_LNG = 71.430;
+        const MAP_CENTER_LAT = 51.128;
 
-        const markers = { start: null, dest: null, ref: null, spots: [], solution: [] };
-        const paths = [];
+        // smaller marker sizes
+        const BASE_MARKER_WIDTH = 18;
+        const BASE_MARKER_HEIGHT = 30;
+        const BASE_MARKER_ANCHOR = [9, 30];
+
+        const SPOT_MARKER_WIDTH = 16;
+        const SPOT_MARKER_HEIGHT = 26;
+        const SPOT_MARKER_ANCHOR = [8, 26];
+
+        const ORDER_MARKER_SIZE = 20;
+
+        let mapEngine = null;
+        let map2gis = null;
+        let mapLeaflet = null;
+
+        const markers2gis = { start: null, dest: null, ref: null, spots: [], solution: [] };
+        const markersLeaflet = { start: null, dest: null, ref: null, spots: [], solution: [] };
+        const paths2gis = [];
+        const pathsLeaflet = [];
+
         const pts = { start: null, dest: null, ref: null };
         let mode = 'points';
         let currentSolutions = [];
         let currentMainStreet = null;
 
-        const icons = {
-            green: new L.Icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png', iconSize: [25, 41], iconAnchor: [12, 41] }),
-            red: new L.Icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png', iconSize: [25, 41], iconAnchor: [12, 41] }),
-            blue: new L.Icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png', iconSize: [25, 41], iconAnchor: [12, 41] }),
-            violet: new L.Icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-violet.png', iconSize: [25, 41], iconAnchor: [12, 41] }),
-        };
-
-        map.on('click', e => mode === 'points' ? handlePt(e.latlng) : handleSp(e.latlng));
-
-        function setMode(m) {
-            mode = m;
-            document.getElementById('btn-p').className = m==='points' ? "py-2 text-[11px] font-bold rounded-lg bg-white shadow-sm" : "py-2 text-[11px] font-bold rounded-lg text-slate-500";
-            document.getElementById('btn-s').className = m==='spots' ? "py-2 text-[11px] font-bold rounded-lg bg-white shadow-sm" : "py-2 text-[11px] font-bold rounded-lg text-slate-500";
-            document.getElementById('spot-ctrl').className = m==='spots' ? "opacity-100 transition-all" : "opacity-40 pointer-events-none transition-all";
-        }
-
-        function handlePt(ll) {
-            const {lat, lng} = ll;
-            if (!pts.start) { pts.start = [lat, lng]; markers.start = L.marker(pts.start, {icon: icons.green}).addTo(map); updateSt('a', true); }
-            else if (!pts.dest) { pts.dest = [lat, lng]; markers.dest = L.marker(pts.dest, {icon: icons.red}).addTo(map); updateSt('b', true); }
-            else if (!pts.ref) { pts.ref = [lat, lng]; markers.ref = L.marker(pts.ref, {icon: icons.blue}).addTo(map); updateSt('c', true); }
-        }
-
-        async function handleSp(ll) {
-            const phi = document.getElementById('i-phi').value, pi = document.getElementById('i-pi').value / 100;
-            await fetch('/add_manual_spot', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ lat: ll.lat, lng: ll.lng, phi, pi }) });
-            fetchSpots();
-        }
-
-        async function fetchSpots() {
-            const res = await fetch('/get_manual_spots'), data = await res.json();
-            markers.spots.forEach(m => map.removeLayer(m));
-            markers.spots = data.map(s => L.marker(s.coords, {icon: icons.violet}).addTo(map).bindPopup(`<div class="p-2"><b class="text-xs">Spot Settings</b><br/><button onclick="deleteSpot('${s.id}')" class="text-[10px] text-red-500 font-bold uppercase mt-2">Delete Marker</button></div>`));
-        }
-
-        window.deleteSpot = async id => { await fetch('/delete_spot', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({ id }) }); fetchSpots(); };
-
-        function clearSolutionLayers() {
-            paths.forEach(p => map.removeLayer(p));
-            paths.length = 0;
-            markers.solution.forEach(m => map.removeLayer(m));
-            markers.solution = [];
-        }
-
-        function drawSolution(sol) {
-            clearSolutionLayers();
-
-            sol.segments.forEach(seg => {
-                const color = seg.type === 'walk' ? '#ef4444' : (seg.type === 'drive_transition' ? '#f97316' : '#3b82f6');
-                const poly = L.polyline(seg.coords, {
-                    color,
-                    weight: seg.type === 'drive_transition' ? 3 : 3,
-                    dashArray: (seg.type === 'walk' || seg.type === 'drive_exit') ? '5,10' : null,
-                    opacity: 0.8
-                }).addTo(map);
-                paths.push(poly);
-            });
-
-            sol.details.forEach(d => {
-                const m = L.marker(d.coords, {
-                    icon: L.divIcon({
-                        className: 'spot-node',
-                        html: d.order,
-                        iconSize: [24, 24]
-                    })
-                }).addTo(map);
-                markers.solution.push(m);
-            });
-
-            document.getElementById('r-option').innerText = sol.name || '-';
-            document.getElementById('r-time').innerText = (sol.metrics.expected_total_sec / 60).toFixed(1) + " min";
-            document.getElementById('r-conf').innerText = (sol.metrics.success_probability * 100).toFixed(0) + "%";
-
-            if (sol.penalized_street) {
-                document.getElementById('r-street').innerText = `Alternative scenario: main street penalized → ${sol.penalized_street}`;
-            } else if (currentMainStreet) {
-                document.getElementById('r-street').innerText = `Base route main street: ${currentMainStreet}`;
-            } else {
-                document.getElementById('r-street').innerText = '';
-            }
-
-            document.getElementById('r-body').innerHTML = sol.details.map(d => {
-                const arrivalDisplay = d.phi_prev > 0
-                    ? `${(d.arrival_time/60).toFixed(1)}m <span class="text-[9px] text-slate-400">(${(d.drive_leg/60).toFixed(1)}+${(d.phi_prev/60).toFixed(1)})</span>`
-                    : `${(d.arrival_time/60).toFixed(1)}m`;
-
-                return `
-                    <tr class="border-b hover:bg-slate-50 transition-colors">
-                        <td class="py-3 font-bold text-orange-500">#${d.order}</td>
-                        <td class="py-3 font-semibold text-slate-700">${d.street}</td>
-                        <td class="py-3">${(d.p*100).toFixed(0)}%</td>
-                        <td class="py-3 font-mono text-indigo-700 font-bold">${arrivalDisplay}</td>
-                        <td class="py-3 text-blue-500 font-mono">${(d.phi/60).toFixed(1)}m</td>
-                        <td class="py-3 font-mono">${(d.walk_b/60).toFixed(1)}m</td>
-                        <td class="py-3 font-bold font-mono">${(d.exit_ref/60).toFixed(1)}m</td>
-                    </tr>`;
-            }).join('');
-
-            document.getElementById('dr').classList.add('open');
-
-            if (paths.length > 0) {
-                map.fitBounds(L.featureGroup(paths).getBounds(), { padding: [80, 80] });
-            }
-        }
-
-        function setActiveOptionButton(index) {
-            const b1 = document.getElementById('btn-option-1');
-            const b2 = document.getElementById('btn-option-2');
-
-            if (index === 0) {
-                b1.className = "py-2 text-[11px] font-bold rounded-lg option-btn-active";
-                b2.className = "py-2 text-[11px] font-bold rounded-lg option-btn-inactive";
-            } else {
-                b1.className = "py-2 text-[11px] font-bold rounded-lg option-btn-inactive";
-                b2.className = "py-2 text-[11px] font-bold rounded-lg option-btn-active";
-            }
-        }
-
-        function showOption(index) {
-            if (!currentSolutions.length || !currentSolutions[index]) return;
-            setActiveOptionButton(index);
-
-            const optionMeta = document.getElementById('option-meta');
-            const sol = currentSolutions[index];
-
-            if (index === 0) {
-                optionMeta.innerText = currentMainStreet
-                    ? `Base route main street: ${currentMainStreet}`
-                    : `Base scenario`;
-            } else {
-                optionMeta.innerText = sol.penalized_street
-                    ? `Alternative route: penalized street = ${sol.penalized_street}`
-                    : `Alternative scenario`;
-            }
-
-            drawSolution(sol);
-        }
-
-        document.getElementById('btn-option-1').addEventListener('click', () => showOption(0));
-        document.getElementById('btn-option-2').addEventListener('click', () => showOption(1));
-
-        async function solve() {
-            if (!pts.start || !pts.dest) return alert("Please set Start (A) and Destination (B).");
-
-            const btn = document.getElementById('solve-btn');
-            btn.innerText = "Finding Path...";
-            btn.disabled = true;
-
-            const payload = {
-                start: pts.start,
-                dest: pts.dest,
-                ref: pts.ref || pts.start,
-                scenario: document.getElementById('scenario').value,
-                algo: document.getElementById('algo').value,
-                exit_multiplier: document.getElementById('check-congest').checked ? 3.0 : 1.0,
-                custom_params: {
-                    lambda_w: parseFloat(document.getElementById('i-lw').value),
-                    lambda_e: parseFloat(document.getElementById('i-le').value),
-                    lambda_tr: parseFloat(document.getElementById('i-ltr').value),
-                    k: parseInt(document.getElementById('i-k').value)
-                }
-            };
-
+        function init2GISMap() {
             try {
-                const res = await fetch('/solve', {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(payload)
+                map2gis = new mapgl.Map('map', {
+                    center: [MAP_CENTER_LNG, MAP_CENTER_LAT],
+                    zoom: 14,
+                    key: TWOGIS_KEY,
                 });
 
-                const data = await res.json();
+                map2gis.on('click', e => {
+                    const ll = { lat: e.lngLat[1], lng: e.lngLat[0] };
+                    if (mode === 'points') handlePt(ll);
+                    else handleSp(ll);
+                });
 
-                if (data.status === 'success') {
-                    currentSolutions = data.solutions || [];
-                    currentMainStreet = data.main_street_from_base_route || null;
-
-                    if (!currentSolutions.length) {
-                        alert("No solutions returned.");
-                        return;
-                    }
-
-                    document.getElementById('option-switcher').classList.remove('hidden');
-                    showOption(0);
-                } else {
-                    alert(data.message);
-                }
-            } catch(e) {
-                console.error(e);
-                alert("Solve failed.");
-            } finally {
-                btn.innerText = "Calculate Best Path";
-                btn.disabled = false;
+                mapEngine = '2gis';
+                document.getElementById('map-badge').innerText = '2GIS Maps';
+                console.log('[Map] 2GIS MapGL initialized');
+            } catch (e) {
+                console.warn('[Map] 2GIS failed, falling back to Leaflet:', e);
+                initLeafletMap();
             }
         }
 
-        function updateSt(k, ok) {
-            const el = document.getElementById(`st-${k}`);
-            el.innerText = ok ? "ACTIVE" : "MISSING";
-            el.className = ok ? "font-bold text-green-500" : "font-bold text-slate-300";
+        function initLeafletMap() {
+            const script = document.createElement('script');
+            script.src = 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';
+            script.onload = () => {
+                mapLeaflet = L.map('map', { zoomControl: false }).setView([MAP_CENTER_LAT, MAP_CENTER_LNG], 14);
+                L.control.zoom({ position: 'topright' }).addTo(mapLeaflet);
+                L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png').addTo(mapLeaflet);
+
+                mapLeaflet.on('click', e => {
+                    if (mode === 'points') handlePt(e.latlng);
+                    else handleSp(e.latlng);
+                });
+
+                mapEngine = 'leaflet';
+                document.getElementById('map-badge').innerText = 'OpenStreetMap (fallback)';
+                console.log('[Map] Leaflet fallback initialized');
+                fetchSpots();
+            };
+            document.head.appendChild(script);
         }
 
-        function resetPoints() {
-            ['start', 'dest', 'ref'].forEach(k => {
-                if (markers[k]) map.removeLayer(markers[k]);
-                markers[k] = null;
-                pts[k] = null;
-                updateSt(k === 'start' ? 'a' : k === 'dest' ? 'b' : 'c', false);
-            });
-
-            clearSolutionLayers();
-            currentSolutions = [];
-            currentMainStreet = null;
-            document.getElementById('option-switcher').classList.add('hidden');
-            document.getElementById('dr').classList.remove('open');
-            document.getElementById('r-body').innerHTML = '';
-            document.getElementById('r-option').innerText = '-';
-            document.getElementById('r-time').innerText = '-';
-            document.getElementById('r-conf').innerText = '-';
-            document.getElementById('r-street').innerText = '';
-            document.getElementById('option-meta').innerText = '';
-        }
-
-        function toggleTuner() {
-            document.getElementById('custom-tuner').className =
-                document.getElementById('scenario').value === 'Custom'
-                    ? "p-4 bg-slate-50 border rounded-2xl space-y-5"
-                    : "hidden";
-        }
-
-        async function fetchLocs() {
-            const res = await fetch('/get_locations');
-            const data = await res.json();
-            Object.keys(data).forEach(k => {
-                const opt = document.createElement('option');
-                opt.value = k;
-                opt.innerText = k;
-                document.getElementById('loc-select').appendChild(opt);
-            });
-            window.presets = data;
-        }
-
-        function loadPreset() {
-            const loc = window.presets[document.getElementById('loc-select').value];
-            resetPoints();
-
-            pts.start = loc.start;
-            markers.start = L.marker(pts.start, {icon: icons.green}).addTo(map);
-            updateSt('a', true);
-
-            pts.dest = loc.dest;
-            markers.dest = L.marker(pts.dest, {icon: icons.red}).addTo(map);
-            updateSt('b', true);
-
-            pts.ref = loc.ref;
-            markers.ref = L.marker(pts.ref, {icon: icons.blue}).addTo(map);
-            updateSt('c', true);
-
-            map.fitBounds([pts.start, pts.dest, pts.ref], { padding: [100, 100] });
-        }
-
-        fetchLocs();
-        fetchSpots();
-        setMode('points');
-    </script>
-</body>
-</html>
-<!-- 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Astana Parking Studio | Optimizer</title>
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-    <style>
-        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
-        #map { height: 100vh; width: 100%; z-index: 1; }
-        .sidebar { z-index: 1000; height: 100vh; width: 380px; position: absolute; left: 0; top: 0; background: white; border-right: 1px solid #e2e8f0; display: flex; flex-direction: column; }
-        .drawer { position: fixed; bottom: -100%; left: 380px; right: 0; background: white; border-top: 2px solid #e2e8f0; z-index: 2000; transition: bottom 0.4s ease; max-height: 55vh; overflow-y: auto; box-shadow: 0 -10px 30px rgba(0,0,0,0.08); }
-        .drawer.open { bottom: 0; }
-        .spot-node { background: #f97316; color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-        input[type=range] { width: 100%; height: 6px; background: #e2e8f0; border-radius: 5px; appearance: none; outline: none; }
-        input[type=range]::-webkit-slider-thumb { appearance: none; width: 16px; height: 16px; background: #4f46e5; border-radius: 50%; cursor: pointer; border: 2px solid white; }
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        .option-btn-active { background: #4f46e5; color: white; box-shadow: 0 4px 14px rgba(79, 70, 229, 0.25); }
-        .option-btn-inactive { background: white; color: #475569; border: 1px solid #e2e8f0; }
-    </style>
-</head>
-<body class="overflow-hidden">
-
-    <div class="sidebar">
-        <div class="p-6 bg-slate-900 text-white">
-            <h1 class="text-lg font-bold tracking-tight">Parking Optimizer</h1>
-            <p class="text-[10px] text-slate-400 uppercase tracking-widest font-bold">Scenario-Based Solver</p>
-        </div>
-
-        <div class="flex-1 overflow-y-auto p-6 space-y-6 custom-scrollbar">
-            <section>
-                <label class="text-[10px] font-bold text-slate-400 uppercase block mb-2">1. Geometry</label>
-                <select id="loc-select" onchange="loadPreset()" class="w-full text-xs border p-2.5 rounded-lg bg-slate-50 mb-2 outline-none">
-                    <option value="" disabled selected>Select Location Preset...</option>
-                </select>
-
-                <div class="grid grid-cols-3 gap-2 bg-slate-100 p-1 rounded-xl">
-                    <button onclick="setMode('points')" id="btn-p" class="py-2 text-[11px] font-bold rounded-lg bg-white shadow-sm">Set A/B/C</button>
-                    <button onclick="setMode('spots')" id="btn-s" class="py-2 text-[11px] font-bold rounded-lg text-slate-500">Add Spots</button>
-                    <button onclick="setMode('edges')" id="btn-e" class="py-2 text-[11px] font-bold rounded-lg text-slate-500">Add Edges</button>
-                </div>
-
-                <div id="edge-help" class="hidden mt-2 text-[10px] text-slate-500 bg-slate-50 border rounded-lg p-2">
-                    Click 2 points on the map to create one manual edge.
-                </div>
-            </section>
-
-            <section class="space-y-2">
-                <div class="flex justify-between items-center p-3 bg-slate-50 rounded-xl text-xs border border-slate-100">
-                    <div class="flex items-center space-x-2"><div class="w-1.5 h-1.5 rounded-full bg-green-500"></div><span>Start (A)</span></div>
-                    <span id="st-a" class="font-bold text-slate-300">MISSING</span>
-                </div>
-                <div class="flex justify-between items-center p-3 bg-slate-50 rounded-xl text-xs border border-slate-100">
-                    <div class="flex items-center space-x-2"><div class="w-1.5 h-1.5 rounded-full bg-red-500"></div><span>Dest (B)</span></div>
-                    <span id="st-b" class="font-bold text-slate-300">MISSING</span>
-                </div>
-                <div class="p-3 bg-slate-50 rounded-xl text-xs border border-slate-100">
-                    <div class="flex justify-between items-center mb-2">
-                        <div class="flex items-center space-x-2"><div class="w-1.5 h-1.5 rounded-full bg-blue-500"></div><span>Exit (C)</span></div>
-                        <span id="st-c" class="font-bold text-slate-300">MISSING</span>
-                    </div>
-                    <label class="flex items-center space-x-2 text-[10px] text-slate-500 cursor-pointer">
-                        <input type="checkbox" id="check-congest" class="w-3 h-3 rounded">
-                        <span>Exit Traffic Congestion?</span>
-                    </label>
-                </div>
-                <button onclick="resetPoints()" class="w-full text-[10px] text-red-500 font-bold uppercase py-2 hover:bg-red-50 rounded-lg">Clear Map</button>
-            </section>
-
-            <section id="spot-ctrl" class="opacity-40 pointer-events-none transition-all">
-                <label class="text-[10px] font-bold text-slate-400 uppercase block mb-2">2. Spot Properties</label>
-                <div class="p-4 bg-indigo-50 border border-indigo-100 rounded-2xl space-y-4">
-                    <div class="flex justify-between text-[11px] font-bold text-indigo-900"><span>Search Overhead ($\phi$)</span><span id="v-phi">60s</span></div>
-                    <input type="range" id="i-phi" min="0" max="1200" step="10" value="60" oninput="document.getElementById('v-phi').innerText=this.value+'s'">
-                    <div class="flex justify-between text-[11px] font-bold text-indigo-900"><span>Success Prob ($P$)</span><span id="v-pi">80%</span></div>
-                    <input type="range" id="i-pi" min="0" max="100" step="1" value="80" oninput="document.getElementById('v-pi').innerText=this.value+'%'">
-                </div>
-            </section>
-
-            <section class="space-y-4">
-                <label class="text-[10px] font-bold text-slate-400 uppercase block">3. User Scenario</label>
-                <div>
-                    <label class="text-[11px] text-slate-600 block mb-1">Stay Type</label>
-                    <select id="scenario" onchange="toggleTuner()" class="w-full text-xs border p-2.5 rounded-lg bg-white outline-none focus:ring-2 focus:ring-indigo-500">
-                        <option value="Short Stay (10-40m)">Short Stay (10-40m)</option>
-                        <option value="Mid Stay (1-2h)">Mid Stay (1-2h)</option>
-                        <option value="Long Stay - Day (6-10h)">Long Stay - Day (6-10h)</option>
-                        <option value="Long Stay - Night (8-12h)">Long Stay - Night (8-12h)</option>
-                        <option value="Evening Stay (2-4h)">Evening Stay (2-4h)</option>
-                        <option value="Taxi (5-10m)">Taxi (5-10m)</option>
-                        <option value="Delivery (1-4m)">Delivery (1-4m)</option>
-                        <option value="Custom">Custom Tuning...</option>
-                    </select>
-                </div>
-
-                <div id="custom-tuner" class="hidden p-4 bg-slate-50 border rounded-2xl space-y-5">
-                    <div>
-                        <div class="flex justify-between text-[10px] font-bold text-slate-600 mb-1"><span>Walk Weight ($\lambda_w$)</span><span id="v-lw">1.5</span></div>
-                        <input type="range" id="i-lw" min="0.1" max="50" step="0.1" value="1.5" oninput="document.getElementById('v-lw').innerText=this.value">
-                    </div>
-                    <div>
-                        <div class="flex justify-between text-[10px] font-bold text-slate-600 mb-1"><span>Exit Weight ($\lambda_e$)</span><span id="v-le">1.0</span></div>
-                        <input type="range" id="i-le" min="0.1" max="10" step="0.1" value="1.0" oninput="document.getElementById('v-le').innerText=this.value">
-                    </div>
-                    <div>
-                        <div class="flex justify-between text-[10px] font-bold text-indigo-700 mb-1"><span>Transition ($\lambda_{tr}$)</span><span id="v-ltr">1.0</span></div>
-                        <input type="range" id="i-ltr" min="0.1" max="10" step="0.1" value="1.0" oninput="document.getElementById('v-ltr').innerText=this.value">
-                    </div>
-                    <div>
-                        <div class="flex justify-between text-[10px] font-bold text-slate-600 mb-1"><span>Chain Length ($K$)</span><span id="v-k">5</span></div>
-                        <input type="range" id="i-k" min="1" max="20" step="1" value="5" oninput="document.getElementById('v-k').innerText=this.value">
-                    </div>
-                </div>
-
-                <div>
-                    <label class="text-[11px] text-slate-600 block mb-1">Algorithm Strategy</label>
-                    <select id="algo" class="w-full text-xs border p-2.5 rounded-lg bg-white outline-none">
-                        <option value="MDP_Difference">Progress-Differential MDP</option>
-                        <option value="MDP">Finite Horizon MDP</option>
-                        <option value="Heuristic">Greedy Lookahead</option>
-                    </select>
-                </div>
-            </section>
-        </div>
-
-        <div class="p-6 bg-slate-50 border-t space-y-3">
-            <div id="option-switcher" class="hidden">
-                <div class="text-[10px] font-bold text-slate-400 uppercase block mb-2">4. Route Options</div>
-                <div class="grid grid-cols-2 gap-2">
-                    <button id="btn-option-1" type="button" class="py-2 text-[11px] font-bold rounded-lg option-btn-active">Option 1</button>
-                    <button id="btn-option-2" type="button" class="py-2 text-[11px] font-bold rounded-lg option-btn-inactive">Option 2</button>
-                </div>
-                <div id="option-meta" class="mt-2 text-[10px] text-slate-500"></div>
-            </div>
-
-            <button onclick="solve()" id="solve-btn" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-xl shadow-lg active:scale-95 transition-all">Calculate Best Path</button>
-        </div>
-    </div>
-
-    <div id="map" class="ml-[380px]"></div>
-
-    <div id="dr" class="drawer ml-[380px]">
-        <div class="p-6 border-b flex items-center justify-between sticky top-0 bg-white/95 backdrop-blur-sm">
-            <div class="flex items-center gap-8">
-                <div>
-                    <span class="text-[10px] text-slate-400 font-bold uppercase block">Selected Option</span>
-                    <span id="r-option" class="text-xl font-bold text-indigo-600">-</span>
-                </div>
-                <div>
-                    <span class="text-[10px] text-slate-400 font-bold uppercase block">Exp. Time</span>
-                    <span id="r-time" class="text-xl font-bold">-</span>
-                </div>
-                <div>
-                    <span class="text-[10px] text-slate-400 font-bold uppercase block">Chain Reliability</span>
-                    <span id="r-conf" class="text-xl font-bold text-green-600">-</span>
-                </div>
-            </div>
-            <button onclick="document.getElementById('dr').classList.remove('open')" class="text-slate-300 hover:text-slate-600"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg></button>
-        </div>
-        <div class="px-6 pt-4">
-            <div id="r-street" class="text-xs text-slate-500"></div>
-        </div>
-        <div class="p-6 overflow-x-auto">
-            <table class="w-full text-left text-xs">
-                <thead>
-                    <tr class="border-b uppercase text-[10px] text-slate-400 tracking-widest font-bold">
-                        <th class="pb-3">Order</th>
-                        <th class="pb-3">Spot Street</th>
-                        <th class="pb-3">Prob</th>
-                        <th class="pb-3 text-indigo-600">Arrival (Drive + $\phi_{prev}$)</th>
-                        <th class="pb-3 text-blue-500">Search ($\phi$)</th>
-                        <th class="pb-3">Walk</th>
-                        <th class="pb-3">Exit</th>
-                    </tr>
-                </thead>
-                <tbody id="r-body"></tbody>
-            </table>
-        </div>
-    </div>
-
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <script>
-        const map = L.map('map', {zoomControl: false}).setView([51.128, 71.430], 14);
-        L.control.zoom({position: 'topright'}).addTo(map);
-        L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png').addTo(map);
-
-        const markers = { start: null, dest: null, ref: null, spots: [], solution: [] };
-        const paths = [];
-        const pts = { start: null, dest: null, ref: null };
-        let mode = 'points';
-        let currentSolutions = [];
-        let currentMainStreet = null;
-
-        let edgePoints = [];
-        let edgePreviewMarkers = [];
-        let edgePreviewLine = null;
-
-        const icons = {
-            green: new L.Icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png', iconSize: [25, 41], iconAnchor: [12, 41] }),
-            red: new L.Icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png', iconSize: [25, 41], iconAnchor: [12, 41] }),
-            blue: new L.Icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png', iconSize: [25, 41], iconAnchor: [12, 41] }),
-            violet: new L.Icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-violet.png', iconSize: [25, 41], iconAnchor: [12, 41] }),
-            grey: new L.Icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-grey.png', iconSize: [25, 41], iconAnchor: [12, 41] }),
+        const MARKER_COLORS = {
+            green:  'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
+            red:    'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+            blue:   'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png',
+            violet: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-violet.png',
+            orange: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-orange.png',
         };
 
-        map.on('click', e => {
-            if (mode === 'points') handlePt(e.latlng);
-            else if (mode === 'spots') handleSp(e.latlng);
-            else if (mode === 'edges') handleEdgeClick(e.latlng);
-        });
+        function addMarker(lat, lng, color, label) {
+            const isSpot = color === 'violet';
+
+            const iconUrl = MARKER_COLORS[color];
+            const width = isSpot ? 16 : 18;
+            const height = isSpot ? 26 : 30;
+
+            if (mapEngine === '2gis') {
+                return new mapgl.HtmlMarker(map2gis, {
+                    coordinates: [lng, lat],
+                    html: `
+                        <div style="
+                            width:${width}px;
+                            height:${height}px;
+                            transform: translate(-50%, -100%);
+                            pointer-events:auto;
+                        ">
+                            <img
+                                src="${iconUrl}"
+                                alt="${label || color}"
+                                style="
+                                    width:${width}px;
+                                    height:${height}px;
+                                    display:block;
+                                    user-select:none;
+                                    pointer-events:none;
+                                "
+                            />
+                        </div>
+                    `,
+                    anchor: [0, 0],
+                });
+            } else {
+                const icon = new L.Icon({
+                    iconUrl,
+                    iconSize: [width, height],
+                    iconAnchor: [Math.round(width / 2), height],
+                });
+                return L.marker([lat, lng], { icon }).addTo(mapLeaflet);
+            }
+        }
+
+        function removeMarker(m) {
+            if (!m) return;
+            if (mapEngine === '2gis') m.destroy();
+            else mapLeaflet.removeLayer(m);
+        }
+
+        function addPolyline(coords, color, weight, dashArray) {
+            if (mapEngine === '2gis') {
+                const lngLat = coords.map(c => [c[1], c[0]]);
+                return new mapgl.Polyline(map2gis, {
+                    coordinates: lngLat,
+                    width: weight || 4,
+                    color: color,
+                    opacity: 0.85,
+                });
+            } else {
+                return L.polyline(coords, {
+                    color,
+                    weight: weight || 4,
+                    dashArray,
+                    opacity: 0.8,
+                }).addTo(mapLeaflet);
+            }
+        }
+
+        function removePolyline(p) {
+            if (!p) return;
+            if (mapEngine === '2gis') p.destroy();
+            else mapLeaflet.removeLayer(p);
+        }
+
+        function fitBounds(coordsList) {
+            if (!coordsList.length) return;
+
+            if (mapEngine === '2gis') {
+                const lngs = coordsList.map(c => c[1]);
+                const lats = coordsList.map(c => c[0]);
+                const sw = [Math.min(...lngs), Math.min(...lats)];
+                const ne = [Math.max(...lngs), Math.max(...lats)];
+                map2gis.fitBounds([sw, ne], { padding: [80, 80] });
+            } else {
+                mapLeaflet.fitBounds(coordsList, { padding: [80, 80] });
+            }
+        }
+
+
+        function addSpotNumberMarker(lat, lng, order) {
+            if (mapEngine === '2gis') {
+                return new mapgl.HtmlMarker(map2gis, {
+                    coordinates: [lng, lat],
+                    html: `
+                        <div style="
+                            width:18px;
+                            height:18px;
+                            border-radius:50%;
+                            background:#f97316;
+                            color:#fff;
+                            border:2px solid white;
+                            box-shadow:0 2px 4px rgba(0,0,0,0.2);
+                            font-size:9px;
+                            font-weight:700;
+                            display:flex;
+                            align-items:center;
+                            justify-content:center;
+                            transform: translate(-50%, -50%);
+                        ">${order}</div>
+                    `,
+                    anchor: [0, 0],
+                });
+            } else {
+                return L.marker([lat, lng], {
+                    icon: L.divIcon({
+                        className: 'spot-node',
+                        html: order,
+                        iconSize: [18, 18],
+                    }),
+                }).addTo(mapLeaflet);
+            }
+        }
+        
 
         function setMode(m) {
             mode = m;
 
-            document.getElementById('btn-p').className = m==='points'
+            document.getElementById('btn-p').className = m === 'points'
                 ? "py-2 text-[11px] font-bold rounded-lg bg-white shadow-sm"
                 : "py-2 text-[11px] font-bold rounded-lg text-slate-500";
 
-            document.getElementById('btn-s').className = m==='spots'
+            document.getElementById('btn-s').className = m === 'spots'
                 ? "py-2 text-[11px] font-bold rounded-lg bg-white shadow-sm"
                 : "py-2 text-[11px] font-bold rounded-lg text-slate-500";
 
-            document.getElementById('btn-e').className = m==='edges'
-                ? "py-2 text-[11px] font-bold rounded-lg bg-white shadow-sm"
-                : "py-2 text-[11px] font-bold rounded-lg text-slate-500";
-
-            document.getElementById('spot-ctrl').className = m==='spots'
+            document.getElementById('spot-ctrl').className = m === 'spots'
                 ? "opacity-100 transition-all"
                 : "opacity-40 pointer-events-none transition-all";
-
-            document.getElementById('edge-help').className = m==='edges'
-                ? "mt-2 text-[10px] text-slate-500 bg-slate-50 border rounded-lg p-2"
-                : "hidden";
-
-            if (m !== 'edges') clearEdgePreview();
         }
 
         function handlePt(ll) {
-            const {lat, lng} = ll;
+            const { lat, lng } = ll;
+
             if (!pts.start) {
                 pts.start = [lat, lng];
-                markers.start = L.marker(pts.start, {icon: icons.green}).addTo(map);
+                markers2gis.start = addMarker(lat, lng, 'green');
                 updateSt('a', true);
             } else if (!pts.dest) {
                 pts.dest = [lat, lng];
-                markers.dest = L.marker(pts.dest, {icon: icons.red}).addTo(map);
+                markers2gis.dest = addMarker(lat, lng, 'red');
                 updateSt('b', true);
             } else if (!pts.ref) {
                 pts.ref = [lat, lng];
-                markers.ref = L.marker(pts.ref, {icon: icons.blue}).addTo(map);
+                markers2gis.ref = addMarker(lat, lng, 'blue');
                 updateSt('c', true);
             }
         }
@@ -985,128 +574,82 @@
 
             await fetch('/add_manual_spot', {
                 method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ lat: ll.lat, lng: ll.lng, phi, pi })
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ lat: ll.lat, lng: ll.lng, phi, pi }),
             });
 
             fetchSpots();
-        }
-
-        async function handleEdgeClick(ll) {
-            const point = [ll.lat, ll.lng];
-            edgePoints.push(point);
-
-            const marker = L.marker(point, {icon: icons.grey}).addTo(map);
-            edgePreviewMarkers.push(marker);
-
-            if (edgePoints.length === 2) {
-                if (edgePreviewLine) map.removeLayer(edgePreviewLine);
-
-                edgePreviewLine = L.polyline(edgePoints, {
-                    color: '#111827',
-                    weight: 4,
-                    opacity: 0.9
-                }).addTo(map);
-
-                const p1 = edgePoints[0];
-                const p2 = edgePoints[1];
-
-                try {
-                    const res = await fetch('/add_edge', {
-                        method: 'POST',
-                        headers: {'Content-Type': 'application/json'},
-                        body: JSON.stringify({
-                            p1: { lat: p1[0], lon: p1[1] },
-                            p2: { lat: p2[0], lon: p2[1] }
-                        })
-                    });
-
-                    const data = await res.json();
-                    console.log('Edge result:', data);
-
-                    if (data.status !== 'success' && data.status !== 'ok') {
-                        alert(data.message || 'Failed to add edge.');
-                    }
-                } catch (err) {
-                    console.error('Error adding edge:', err);
-                    alert('Error adding edge.');
-                }
-
-                clearEdgePreview();
-            }
-        }
-
-        function clearEdgePreview() {
-            edgePreviewMarkers.forEach(m => map.removeLayer(m));
-            edgePreviewMarkers = [];
-            edgePoints = [];
-
-            if (edgePreviewLine) {
-                map.removeLayer(edgePreviewLine);
-                edgePreviewLine = null;
-            }
         }
 
         async function fetchSpots() {
             const res = await fetch('/get_manual_spots');
             const data = await res.json();
 
-            markers.spots.forEach(m => map.removeLayer(m));
-            markers.spots = data.map(s =>
-                L.marker(s.coords, {icon: icons.violet}).addTo(map).bindPopup(
-                    `<div class="p-2"><b class="text-xs">Spot Settings</b><br/><button onclick="deleteSpot('${s.id}')" class="text-[10px] text-red-500 font-bold uppercase mt-2">Delete Marker</button></div>`
-                )
-            );
+            markers2gis.spots.forEach(m => removeMarker(m));
+            markers2gis.spots = [];
+
+            data.forEach(s => {
+                const m = addMarker(s.coords[0], s.coords[1], 'violet');
+                markers2gis.spots.push(m);
+            });
         }
 
         window.deleteSpot = async id => {
             await fetch('/delete_spot', {
                 method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ id })
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ id }),
             });
             fetchSpots();
         };
 
         function clearSolutionLayers() {
-            paths.forEach(p => map.removeLayer(p));
-            paths.length = 0;
-            markers.solution.forEach(m => map.removeLayer(m));
-            markers.solution = [];
+            paths2gis.forEach(p => removePolyline(p));
+            paths2gis.length = 0;
+
+            markers2gis.solution.forEach(m => removeMarker(m));
+            markers2gis.solution = [];
         }
 
         function drawSolution(sol) {
             clearSolutionLayers();
 
+            const allCoords = [];
+
             sol.segments.forEach(seg => {
-                const color = seg.type === 'walk' ? '#ef4444' : (seg.type === 'drive_transition' ? '#f97316' : '#3b82f6');
-                const poly = L.polyline(seg.coords, {
-                    color,
-                    weight: seg.type === 'drive_transition' ? 3 : 3,
-                    dashArray: (seg.type === 'walk' || seg.type === 'drive_exit') ? '5,10' : null,
-                    opacity: 0.8
-                }).addTo(map);
-                paths.push(poly);
+                if (!seg.coords || seg.coords.length < 2) return;
+
+                let color, weight, dash;
+                if (seg.type === 'walk') {
+                    color = '#ef4444';
+                    weight = 3;
+                    dash = '5,10';
+                } else if (seg.type === 'drive_transition') {
+                    color = '#f97316';
+                    weight = 4;
+                    dash = null;
+                } else {
+                    color = '#3b82f6';
+                    weight = 3;
+                    dash = '5,10';
+                }
+
+                const p = addPolyline(seg.coords, color, weight, dash);
+                paths2gis.push(p);
+                seg.coords.forEach(c => allCoords.push(c));
             });
 
             sol.details.forEach(d => {
-                const m = L.marker(
-                d.coords, {
-                    icon: L.divIcon({
-                        className: 'spot-node',
-                        html: d.order,
-                        iconSize: [24, 24]
-                    })
-                }).addTo(map);
-                markers.solution.push(m);
+                const m = addSpotNumberMarker(d.coords[0], d.coords[1], d.order);
+                markers2gis.solution.push(m);
             });
 
             document.getElementById('r-option').innerText = sol.name || '-';
-            document.getElementById('r-time').innerText = (sol.metrics[0] / 60).toFixed(1) + " min";
-            document.getElementById('r-conf').innerText = (sol.metrics[4] * 100).toFixed(0) + "%";
+            document.getElementById('r-time').innerText = (sol.metrics.expected_total_sec / 60).toFixed(1) + ' min';
+            document.getElementById('r-conf').innerText = (sol.metrics.success_probability * 100).toFixed(0) + '%';
 
             if (sol.penalized_street) {
-                document.getElementById('r-street').innerText = `Alternative scenario: main street penalized → ${sol.penalized_street}`;
+                document.getElementById('r-street').innerText = `Alternative: penalized → ${sol.penalized_street}`;
             } else if (currentMainStreet) {
                 document.getElementById('r-street').innerText = `Base route main street: ${currentMainStreet}`;
             } else {
@@ -1115,26 +658,25 @@
 
             document.getElementById('r-body').innerHTML = sol.details.map(d => {
                 const arrivalDisplay = d.phi_prev > 0
-                    ? `${(d.arrival_time/60).toFixed(1)}m <span class="text-[9px] text-slate-400">(${(d.drive_leg/60).toFixed(1)}+${(d.phi_prev/60).toFixed(1)})</span>`
-                    : `${(d.arrival_time/60).toFixed(1)}m`;
+                    ? `${(d.arrival_time / 60).toFixed(1)}m <span class="text-[9px] text-slate-400">(${(d.drive_leg / 60).toFixed(1)}+${(d.phi_prev / 60).toFixed(1)})</span>`
+                    : `${(d.arrival_time / 60).toFixed(1)}m`;
 
                 return `
                     <tr class="border-b hover:bg-slate-50 transition-colors">
                         <td class="py-3 font-bold text-orange-500">#${d.order}</td>
                         <td class="py-3 font-semibold text-slate-700">${d.street}</td>
-                        <td class="py-3">${(d.p*100).toFixed(0)}%</td>
+                        <td class="py-3">${(d.p * 100).toFixed(0)}%</td>
                         <td class="py-3 font-mono text-indigo-700 font-bold">${arrivalDisplay}</td>
-                        <td class="py-3 text-blue-500 font-mono">${(d.phi/60).toFixed(1)}m</td>
-                        <td class="py-3 font-mono">${(d.walk_b/60).toFixed(1)}m</td>
-                        <td class="py-3 font-bold font-mono">${(d.exit_ref/60).toFixed(1)}m</td>
-                    </tr>`;
+                        <td class="py-3 text-blue-500 font-mono">${(d.phi / 60).toFixed(1)}m</td>
+                        <td class="py-3 font-mono">${(d.walk_b / 60).toFixed(1)}m</td>
+                        <td class="py-3 font-bold font-mono">${(d.exit_ref / 60).toFixed(1)}m</td>
+                    </tr>
+                `;
             }).join('');
 
             document.getElementById('dr').classList.add('open');
 
-            if (paths.length > 0) {
-                map.fitBounds(L.featureGroup(paths).getBounds(), { padding: [80, 80] });
-            }
+            if (allCoords.length) fitBounds(allCoords);
         }
 
         function setActiveOptionButton(index) {
@@ -1152,19 +694,20 @@
 
         function showOption(index) {
             if (!currentSolutions.length || !currentSolutions[index]) return;
+
             setActiveOptionButton(index);
 
-            const optionMeta = document.getElementById('option-meta');
             const sol = currentSolutions[index];
+            const optionMeta = document.getElementById('option-meta');
 
             if (index === 0) {
                 optionMeta.innerText = currentMainStreet
                     ? `Base route main street: ${currentMainStreet}`
-                    : `Base scenario`;
+                    : 'Base scenario';
             } else {
                 optionMeta.innerText = sol.penalized_street
-                    ? `Alternative route: penalized street = ${sol.penalized_street}`
-                    : `Alternative scenario`;
+                    ? `Alternative route: penalized = ${sol.penalized_street}`
+                    : 'Alternative scenario';
             }
 
             drawSolution(sol);
@@ -1174,10 +717,12 @@
         document.getElementById('btn-option-2').addEventListener('click', () => showOption(1));
 
         async function solve() {
-            if (!pts.start || !pts.dest) return alert("Please set Start (A) and Destination (B).");
+            if (!pts.start || !pts.dest) {
+                return alert('Please set Start (A) and Destination (B).');
+            }
 
             const btn = document.getElementById('solve-btn');
-            btn.innerText = "Finding Path...";
+            btn.innerText = 'Finding Path...';
             btn.disabled = true;
 
             const payload = {
@@ -1191,15 +736,15 @@
                     lambda_w: parseFloat(document.getElementById('i-lw').value),
                     lambda_e: parseFloat(document.getElementById('i-le').value),
                     lambda_tr: parseFloat(document.getElementById('i-ltr').value),
-                    k: parseInt(document.getElementById('i-k').value)
-                }
+                    k: parseInt(document.getElementById('i-k').value),
+                },
             };
 
             try {
                 const res = await fetch('/solve', {
                     method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(payload)
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload),
                 });
 
                 const data = await res.json();
@@ -1209,7 +754,7 @@
                     currentMainStreet = data.main_street_from_base_route || null;
 
                     if (!currentSolutions.length) {
-                        alert("No solutions returned.");
+                        alert('No solutions returned.');
                         return;
                     }
 
@@ -1218,30 +763,29 @@
                 } else {
                     alert(data.message);
                 }
-            } catch(e) {
+            } catch (e) {
                 console.error(e);
-                alert("Solve failed.");
+                alert('Solve failed.');
             } finally {
-                btn.innerText = "Calculate Best Path";
+                btn.innerText = 'Calculate Best Path';
                 btn.disabled = false;
             }
         }
 
         function updateSt(k, ok) {
             const el = document.getElementById(`st-${k}`);
-            el.innerText = ok ? "ACTIVE" : "MISSING";
-            el.className = ok ? "font-bold text-green-500" : "font-bold text-slate-300";
+            el.innerText = ok ? 'ACTIVE' : 'MISSING';
+            el.className = ok ? 'font-bold text-green-500' : 'font-bold text-slate-300';
         }
 
         function resetPoints() {
             ['start', 'dest', 'ref'].forEach(k => {
-                if (markers[k]) map.removeLayer(markers[k]);
-                markers[k] = null;
+                removeMarker(markers2gis[k]);
+                markers2gis[k] = null;
                 pts[k] = null;
                 updateSt(k === 'start' ? 'a' : k === 'dest' ? 'b' : 'c', false);
             });
 
-            clearEdgePreview();
             clearSolutionLayers();
             currentSolutions = [];
             currentMainStreet = null;
@@ -1258,19 +802,21 @@
         function toggleTuner() {
             document.getElementById('custom-tuner').className =
                 document.getElementById('scenario').value === 'Custom'
-                    ? "p-4 bg-slate-50 border rounded-2xl space-y-5"
-                    : "hidden";
+                    ? 'p-4 bg-slate-50 border rounded-2xl space-y-5'
+                    : 'hidden';
         }
 
         async function fetchLocs() {
             const res = await fetch('/get_locations');
             const data = await res.json();
+
             Object.keys(data).forEach(k => {
                 const opt = document.createElement('option');
                 opt.value = k;
                 opt.innerText = k;
                 document.getElementById('loc-select').appendChild(opt);
             });
+
             window.presets = data;
         }
 
@@ -1279,23 +825,24 @@
             resetPoints();
 
             pts.start = loc.start;
-            markers.start = L.marker(pts.start, {icon: icons.green}).addTo(map);
+            markers2gis.start = addMarker(loc.start[0], loc.start[1], 'green');
             updateSt('a', true);
 
             pts.dest = loc.dest;
-            markers.dest = L.marker(pts.dest, {icon: icons.red}).addTo(map);
+            markers2gis.dest = addMarker(loc.dest[0], loc.dest[1], 'red');
             updateSt('b', true);
 
             pts.ref = loc.ref;
-            markers.ref = L.marker(pts.ref, {icon: icons.blue}).addTo(map);
+            markers2gis.ref = addMarker(loc.ref[0], loc.ref[1], 'blue');
             updateSt('c', true);
 
-            map.fitBounds([pts.start, pts.dest, pts.ref], { padding: [100, 100] });
+            fitBounds([loc.start, loc.dest, loc.ref]);
         }
 
+        init2GISMap();
         fetchLocs();
         fetchSpots();
         setMode('points');
     </script>
 </body>
-</html>  -->
+</html>

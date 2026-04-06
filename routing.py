@@ -13,14 +13,11 @@ Key responsibilities:
 Dependencies: osmnx, networkx, shapely, geopy, requests
 """
 
-import math
 import os
 from collections import defaultdict
 
 import networkx as nx
 import osmnx as ox
-import requests
-from geopy.distance import geodesic
 from shapely.geometry import LineString, Point
 
 # ==========================================
