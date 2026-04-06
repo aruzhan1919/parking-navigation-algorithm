@@ -128,7 +128,9 @@ def build_drive_fn(start, ref, G_used, traffic_mult_drive=1.0, traffic_mult_exit
             else (ref if v[1] == "ref" else start)
         )
 
-        res = routing.get_route(u_t, v_t, custom_G=G_used)
+        res = routing.get_route(
+            u_t, v_t, custom_G=G_used, twogis_display=False
+        )
 
         if not res["nodes"]:
             result = {

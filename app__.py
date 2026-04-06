@@ -7,6 +7,7 @@ import pytz
 from geopy.distance import geodesic
 import requests as http_requests
 import routing
+import twogis_routing
 import pandas as pd
 
 # from routing import add_edge_from_latlon
@@ -23,6 +24,15 @@ from algorithms import (
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 STATIC_DIR = os.path.join(BASE_DIR, "static")
 MANUAL_FILE = os.path.join(BASE_DIR, "manual_spots_new.json")
+
+
+def _env_flag(name: str, default: bool = False) -> bool:
+    v = (os.getenv(name) or ("true" if default else "false")).lower().strip()
+    if default:
+        return v not in ("0", "false", "no", "off")
+    return v in ("1", "true", "yes", "on")
+
+
 DISTANCE_CACHE_FILE = os.path.join(BASE_DIR, "distance_cache.json")
 
 if not os.path.exists(STATIC_DIR):
@@ -226,7 +236,11 @@ def build_solution(
     routing_mode="normal",
     penalized_street=None,
     street_penalty_factor=5.0,
+    twogis_for_map=True,
 ):
+    if twogis_for_map:
+        twogis_routing.reset_batch_suppress_only()
+
     DISTANCE_CACHE.clear()
 
     weather_mult = get_weather_multipliers(start[0], start[1])
@@ -300,7 +314,9 @@ def build_solution(
             else (ref if v[1] == "ref" else start)
         )
 
-        res = routing.get_route(u_t, v_t, custom_G=G_used)
+        res = routing.get_route(
+            u_t, v_t, custom_G=G_used, twogis_display=False
+        )
 
         # if not res["path"]:
         if not res["nodes"]:
@@ -362,19 +378,71 @@ def build_solution(
     details = []
     curr_origin_id = start
 
+    # One 2GIS HTTP call for the whole drive chain (trial-friendly). Disable with
+    # TWOGIS_SINGLE_CHAIN_REQUEST=false. Long chains (> TWOGIS_MAX_WAYPOINT_SPOTS, default 8) skip this.
+    max_wp = int(os.getenv("TWOGIS_MAX_WAYPOINT_SPOTS", "8"))
+    tried_multi = (
+        twogis_for_map
+        and _env_flag("TWOGIS_SINGLE_CHAIN_REQUEST", True)
+        and len(chain) <= max_wp
+    )
+    chain_leg_paths = None
+    if tried_multi:
+        waypoints = [(float(start[0]), float(start[1]))]
+        for idx in chain:
+            nid = f"spot_{state['spots'][idx]['id']}"
+            nd = G_used.nodes[nid]
+            waypoints.append((float(nd["y"]), float(nd["x"])))
+        waypoints.append((float(ref[0]), float(ref[1])))
+        multi = twogis_routing.request_route_through_waypoints(waypoints)
+        if multi and multi.get("path"):
+            legs = twogis_routing.split_polyline_at_waypoints(
+                multi["path"], waypoints
+            )
+            if len(legs) == len(chain) + 1:
+                chain_leg_paths = legs
+            else:
+                print(
+                    f"[2GIS] chain split got {len(legs)} legs, expected {len(chain) + 1}; "
+                    "using internal per-leg geometry (no extra 2GIS)."
+                )
+    elif twogis_for_map and _env_flag("TWOGIS_SINGLE_CHAIN_REQUEST", True):
+        print(
+            f"[2GIS] chain has {len(chain)} spots (> {max_wp} pref limit); "
+            "using per-leg requests (higher API usage)."
+        )
+
+    # If we already attempted the single chain request, do not fall back to many 2GIS legs (429).
+    twogis_per_leg = twogis_for_map and not tried_multi
+
     for i, idx in enumerate(chain):
         spot = state["spots"][idx]
         spot_node_id = f"spot_{spot['id']}"
 
-        res = routing.get_route(curr_origin_id, spot_node_id, custom_G=G_used)
-
-        leg_drive_time = res["travel_time"] * traffic_mult_drive
+        if chain_leg_paths is not None:
+            res = routing.get_route(
+                curr_origin_id,
+                spot_node_id,
+                custom_G=G_used,
+                twogis_display=False,
+            )
+            coords = chain_leg_paths[i]
+            leg_drive_time = res["travel_time"] * traffic_mult_drive
+        else:
+            res = routing.get_route(
+                curr_origin_id,
+                spot_node_id,
+                custom_G=G_used,
+                twogis_display=twogis_per_leg,
+            )
+            coords = res["path"]
+            leg_drive_time = res["travel_time"] * traffic_mult_drive
         phi_prev = state["spots"][chain[i - 1]]["phi_exit_seconds"] if i > 0 else 0
         total_arrival_time = leg_drive_time + phi_prev
 
         segments.append(
             {
-                "coords": res["path"],
+                "coords": coords,
                 "type": "drive_transition",
                 "label": spot.get("street", "Spot"),
             }
@@ -420,9 +488,18 @@ def build_solution(
         curr_origin_id = spot_node_id
 
     last_spot_id = f"spot_{state['spots'][chain[-1]]['id']}"
-    res_ex = routing.get_route(last_spot_id, ref, custom_G=G_used)
+    if chain_leg_paths is not None:
+        res_ex = routing.get_route(
+            last_spot_id, ref, custom_G=G_used, twogis_display=False
+        )
+        exit_coords = chain_leg_paths[len(chain)]
+    else:
+        res_ex = routing.get_route(
+            last_spot_id, ref, custom_G=G_used, twogis_display=twogis_per_leg
+        )
+        exit_coords = res_ex["path"]
 
-    segments.append({"coords": res_ex["path"], "type": "drive_exit"})
+    segments.append({"coords": exit_coords, "type": "drive_exit"})
     segments.append(
         {"coords": [state["spots"][chain[-1]]["coords"], dest], "type": "walk"}
     )
@@ -471,6 +548,32 @@ def solve():
     if not MANUAL_SPOTS:
         return jsonify({"status": "error", "message": "No spots defined."})
 
+    twogis_routing.begin_solve_request()
+    try:
+        return _solve_impl(
+            data,
+            start,
+            dest,
+            ref,
+            exit_multiplier,
+            scenario_key,
+            algo_choice,
+            street_penalty_factor,
+        )
+    finally:
+        twogis_routing.end_solve_request()
+
+
+def _solve_impl(
+    data,
+    start,
+    dest,
+    ref,
+    exit_multiplier,
+    scenario_key,
+    algo_choice,
+    street_penalty_factor,
+):
     # Step 1: build temporary augmented graph just to inspect the base corridor
     # G_aug_preview = routing.augment_graph_with_spots(MANUAL_SPOTS)
 
@@ -517,6 +620,7 @@ def solve():
             routing_mode="penalized",
             penalized_street=main_street,
             street_penalty_factor=street_penalty_factor,
+            twogis_for_map=_env_flag("TWOGIS_MAP_OPTION2"),
         )
     else:
         option2 = {

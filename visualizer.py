@@ -68,7 +68,9 @@ class MapVisualizer:
     def _draw_segment(
         self, m, start_coords, end_coords, color, tooltip, dash_array=None
     ):
-        route_data = routing.get_route(start_coords, end_coords)
+        route_data = routing.get_route(
+            start_coords, end_coords, twogis_display=True
+        )
         # route_data = routing.get_route(start_coords, end_coords, custom_G=state["G_aug"])
         if route_data and route_data.get("path"):
             folium.PolyLine(

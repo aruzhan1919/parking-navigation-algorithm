@@ -10,12 +10,16 @@ Key responsibilities:
 4. Count pedestrian street crossings for walk penalty
 5. Build primary + alternative routes for UI display
 
+Optional 2GIS (TWOGIS_MODE=display_only by default): internal graph for costs;
+call get_route(..., twogis_display=True) for final map polylines only.
+
 Dependencies: osmnx, networkx, shapely, geopy, requests
 """
 
 import math
 import os
 from collections import defaultdict
+from typing import Optional
 
 import networkx as nx
 import osmnx as ox
@@ -48,6 +52,27 @@ def _routing_provider() -> str:
 
 def _use_twogis() -> bool:
     return _routing_provider() == "twogis"
+
+
+def _twogis_mode() -> str:
+    """
+    display_only (default): 2GIS only when get_route(..., twogis_display=True).
+    all_legs: try 2GIS on every get_route (heavy; needs high API quota).
+    """
+    m = (os.getenv("TWOGIS_MODE") or "display_only").lower().strip()
+    if m in ("all", "all_legs", "everywhere", "1", "true", "yes"):
+        return "all_legs"
+    return "display_only"
+
+
+def _should_use_twogis_for_request(twogis_display: Optional[bool]) -> bool:
+    if _routing_provider() != "twogis":
+        return False
+    if twogis_display is True:
+        return True
+    if twogis_display is False:
+        return False
+    return _twogis_mode() == "all_legs"
 
 
 def _endpoint_lat_lon(u_coords, u_node, target_G):
@@ -626,7 +651,7 @@ def _resolve_to_node(ref, target_G):
 #             "turn_penalty": float("inf"),
 #             "nodes": [],
 #         }
-def get_route(u_coords, v_coords, custom_G=None):
+def get_route(u_coords, v_coords, custom_G=None, twogis_display: Optional[bool] = None):
     """
     Compute shortest path between two points using Dijkstra on travel_time_new.
     Also computes turn penalties for the path.
@@ -635,6 +660,9 @@ def get_route(u_coords, v_coords, custom_G=None):
         u_coords: start — (lat, lon), spot dict, or node id string
         v_coords: end — same formats
         custom_G: use this graph instead of global G (e.g. G_aug with spots)
+        twogis_display: None = follow TWOGIS_MODE (default display_only → no 2GIS here).
+            False = never call 2GIS (optimization / graph helpers).
+            True = try 2GIS for polyline + duration (final map segments only).
 
     Returns:
         dict:
@@ -770,7 +798,7 @@ def get_route(u_coords, v_coords, custom_G=None):
 
             turn_penalty += base_turn + signal_penalty + extra_penalty
 
-        if _use_twogis():
+        if _should_use_twogis_for_request(twogis_display):
             try:
                 la1, lo1 = _endpoint_lat_lon(u_coords, u_node, target_G)
                 la2, lo2 = _endpoint_lat_lon(v_coords, v_node, target_G)
