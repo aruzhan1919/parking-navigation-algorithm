@@ -6,7 +6,7 @@ import routing
 from scenarios import SCENARIOS
 from locations import LOCATIONS
 from transformation import StateAdapter
-from algorithms import FiniteHorizonMDP, HeuristicLookahead, MDP_Difference
+from algorithms_ import FiniteHorizonMDP, HeuristicLookahead, MDP_Difference
 from geopy.distance import geodesic
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
