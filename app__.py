@@ -334,11 +334,6 @@ def build_solution(
     state["exit_multiplier"] = exit_multiplier
     state["G_aug"] = G_used
 
-    # solver_class = (
-    #     MDP_Difference
-    #     if algo_choice == "MDP_Difference"
-    #     else (FiniteHorizonMDP if algo_choice == "MDP" else HeuristicLookahead)
-    # )
     solver_class = (
         MDP_Difference
         if algo_choice == "MDP_Difference"
@@ -397,26 +392,6 @@ def build_solution(
             }
         )
 
-        # details.append(
-        #     {
-        #         "order": i + 1,
-        #         "street": spot.get("street", "Spot"),
-        #         "coords": spot["coords"],  # keep original
-        #         "entry_coords": res["path"][-1]
-        #         if res["path"]
-        #         else spot["coords"],  # ✅ ADD THIS
-        #         "p": spot.get("p_i", 0.8),
-        #         "phi": spot.get("phi_exit_seconds", 60),
-        #         "drive_leg": leg_drive_time,
-        #         "phi_prev": phi_prev,
-        #         "arrival_time": total_arrival_time,
-        #         "walk_b": state["walk_fn"](spot["coords"]),
-        #         "exit_ref": state["drive_fn"](("spot", spot), ("node", "ref"))[
-        #             "travel_time"
-        #         ],
-        #     }
-        # )
-
         curr_origin_id = spot_node_id
 
     last_spot_id = f"spot_{state['spots'][chain[-1]]['id']}"
@@ -429,15 +404,6 @@ def build_solution(
 
     success_prob = 1.0 - np.prod([1 - state["spots"][idx]["p_i"] for idx in chain])
 
-    # return {
-    #     "status": "success",
-    #     "metrics": list(metrics) + [success_prob],
-    #     "details": details,
-    #     "segments": segments,
-    #     "chain": chain,
-    #     "routing_mode": routing_mode,
-    #     "penalized_street": penalized_street,
-    # }
     # NEW — metrics is now a 6-tuple, success_prob already inside at index 5
     return {
         "status": "success",
@@ -472,14 +438,7 @@ def solve():
         return jsonify({"status": "error", "message": "No spots defined."})
 
     # Step 1: build temporary augmented graph just to inspect the base corridor
-    # G_aug_preview = routing.augment_graph_with_spots(MANUAL_SPOTS)
 
-    # route_pair = routing.get_primary_and_alternative_route(
-    #     start,
-    #     dest,
-    #     custom_G=G_aug_preview,
-    #     street_penalty_factor=street_penalty_factor,
-    # )
     route_pair = routing.get_primary_and_alternative_route(
         start,
         dest,
